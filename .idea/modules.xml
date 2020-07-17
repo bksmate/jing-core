@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/pkg-jing-core.iml" filepath="$PROJECT_DIR$/pkg-jing-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jing-core.iml" filepath="$PROJECT_DIR$/jing-core.iml" />
     </modules>
   </component>
 </project>
