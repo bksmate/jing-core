@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jing>
+    <connect-listener>org.jing.webSocket.ConnectListener</connect-listener>
+    <disconnect-listener>org.jing.webSocket.DisconnectListener</disconnect-listener>
+    <default-event-listener>org.jing.webSocket.DefaultListener</default-event-listener>
+    <!-- 0 or more-->
+    <event-listener>
+        <name>testMessage</name>
+        <impl>org.jing.webSocket.DefaultListener</impl>
+    </event-listener>
+</jing>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jing>
+    <service>
+        <index>1</index>
+        <path>com.abc.hun.tradeMonitor.service</path>
+    </service>
+    <service>
+        <index>99</index>
+        <path>test</path>
+    </service>
+</jing>

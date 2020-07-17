@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact name="pkg-jing-core:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/pkg_jing_core_jar</output-path>
+    <root id="root">
+      <element id="archive" name="pkg-jing-core.jar">
+        <element id="module-output" name="pkg-jing-core" />
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/../jing-core/web/WEB-INF/lib/log4j-1.2.17.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/../jing-core/web/WEB-INF/lib/log4j-core-2.3.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/../jing-core/web/WEB-INF/lib/dom4j-2.0.2.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/../jing-core/web/WEB-INF/lib/log4j-api-2.3.jar" />
+    </root>
+  </artifact>
+</component>
