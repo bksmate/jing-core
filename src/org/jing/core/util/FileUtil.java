@@ -7,6 +7,7 @@ import org.jing.core.lang.JingException;
 import org.jing.core.logger.JingLogger;
 
 import java.io.*;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,15 +26,45 @@ public class FileUtil {
     static class InnerLogger {
         JingLogger logger = null;
 
-        void info(String msg, String parameters) {
+        void createLogger() {
             if (null == logger && Configuration.hasInit()) {
                 logger = JingLogger.getLogger(FileUtil.class);
             }
-            if (null != logger && JingLogger.hasInit()) {
+        }
+
+        boolean checkLogger() {
+            return null != logger && JingLogger.hasInit();
+        }
+
+        void info(String msg, String parameters) {
+            createLogger();
+            if (checkLogger()) {
                 logger.info(msg, parameters);
             }
             else {
                 System.out.println(StringUtil.mixParameters(msg, parameters));
+            }
+        }
+
+        void error(String msg, Throwable t, String... parameters) {
+            createLogger();
+            if (checkLogger()) {
+                logger.error(msg, t, parameters);
+            }
+            else {
+                System.out.println(StringUtil.mixParameters(msg, parameters));
+                t.printStackTrace();
+            }
+        }
+
+        void error(String msg, Throwable t) {
+            createLogger();
+            if (checkLogger()) {
+                logger.error(msg, t);
+            }
+            else {
+                System.out.println(msg);
+                t.printStackTrace();
             }
         }
     }
@@ -194,6 +225,120 @@ public class FileUtil {
                 new StringBuilder("Failed To Read Properties [filePath: ").append(filePath).append("]").toString(), e);
         }
         return null;
+    }
+
+    public static void writeFile(File file, String content, String encoding) {
+        writeFile(file, content, false, encoding);
+    }
+
+    public static void writeFile(File file, String content) {
+        writeFile(file, content, false, null);
+    }
+
+    public static void writeFile(File file, String content, boolean append) {
+        writeFile(file, content, append, null);
+    }
+
+    public static void writeFile(File file, String content, boolean append, String encoding) {
+        encoding = StringUtil.ifEmpty(encoding, "utf-8");
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
+            writer.write(content);
+            writer.flush();
+        }
+        catch (Exception e) {
+            logger.error("Failed to write file {}", e, file.getAbsolutePath());
+        }
+        finally {
+            if (null != writer) {
+                try {
+                    writer.close();
+                }
+                catch (Exception e) {
+                    logger.error("Failed to close OutputStreamWriter", e);
+                }
+                finally {
+                    writer = null;
+                }
+            }
+        }
+    }
+
+    public static void writeFile(String filePath, String content, boolean append) {
+        writeFile(new File(filePath), content, append);
+    }
+
+    public static void writeFile(String filePath, String content, String encoding) {
+        writeFile(new File(filePath), content, encoding);
+    }
+
+    public static void writeFile(String filePath, String content) {
+        writeFile(new File(filePath), content);
+    }
+
+    public static void writeFile(String filePath, String content, boolean append, String encoding) {
+        writeFile(new File(filePath), content, append, encoding);
+    }
+
+    public static void writeFile(File file, List<String> rowList, String encoding) {
+        writeFile(file, rowList, false, encoding);
+    }
+
+    public static void writeFile(File file, List<String> rowList) {
+        writeFile(file, rowList, false, null);
+    }
+
+    public static void writeFile(File file, List<String> rowList, boolean append) {
+        writeFile(file, rowList, append, null);
+    }
+
+    public static void writeFile(File file, List<String> rowList, boolean append, String encoding) {
+        encoding = StringUtil.ifEmpty(encoding, "utf-8");
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
+            int count = GenericUtil.countList(rowList);
+            for (int i$ = 0; i$ < count; i$++) {
+                if (0 != i$) {
+                    writer.newLine();
+                }
+                writer.write(rowList.get(i$));
+            }
+            writer.flush();
+        }
+        catch (Exception e) {
+            logger.error("Failed to write file {}", e, file.getAbsolutePath());
+        }
+        finally {
+            if (null != writer) {
+                try {
+                    writer.close();
+                }
+                catch (Exception e) {
+                    logger.error("Failed to close OutputStreamWriter", e);
+                }
+                finally {
+                    writer = null;
+                }
+            }
+        }
+    }
+
+    public static void writeFile(String filePath, List<String> rowList, boolean append) {
+        writeFile(new File(filePath), rowList, append);
+    }
+
+    public static void writeFile(String filePath, List<String> rowList, String encoding) {
+        writeFile(new File(filePath), rowList, encoding);
+    }
+
+    public static void writeFile(String filePath, List<String> rowList) {
+        writeFile(new File(filePath), rowList);
+    }
+
+    public static void writeFile(String filePath, List<String> rowList, boolean append, String encoding) {
+        writeFile(new File(filePath), rowList, append, encoding);
     }
 
     /**

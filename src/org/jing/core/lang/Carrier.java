@@ -35,6 +35,12 @@ public class Carrier {
     public Carrier() {
     }
 
+    public Carrier(String rootNodeName) {
+        if (StringUtil.isNotEmpty(rootNodeName)) {
+            this.rootNodeName = rootNodeName;
+        }
+    }
+
     /**
      * Description: Throw exception if value map is empty. <br>
      *
@@ -59,6 +65,10 @@ public class Carrier {
 
     public void setRootNodeName(String rootNodeName) {
         this.rootNodeName = rootNodeName;
+    }
+
+    public String getRootNodeName() {
+        return rootNodeName;
     }
 
     /**

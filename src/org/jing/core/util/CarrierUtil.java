@@ -3,12 +3,20 @@ package org.jing.core.util;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.jing.core.json.CharReader;
+import org.jing.core.json.Parser;
+import org.jing.core.json.TokenList;
+import org.jing.core.json.Tokenizer;
 import org.jing.core.lang.Carrier;
+import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class CarrierUtil {
@@ -155,5 +163,88 @@ public class CarrierUtil {
         Element retElement = DocumentHelper.createElement(name);
         retElement.setText(value);
         return retElement;
+    }
+
+    public static String carrier2JsonContent(Carrier carrier) {
+        return carrier2JsonContent(carrier, false);
+    }
+
+    public static String carrier2JsonContent(Carrier carrier, boolean needRootNode) {
+        if (needRootNode) {
+            StringBuilder stbr = new StringBuilder("{");
+            carrierKey2JsonContent(stbr, carrier.getRootNodeName())
+                .append(carrierValue2JsonContent(carrier.getValueMap())).append("}");
+            return stbr.toString();
+        }
+        else {
+            return carrierValue2JsonContent(carrier.getValueMap());
+        }
+    }
+
+    private static StringBuilder carrierKey2JsonContent(StringBuilder stbr, Object keyNode) {
+        stbr.append("\"").append(StringUtil.parseString(keyNode)).append("\":");
+        return stbr;
+    }
+
+    private static String carrierValue2JsonContent(Object valueNode) {
+        StringBuilder stbr = new StringBuilder("");
+        if (null == valueNode) {
+            stbr.append("null");
+        }
+        else if (valueNode instanceof List) {
+            stbr.append("[");
+            int count = GenericUtil.countList((List<?>) valueNode);
+            for (int i$ = 0; i$ < count; i$++) {
+                if (i$ > 0) {
+                    stbr.append(",");
+                }
+                stbr.append(carrierValue2JsonContent(((List<?>) valueNode).get(i$)));
+            }
+            stbr.append("]");
+        }
+        else if (valueNode instanceof Map) {
+            stbr.append("{");
+            Iterator iterator = ((Map) valueNode).keySet().iterator();
+            Object key;
+            Object value;
+            boolean f$ = false;
+            while (iterator.hasNext()) {
+                key = iterator.next();
+                value = ((Map) valueNode).get(key);
+                if (f$) {
+                    stbr.append(",");
+                }
+                else {
+                    f$ = true;
+                }
+                carrierKey2JsonContent(stbr, key).append(carrierValue2JsonContent(value));
+            }
+            stbr.append("}");
+        }
+        else if (valueNode instanceof Carrier) {
+            stbr.append(carrier2JsonContent(((Carrier) valueNode)));
+        }
+        else if (valueNode instanceof Long
+            || valueNode instanceof Integer
+            || valueNode instanceof Short
+            || valueNode instanceof Double
+            || valueNode instanceof Float) {
+            stbr.append(StringUtil.parseString(valueNode));
+        }
+        else {
+            stbr.append("\"").append(StringUtil.parseString(valueNode)).append("\"");
+        }
+        return stbr.toString();
+    }
+
+    public static Carrier jsonContent2Carrier(String jsonContent) throws JingException {
+        return jsonContent2Carrier(jsonContent, null);
+    }
+
+    public static Carrier jsonContent2Carrier(String jsonContent, String rootNodeName) throws JingException {
+        jsonContent = jsonContent.trim();
+        CharReader charReader = new CharReader(new StringReader(jsonContent));
+        TokenList tokens = new Tokenizer().tokenize(charReader);
+        return new Parser().parse(tokens, rootNodeName);
     }
 }
