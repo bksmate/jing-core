@@ -1,5 +1,6 @@
 package test;
 
+import org.jing.core.lang.Pair2;
 import org.jing.core.thread.ThreadFactory;
 
 import java.lang.Exception;
@@ -12,19 +13,9 @@ import java.lang.Exception;
  */
 public class Demo4ThreadFactory {
     private Demo4ThreadFactory() throws Exception {
-        JThreadInstance3 thread1 = new JThreadInstance3(10);
-        JThreadInstance3 thread2 = new JThreadInstance3(10);
-        JThreadInstance3 thread3 = new JThreadInstance3(10);
-        JThreadInstance4 thread4 = new JThreadInstance4(10);
-        JThreadInstance4 thread5 = new JThreadInstance4(10);
-        JThreadInstance4 thread6 = new JThreadInstance4(10);
-        ThreadFactory.setMaxThreadNumber(1);
-        ThreadFactory.createThread(thread1, "run", true, true);
-        ThreadFactory.createThread(thread2, "run", true, false);
-        ThreadFactory.createThread(thread3, "run", true, true);
-        ThreadFactory.createThread(thread4, "run", true, false);
-        ThreadFactory.createThread(thread5, "run", true, true);
-        ThreadFactory.createThread(thread6, "run", true, true);
+        ThreadFactory.setMaxThreadNumber(2);
+        ThreadFactory.createThreadByType(JThreadInstance3.class, new ThreadFactory.Constructor(new Pair2<Class<?>, Object>(int.class, 4)), new ThreadFactory.Method("run"), true, true);
+        ThreadFactory.createThreadByIncident(new JThreadInstance3(6), new ThreadFactory.Method("run"), true, true);
     }
 
     public static void main(String[] args) throws Exception {

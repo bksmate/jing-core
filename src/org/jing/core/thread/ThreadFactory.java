@@ -2,10 +2,11 @@ package org.jing.core.thread;
 
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
+import org.jing.core.lang.Pair2;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.util.GenericUtil;
 import org.jing.core.util.StringUtil;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -24,22 +25,85 @@ public class ThreadFactory implements Runnable {
 
     private static final LinkedList<ThreadFactory> waitingList = new LinkedList<ThreadFactory>();
 
-    private Object incident;
+    private Class<?> type;
 
-    private String methodName;
+    private Object incident;
 
     private boolean forceAccess;
 
-    private ThreadFactory(Object incident, String methodName, boolean forceAccess) throws JingException {
-        if (null == incident) {
-            ExceptionHandler.publish("Incident cannot be empty.");
+    private Constructor constructor;
+
+    private Method method;
+
+    public static class Constructor {
+        private Class<?>[] constructorTypes;
+
+        private Object[] constructorValues;
+
+        public Constructor(Pair2<Class<?>, ?>... constructorParameters) {
+            int size = GenericUtil.countArray(constructorParameters);
+            if (0 != size) {
+                this.constructorTypes = new Class[size];
+                this.constructorValues = new Object[size];
+                for (int i$ = 0; i$ < size; i$++) {
+                    this.constructorTypes[i$] = constructorParameters[i$].getA();
+                    this.constructorValues[i$] = constructorParameters[i$].getB();
+                }
+            }
+            else {
+                this.constructorTypes = null;
+                this.constructorValues = null;
+            }
         }
-        if (StringUtil.isEmpty(methodName)) {
-            ExceptionHandler.publish("MethodName cannot be empty.");
+
+        public Class<?>[] getConstructorTypes() {
+            return constructorTypes;
         }
-        this.incident = incident;
-        this.methodName = methodName;
-        this.forceAccess = forceAccess;
+
+        public Object[] getConstructorValues() {
+            return constructorValues;
+        }
+    }
+
+    public static class Method {
+        private String methodName;
+
+        private Class<?>[] methodTypes;
+
+        private Object[] methodValues;
+
+        public Method(String methodName, Pair2<Class<?>, ?>... methodParameters) {
+            this.methodName = methodName;
+            int size = GenericUtil.countArray(methodParameters);
+            if (0 != size) {
+                this.methodTypes = new Class[size];
+                this.methodValues = new Object[size];
+                for (int i$ = 0; i$ < size; i$++) {
+                    this.methodTypes[i$] = methodParameters[i$].getA();
+                    this.methodValues[i$] = methodParameters[i$].getB();
+                }
+            }
+            else {
+                this.methodTypes = null;
+                this.methodValues = null;
+            }
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+
+        public Class<?>[] getMethodTypes() {
+            return methodTypes;
+        }
+
+        public Object[] getMethodValues() {
+            return methodValues;
+        }
+    }
+
+    private ThreadFactory() {
+
     }
 
     private static boolean checkAvailable() {
@@ -118,8 +182,20 @@ public class ThreadFactory implements Runnable {
         }
     }
 
-    public static void createThread(Object incident, String methodName, boolean forceAccess, boolean wait) throws JingException {
-        ThreadFactory thread = new ThreadFactory(incident, methodName, forceAccess);
+    public static void createThreadByIncident(Object incident, Method method, boolean forceAccess, boolean wait) throws JingException {
+        ThreadFactory thread = new ThreadFactory();
+        if (null == incident) {
+            ExceptionHandler.publish("Incident cannot be empty.");
+            return;
+        }
+        if (null == method || StringUtil.isEmpty(method.getMethodName())) {
+            ExceptionHandler.publish("Method cannot be empty.");
+        }
+        thread.type = incident.getClass();
+        thread.incident = incident;
+        thread.constructor = null;
+        thread.method = method;
+        thread.forceAccess = forceAccess;
         if (checkAvailable() && addThread(thread)) {
             new Thread(thread).start();
         }
@@ -130,6 +206,30 @@ public class ThreadFactory implements Runnable {
         }
         else {
             LOGGER.imp("No available thread for no wait. [incident: {}]", incident.getClass().getName());
+        }
+    }
+
+    public static void createThreadByType(Class<?> type, Constructor constructor, Method method, boolean forceAccess, boolean wait) throws JingException {
+        ThreadFactory thread = new ThreadFactory();
+        if (null == type) {
+            ExceptionHandler.publish("Type cannot be empty.");
+            return;
+        }
+        thread.type = type;
+        thread.incident = null;
+        thread.constructor = constructor;
+        thread.method = method;
+        thread.forceAccess = forceAccess;
+        if (checkAvailable() && addThread(thread)) {
+            new Thread(thread).start();
+        }
+        else if (wait) {
+            LOGGER.imp("No available thread. [type: {}]", type.getName());
+            LOGGER.imp("Try to wait. [type: {}]", type.getName());
+            addWaiting(thread);
+        }
+        else {
+            LOGGER.imp("No available thread for no wait. [type: {}]", type.getName());
         }
     }
 
@@ -147,11 +247,29 @@ public class ThreadFactory implements Runnable {
     @Override
     public void run() {
         try {
-            Method method = incident.getClass().getDeclaredMethod(methodName);
-            if (forceAccess) {
-                method.setAccessible(true);
+            Object incident;
+            if (null == this.incident) {
+                if (null != this.constructor) {
+                    java.lang.reflect.Constructor constructor = this.type.getConstructor(this.constructor.getConstructorTypes());
+                    if (forceAccess) {
+                        constructor.setAccessible(true);
+                    }
+                    incident = constructor.newInstance(this.constructor.getConstructorValues());
+                }
+                else {
+                    incident = this.type.newInstance();
+                }
             }
-            method.invoke(incident);
+            else {
+                incident = this.incident;
+            }
+            if (null != this.method) {
+                java.lang.reflect.Method method = incident.getClass().getDeclaredMethod(this.method.getMethodName(), this.method.getMethodTypes());
+                if (forceAccess) {
+                    method.setAccessible(true);
+                }
+                method.invoke(incident, this.method.getMethodValues());
+            }
         }
         catch (Exception e) {
             LOGGER.error(e);

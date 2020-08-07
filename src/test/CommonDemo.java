@@ -1,5 +1,6 @@
 package test;
 
+import org.jing.core.logger.JingLogger;
 import org.jing.core.util.StringUtil;
 
 import java.lang.Exception;
@@ -12,7 +13,10 @@ import java.lang.Exception;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        System.out.println(StringUtil.pad("123", StringUtil.PAD_MODEL_LEFT, '0', 1));
+        JingLogger logger = JingLogger.getLogger(CommonDemo.class);
+        logger.sql("SELECT 1 FROM DUAL", this.hashCode());
+        logger.sql("SELECT 1 FROM DUAL", "1, 2, 3", this.hashCode());
+        logger.sql("{} row selected.", this.hashCode(), 1);
     }
 
     public static void main(String[] args) throws Exception {

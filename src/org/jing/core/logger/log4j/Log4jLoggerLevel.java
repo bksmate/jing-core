@@ -12,7 +12,7 @@ import java.util.HashSet;
  * @createDate: 2019-02-03 <br>
  */
 public class Log4jLoggerLevel extends Level {
-    public static final Level SQL = new Log4jLoggerLevel(60000, "SQL", 0);
+    public static final Level SQL = new Log4jLoggerLevel(29999, "SQL", 0);
 
     public static final Level IMP = new Log4jLoggerLevel(39999, "IMP", 0);
 
