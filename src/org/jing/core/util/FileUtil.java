@@ -282,9 +282,15 @@ public class FileUtil {
         encoding = StringUtil.ifEmpty(encoding, "utf-8");
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
-            writer.write(content);
-            writer.flush();
+            File parent = file.getParentFile();
+            if ((parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
+                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
+                writer.write(content);
+                writer.flush();
+            }
+            else {
+                ExceptionHandler.publish("Failed to mkdirs");
+            }
         }
         catch (Exception e) {
             logger.error("Failed to write file {}", e, file.getAbsolutePath());
@@ -336,15 +342,21 @@ public class FileUtil {
         encoding = StringUtil.ifEmpty(encoding, "utf-8");
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
-            int count = GenericUtil.countList(rowList);
-            for (int i$ = 0; i$ < count; i$++) {
-                if (0 != i$) {
-                    writer.newLine();
+            File parent = file.getParentFile();
+            if ((parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
+                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
+                int count = GenericUtil.countList(rowList);
+                for (int i$ = 0; i$ < count; i$++) {
+                    if (0 != i$) {
+                        writer.newLine();
+                    }
+                    writer.write(rowList.get(i$));
                 }
-                writer.write(rowList.get(i$));
+                writer.flush();
             }
-            writer.flush();
+            else {
+                ExceptionHandler.publish("Failed to mkdirs");
+            }
         }
         catch (Exception e) {
             logger.error("Failed to write file {}", e, file.getAbsolutePath());
