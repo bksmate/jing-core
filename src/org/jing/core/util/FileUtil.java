@@ -7,6 +7,7 @@ import org.jing.core.lang.JingException;
 import org.jing.core.logger.JingLogger;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -121,6 +122,44 @@ public class FileUtil {
 
     public static String readFile(String filePath) throws JingException {
         return readFile(new File(filePath), null);
+    }
+
+    public static List<String> readFile2List(String filePath) throws JingException {
+        return readFile2List(new File(filePath), null);
+    }
+
+    public static List<String> readFile2List(File file) throws JingException {
+        return readFile2List(file, null);
+    }
+
+    public static List<String> readFile2List(String filePath, String encoding) throws JingException {
+        return readFile2List(new File(filePath), encoding);
+    }
+
+    public static List<String> readFile2List(File file, String encoding) throws JingException {
+        List<String> retList = null;
+        String filePath = file.getAbsolutePath();
+        logger.info("Try To Read File [filePath: {}]", filePath);
+        String retString = null;
+        try {
+            encoding = StringUtil.ifEmpty(encoding, "utf-8");
+            BufferedReader br = getBufferedReader(file, encoding);
+            String row;
+            boolean initFlag = false;
+            while (null != (row = br.readLine())) {
+                if (null == retList) {
+                    retList = new ArrayList<String>();
+                }
+                retList.add(row);
+                initFlag = true;
+            }
+            br.close();
+        }
+        catch (Exception e) {
+            ExceptionHandler.publish("UTIL-FILE-00003",
+                new StringBuilder("Failed To Read File [filePath: ").append(filePath).append("]").toString(), e);
+        }
+        return retList;
     }
 
     public static void zip(String zipFilePath, String srcFilePath) throws Exception {

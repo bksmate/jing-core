@@ -43,7 +43,7 @@ public class ToUtil {
 
     public static void element2Carrier(Element element, Carrier parentCarrier, boolean isRootElement) throws JingException {
         if (element.isTextOnly()) {
-            parentCarrier.addValueByKey(element.getName(), element.getTextTrim());
+            parentCarrier.addValueByKey(element.getName(), element.getText().trim());
         }
         else {
             Carrier newCarrier = new Carrier();

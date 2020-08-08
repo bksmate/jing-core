@@ -1,7 +1,8 @@
 package test;
 
-import org.jing.core.logger.JingLogger;
-import org.jing.core.util.StringUtil;
+import org.jing.core.lang.Carrier;
+import org.jing.core.util.CarrierUtil;
+import org.jing.core.util.FileUtil;
 
 import java.lang.Exception;
 
@@ -13,10 +14,9 @@ import java.lang.Exception;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        JingLogger logger = JingLogger.getLogger(CommonDemo.class);
-        logger.sql("SELECT 1 FROM DUAL", this.hashCode());
-        logger.sql("SELECT 1 FROM DUAL", "1, 2, 3", this.hashCode());
-        logger.sql("{} row selected.", this.hashCode(), 1);
+        Carrier crawlerCarrier = CarrierUtil.string2Carrier(FileUtil.readFile("F:\\W\\WorkSpace\\IDEA\\Crawler/config/crawler.xml"));
+        String header = crawlerCarrier.getStringByPath("request-header");
+        System.out.println(header);
     }
 
     public static void main(String[] args) throws Exception {
