@@ -173,6 +173,14 @@ public class Carrier {
     }
 
     public String asXML() {
+        OutputFormat xmlFormat = new OutputFormat();
+        xmlFormat.setNewlines(true);
+        xmlFormat.setIndent(true);
+        xmlFormat.setIndent("    ");
+        return asXML(xmlFormat, true);
+    }
+
+    public String asXML(OutputFormat xmlFormat, boolean needHead) {
         Document document =DocumentHelper.createDocument();
         Element rootElement = DocumentHelper.createElement(rootNodeName);
         document.setRootElement(rootElement);
@@ -183,13 +191,14 @@ public class Carrier {
         // 设置数据
         CarrierUtil.object2Element(valueMap, null, rootElement);
         try {
-            OutputFormat xmlFormat = new OutputFormat();
             StringWriter sw = new StringWriter();
             XMLWriter xmlWriter = new XMLWriter(sw, xmlFormat);
-            xmlFormat.setNewlines(true);
-            xmlFormat.setIndent(true);
-            xmlFormat.setIndent("    ");
-            xmlWriter.write(document);
+            if (needHead) {
+                xmlWriter.write(document);
+            }
+            else {
+                xmlWriter.write(rootElement);
+            }
             return sw.toString();
         }
         catch (Exception e) {

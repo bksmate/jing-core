@@ -1,5 +1,6 @@
 package test;
 
+import org.dom4j.io.OutputFormat;
 import org.jing.core.lang.Carrier;
 import org.jing.core.util.CarrierUtil;
 
@@ -29,6 +30,11 @@ public class Demo4Carrier {
         Carrier jsonCarrier = CarrierUtil.jsonContent2Carrier(jsonContent, null);
         System.out.println(jsonCarrier.asXML());
         System.out.println(CarrierUtil.carrier2JsonContent(jsonCarrier));
+        OutputFormat xmlFormat = new OutputFormat();
+        xmlFormat.setIndent("");
+        xmlFormat.setNewlines(false);
+        xmlFormat.setExpandEmptyElements(true);
+        System.out.println(jsonCarrier.asXML(xmlFormat, false));
     }
 
     public static void main(String[] args) throws Exception {
