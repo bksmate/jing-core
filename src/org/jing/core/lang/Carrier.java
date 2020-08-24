@@ -76,20 +76,24 @@ public class Carrier {
      *
      * @param valueMap <br>
      */
-    public void setValueMap(HashMap<String, Object> valueMap) {
+    public Carrier setValueMap(HashMap<String, Object> valueMap) {
         this.valueMap = valueMap;
+        return this;
     }
 
-    public void addValueByKey(String key, Object value) throws JingException {
+    public Carrier addValueByKey(String key, Object value) throws JingException {
         CarrierUtil.addValueByKey(valueMap, key, value);
+        return this;
     }
 
-    public void setValueByKey(int seq, String key, Object value) throws JingException {
+    public Carrier setValueByKey(int seq, String key, Object value) throws JingException {
         CarrierUtil.setValueByKey(valueMap, key, value, seq);
+        return this;
     }
 
-    public void setValueByKey(String key, Object value) throws JingException {
+    public Carrier setValueByKey(String key, Object value) throws JingException {
         CarrierUtil.setValueByKey(valueMap, key, value, 0);
+        return this;
     }
 
     public Object getValueByKey(int seq, String key, Object defaultValue) throws JingException {
@@ -168,8 +172,9 @@ public class Carrier {
         return StringUtil.ifEmpty(extendMap.get("SERVICE_CODE"));
     }
 
-    public void putAll(HashMap<String, Object> valueMap) {
+    public Carrier putAll(HashMap<String, Object> valueMap) {
         this.valueMap.putAll(valueMap);
+        return this;
     }
 
     public String asXML() {
