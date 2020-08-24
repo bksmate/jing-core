@@ -17,6 +17,8 @@ import org.jing.core.util.StringUtil;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 
@@ -76,16 +78,16 @@ public class Log4jInit implements JInit, Serializable {
     }
 
     private void registerLoggerLevel() throws Exception {
-        Field[] fields$1 = Log4jLoggerLevel.class.getDeclaredFields();
-        int count$fields$1 = fields$1.length;
-        Field[] fields$2 = Level.class.getDeclaredFields();
-        int count$fields$2= fields$2.length;
-        Field[] fields = new Field[count$fields$1 + count$fields$2];
-        System.arraycopy(fields$1, 0, fields, 0, count$fields$1);
-        System.arraycopy(fields$2, 0, fields, count$fields$1, count$fields$2);
-        for (Field field$ : fields) {
-            if (Modifier.isStatic(field$.getModifiers()) && field$.getType() == Level.class) {
-                Log4jLoggerLevel.LEVEL_MAPPING.put(field$.getName(), (Level) field$.get(null));
+        Field[] origLevels = Level.class.getDeclaredFields();
+        ArrayList<Field> allFields = new ArrayList<Field>(Arrays.asList(origLevels));
+        allFields.addAll(Arrays.asList(Log4jLoggerLevel.class.getDeclaredFields()));
+        int extendLevelCount = parameter.getCount("extendLevel");
+        for (int i$ = 0; i$ < extendLevelCount; i$ ++) {
+            allFields.addAll(Arrays.asList(Class.forName(parameter.getString(i$, "extendLevel")).getDeclaredFields()));
+        }
+        for (Field field: allFields) {
+            if (Modifier.isStatic(field.getModifiers()) && Level.class.isAssignableFrom(field.getType())) {
+                Log4jLoggerLevel.LEVEL_MAPPING.put(field.getName(), (Level) field.get(null));
             }
         }
         String equals = StringUtil.ifEmpty(parameter.getStringByPath("level.equals", ""));

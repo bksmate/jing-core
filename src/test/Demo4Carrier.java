@@ -35,6 +35,7 @@ public class Demo4Carrier {
         xmlFormat.setNewlines(false);
         xmlFormat.setExpandEmptyElements(true);
         System.out.println(jsonCarrier.asXML(xmlFormat, false));
+        System.out.println("123".split("\\.").length);
     }
 
     public static void main(String[] args) throws Exception {

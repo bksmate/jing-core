@@ -12,9 +12,9 @@ import java.util.HashSet;
  * @createDate: 2019-02-03 <br>
  */
 public class Log4jLoggerLevel extends Level {
-    public static final Level SQL = new Log4jLoggerLevel(29999, "SQL", 0);
+    public static final Log4jLoggerLevel SQL = new Log4jLoggerLevel(29999, "SQL", 0);
 
-    public static final Level IMP = new Log4jLoggerLevel(39999, "IMP", 0);
+    public static final Log4jLoggerLevel IMP = new Log4jLoggerLevel(39999, "IMP", 0);
 
     public static final HashSet<Level> EQUALS_PRIORITY = new HashSet<Level>();
     public static final HashSet<Level> GORE_PRIORITY = new HashSet<Level>();

@@ -17,6 +17,7 @@
                 <ignore>SQL</ignore>-->
             </level>
             <rootFilter>org.jing.core.logger.log4j.Log4jFilter</rootFilter>
+            <extendLevel>test.TempLoggerLevel</extendLevel>
             <!--使用db包的话, 下面的注释应该取消掉, sql这个日志级别会打印到单独日志里面去, 方便观察-->
             <!--<extendFilter>
                 <sql>org.jing.core.logger.log4j.impl.Log4jSqlFilter</sql>
