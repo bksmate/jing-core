@@ -30,6 +30,8 @@ public class Configuration {
 
     private static boolean initFlag = false;
 
+    private static String jingHome;
+
     /**
      * 存储继承了JInit接口的类和对应实例的map. <br>
      */
@@ -37,11 +39,11 @@ public class Configuration {
 
     private void loadConfigFile() {
         synchronized (Configuration.class) {
-            String jingHome = System.getProperty("JING_HOME");
-            if (StringUtil.isEmpty(jingHome)) {
-                jingHome = FileUtil.buildPath("config?system.xml");
-            }
-            String configContent = readFile(jingHome);
+            jingHome = StringUtil.ifEmpty(System.getProperty("JING_HOME"));
+            jingHome = StringUtil.isEmpty(jingHome) ? "" : jingHome + File.separator;
+            System.setProperty("JING_LOG_DIR", jingHome + "logs");
+            String systemConfigFile = FileUtil.buildPathWithHome("config?system.xml");
+            String configContent = readFile(systemConfigFile);
             configContent = StringUtil.preOperation4XML(configContent);
             try {
                 configCarrier = CarrierUtil.string2Carrier(configContent);
@@ -52,6 +54,10 @@ public class Configuration {
                 System.exit(-1);
             }
         }
+    }
+
+    public static String getJingHome() {
+        return jingHome;
     }
 
     public void reloadConfigFile() {
@@ -145,9 +151,9 @@ public class Configuration {
         content = StringUtil.mixParameters(content, parameters);
         content = getLogPrefix() + content;
         System.out.println(content);
-        File logFile = new File("log");
+        File logFile = new File(FileUtil.buildPathWithHome("logs"));
         if (logFile.exists() || logFile.mkdirs()) {
-            writeFile(FileUtil.buildPath("log?start.log"), content);
+            writeFile(FileUtil.buildPathWithHome("logs?start.log"), content);
         }
         else {
             System.out.println("Failed to create start.log, shut down.");

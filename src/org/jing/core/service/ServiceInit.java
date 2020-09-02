@@ -38,7 +38,7 @@ public class ServiceInit implements JInit {
             return;
         }
         Carrier carrier = CarrierUtil.string2Carrier(
-            FileUtil.readFile(FileUtil.buildPath(parameters.getString("path", "")), "UTF-8")
+            FileUtil.readFile(FileUtil.buildPathWithHome(parameters.getString("path", "")), "UTF-8")
         );
         int count = carrier.getCount("service");
         List<Carrier> mapperList = new ArrayList<Carrier>();

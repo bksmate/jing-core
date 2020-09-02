@@ -406,4 +406,20 @@ public class FileUtil {
         }
         return path;
     }
+
+    /**
+     *  构建适合当前OS的路径字符串, 入参里的路径分隔符应该是?. <br>
+     *
+     * @param path <br>
+     * @return <br>
+     */
+    public static String buildPathWithHome(String path) {
+        String separator = System.getProperty("file.separator");
+        int index;
+        while ((index = path.indexOf("?")) != -1) {
+            path = path.substring(0, index) + separator + path.substring(index + 1);
+        }
+        path = Configuration.getJingHome() + path;
+        return path;
+    }
 }

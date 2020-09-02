@@ -32,7 +32,7 @@ public class MultiplyThreadInit implements JInit {
             return;
         }
         Carrier carrier = CarrierUtil.string2Carrier(
-            FileUtil.readFile(FileUtil.buildPath(parameters.getString("path", "")), "UTF-8")
+            FileUtil.readFile(FileUtil.buildPathWithHome(parameters.getString("path", "")), "UTF-8")
         );
         int count = carrier.getCount("thread");
         List<Carrier> threadList = new ArrayList<Carrier>();

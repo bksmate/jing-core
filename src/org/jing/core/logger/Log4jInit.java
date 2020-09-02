@@ -38,7 +38,7 @@ public class Log4jInit implements JInit, Serializable {
     @Override
     public void init(Carrier params) throws JingException {
         parameter = params;
-        PropertyConfigurator.configure(FileUtil.buildPath(parameter.getStringByPath("path")));
+        PropertyConfigurator.configure(FileUtil.buildPathWithHome(parameter.getStringByPath("path")));
         try {
             // 2.1. 加载特殊日志记录级别.
             registerLoggerLevel();
