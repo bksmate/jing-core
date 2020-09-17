@@ -112,6 +112,10 @@ public class Carrier {
         return CarrierUtil.getValueByKey(valueMap, key, null, 0);
     }
 
+    public void removeByKey(String key) {
+        this.valueMap.remove(key);
+    }
+
     public String getString(int seq, String key, String deaultString) throws JingException {
         Object retObject = getValueByKey(seq, key, deaultString);
         return StringUtil.parseString(retObject);
