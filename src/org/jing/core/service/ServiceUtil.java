@@ -29,7 +29,7 @@ public class ServiceUtil {
         ExceptionHandler.publishWithCheck(null == tempJService, "PATH-0003", "Cannot find Service: " + serviceCode);
         Object retObject = null;
         try {
-            JService service = (JService) ServiceInit.mappingService(serviceCode).newInstance();
+            JService service = (JService) tempJService.newInstance();
             // 2. 找类里是否有带了serviceCode的注解的方法.
             // yes: 直接调用遍历搜索到的第一个方法并返回.
             // no: 使用默认的execute方法.
