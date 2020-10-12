@@ -36,6 +36,10 @@ public class Demo4Carrier {
         xmlFormat.setExpandEmptyElements(true);
         System.out.println(jsonCarrier.asXML(xmlFormat, false));
         System.out.println("123".split("\\.").length);
+        carrier.setValueByPath("TEST.PATH.NODE1", "1");
+        carrier.setValueByPath("TEST.PATH.NODE2", "2");
+        carrier.setValueByPath("TEST.PATH.NODE3", "4");
+        System.out.println(carrier.asXML());
     }
 
     public static void main(String[] args) throws Exception {

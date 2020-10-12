@@ -168,30 +168,27 @@ public class FileUtil {
             zipFile.delete();
         }
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
-        BufferedOutputStream bos = new BufferedOutputStream(out);
         File sourceFile = new File(srcFilePath);
-        zipSubFunc(out, bos, sourceFile, sourceFile.getName());
-        bos.close();
+        zipSubFunc(out, sourceFile, sourceFile.getName());
         out.close();
     }
 
-    public static void zipSubFunc(ZipOutputStream out, BufferedOutputStream bos, File srcFile, String base)
+    public static void zipSubFunc(ZipOutputStream out, File srcFile, String base)
         throws Exception {
         if (srcFile.isDirectory()) {
             File[] flist = srcFile.listFiles();
-            if (flist.length == 0) {
-                System.out.println(base + "/");
-                out.putNextEntry(new ZipEntry(base + "/"));
+            int count = GenericUtil.countArray(flist);
+            if (count == 0) {
+                out.putNextEntry(new ZipEntry(base + File.separator));
             }
             else {
-                for (int i = 0; i < flist.length; i++) {
-                    zipSubFunc(out, bos, flist[i], base + "/" + flist[i].getName());
+                for (int i$ = 0; i$ < count; i$++) {
+                    zipSubFunc(out, flist[i$], base + File.separator + flist[i$].getName());
                 }
             }
         }
         else {
-            File file = new File(base);
-            out.putNextEntry(new ZipEntry(file.getName()));
+            out.putNextEntry(new ZipEntry(base));
             FileInputStream fos = new FileInputStream(srcFile);
             BufferedInputStream bis = new BufferedInputStream(fos);
             int tag;
@@ -419,7 +416,12 @@ public class FileUtil {
         while ((index = path.indexOf("?")) != -1) {
             path = path.substring(0, index) + separator + path.substring(index + 1);
         }
-        path = Configuration.getJingHome() + path;
-        return path;
+        if (path.contains(":") || path.startsWith("\\") || path.startsWith("/")) {
+            return path;
+        }
+        else {
+            path = Configuration.getJingHome() + path;
+            return path;
+        }
     }
 }

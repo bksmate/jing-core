@@ -14,9 +14,9 @@ import java.lang.Exception;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        Carrier crawlerCarrier = CarrierUtil.string2Carrier(FileUtil.readFile("F:\\W\\WorkSpace\\IDEA\\Crawler/config/crawler.xml"));
-        String header = crawlerCarrier.getStringByPath("request-header");
-        System.out.println(header);
+        String path = "E:\\W\\WorkSpace\\idea\\jing-jdbc\\out\\artifacts\\jing_jdbc_jar";
+        path = "/opt/s";
+        System.out.println(path.indexOf(":") != -1 || path.startsWith("\\") || path.startsWith("/"));
     }
 
     public static void main(String[] args) throws Exception {

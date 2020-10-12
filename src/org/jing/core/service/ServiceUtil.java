@@ -24,6 +24,7 @@ public class ServiceUtil {
 
     public static Object callService(String serviceCode, Object param) throws JingException {
         ExceptionHandler.publishWithCheck(StringUtil.isEmpty(serviceCode), "PATH-0002", "Service Code is empty");
+        LOGGER.debug("[request:\r\n{}]", param);
         // 1. 找映射类
         Class<? super JService> tempJService = ServiceInit.mappingService(serviceCode);
         ExceptionHandler.publishWithCheck(null == tempJService, "PATH-0003", "Cannot find Service: " + serviceCode);
@@ -61,6 +62,7 @@ public class ServiceUtil {
             ExceptionHandler.publish("PATH-0004", "Service Inner Exception", e);
             retObject = null;
         }
+        LOGGER.debug("[response:\r\n{}]", retObject);
         return retObject;
     }
 }

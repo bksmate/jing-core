@@ -10,6 +10,7 @@ import org.jing.core.util.StringUtil;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -176,7 +177,7 @@ public class Carrier {
         return StringUtil.ifEmpty(extendMap.get("SERVICE_CODE"));
     }
 
-    public Carrier putAll(HashMap<String, Object> valueMap) {
+    public Carrier putAll(Map<String, Object> valueMap) {
         this.valueMap.putAll(valueMap);
         return this;
     }
@@ -252,6 +253,43 @@ public class Carrier {
 
     public String getStringByPath(String path, String defaultString) throws JingException {
         return StringUtil.ifEmpty(getStringByPath(path), defaultString);
+    }
+
+    public void setValueByPath(String path, Object value) throws JingException {
+        String[] paths = path.split("\\.");
+        int length = paths.length;
+        Carrier p = this;
+        Object o;
+        String key = paths[0];
+        for (int i$ = 1; i$ < length; i$++) {
+            o = p.getValueByKey(key);
+            if (o instanceof Carrier) {
+                p = (Carrier) o;
+            }
+            else if (o instanceof Map) {
+                Carrier tempC = new Carrier();
+                tempC.putAll((Map<String, Object>) o);
+                p.setValueByKey(key, tempC);
+                p = tempC;
+            }
+            else if (o instanceof List) {
+                Carrier tempC = new Carrier();
+                if (((List) o).size() > 1) {
+                    ((List) o).set(0, tempC);
+                }
+                else {
+                    p.setValueByKey(key, tempC);
+                }
+                p = tempC;
+            }
+            else {
+                Carrier tempC = new Carrier();
+                p.setValueByKey(key, tempC);
+                p = tempC;
+            }
+            key = paths[i$];
+        }
+        p.setValueByKey(key, value);
     }
 
     @Override

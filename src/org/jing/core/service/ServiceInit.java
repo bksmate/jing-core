@@ -94,9 +94,14 @@ public class ServiceInit implements JInit {
 
     private static HashMap<String, Class<? super JService>> serviceMap = new HashMap<String, Class<? super JService>>();
 
-    public static Class<? super JService> mappingService(String serviceCode) {
+    public static Class<? super JService> mappingService(String serviceCode) throws JingException {
         Class<? super JService> tempJService = serviceMap.get(serviceCode);
-        LOGGER.debug("Get service mapping: [serviceCode: {}][serviceImpl: {}]", serviceCode, tempJService.getName());
+        if (null == tempJService) {
+            ExceptionHandler.publish("Failed to get service mapping: {}", serviceCode);
+        }
+        else {
+            LOGGER.debug("Get service mapping: [serviceCode: {}][serviceImpl: {}]", serviceCode, tempJService.getName());
+        }
         return tempJService;
     }
 }
