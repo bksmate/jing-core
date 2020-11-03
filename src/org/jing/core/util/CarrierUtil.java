@@ -136,14 +136,17 @@ public class CarrierUtil {
             element.add(retElement);
         }
         else */
+        if (object instanceof Carrier) {
+            object = ((Carrier) object).getValueMap();
+        }
         if (object instanceof List) {
             int size = ((List<Object>) object).size();
-            for (int i = 0; i < size; i++) {
+            for (int i$ = 0; i$ < size; i$++) {
                 Element retElement = DocumentHelper.createElement(name);
                 element.getParent().add(retElement);
-                object2Element(((List<Object>) object).get(i), name, retElement);
+                object2Element(((List<Object>) object).get(i$), name, retElement);
             }
-            if (size > 1) {
+            if (size != 0) {
                 element.getParent().remove(element);
             }
         }
@@ -182,7 +185,7 @@ public class CarrierUtil {
     }
 
     private static StringBuilder carrierKey2JsonContent(StringBuilder stbr, Object keyNode) {
-        stbr.append("\"").append(StringUtil.parseString(keyNode)).append("\":");
+        stbr.append("\"").append(StringUtil.escape4Json(StringUtil.parseString(keyNode))).append("\":");
         return stbr;
     }
 
@@ -229,10 +232,10 @@ public class CarrierUtil {
             || valueNode instanceof Short
             || valueNode instanceof Double
             || valueNode instanceof Float) {
-            stbr.append(StringUtil.parseString(valueNode));
+            stbr.append(StringUtil.escape4Json(StringUtil.parseString(valueNode)));
         }
         else {
-            stbr.append("\"").append(StringUtil.parseString(valueNode)).append("\"");
+            stbr.append("\"").append(StringUtil.escape4Json(StringUtil.parseString(valueNode))).append("\"");
         }
         return stbr.toString();
     }

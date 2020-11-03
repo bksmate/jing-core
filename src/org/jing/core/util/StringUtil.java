@@ -401,4 +401,13 @@ public class StringUtil {
             return ifEmpty(retString);
         }
     }
+
+    public static String escape4Json(String string) {
+        string = string
+            .replaceAll("\\r", "\\\\r")
+            .replaceAll("\\n", "\\\\n")
+            .replaceAll("\"", "\\\\\"")
+            .replaceAll("\\t", "\\\\t");
+        return string;
+    }
 }

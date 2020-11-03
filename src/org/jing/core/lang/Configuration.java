@@ -57,14 +57,23 @@ public class Configuration {
             System.setProperty("JING_LOG_DIR", logDir);
             String systemConfigFile = FileUtil.buildPathWithHome("config?system.xml");
             String configContent = readFile(systemConfigFile);
-            configContent = StringUtil.preOperation4XML(configContent);
-            try {
-                configCarrier = CarrierUtil.string2Carrier(configContent);
+            if (StringUtil.isEmpty(configContent)) {
+                log("Use default configuration");
+                try {
+                    configCarrier = CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_CONFIG);
+                }
+                catch (Exception e) {
+                    log("Failed to use default configuration.");
+                }
             }
-            catch (Exception e) {
-                log("Failed to transfer configuration xml.");
-                log(StringUtil.getErrorStack(e));
-                System.exit(-1);
+            else {
+                try {
+                    configContent = StringUtil.preOperation4XML(configContent);
+                    configCarrier = CarrierUtil.string2Carrier(configContent);
+                }
+                catch (Exception e) {
+                    log("Failed to transfer configuration xml.");
+                }
             }
         }
     }
@@ -141,13 +150,12 @@ public class Configuration {
         }
         catch (Exception e) {
             log("Failed to read file: {}", filePath);
-            log(StringUtil.getErrorStack(e));
         }
 
         return stbr.toString();
     }
 
-    private void writeFile(String filePath, String content) {
+    private static void writeFile(String filePath, String content) {
         try {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(filePath), true), "utf-8"));
             bw.write(content);
@@ -160,7 +168,7 @@ public class Configuration {
         }
     }
 
-    private void log(String content, String... parameters) {
+    public static void log(String content, String... parameters) {
         content = StringUtil.mixParameters(content, parameters);
         content = getLogPrefix() + content;
         System.out.println(content);
@@ -173,8 +181,8 @@ public class Configuration {
         }
     }
 
-    private String getLogPrefix() {
-        return StringUtil.getDate("===[yyyy-MM-dd HH:mm:ss.SSS]===: ");
+    private static String getLogPrefix() {
+        return StringUtil.getDate("[yyyy-MM-dd HH:mm:ss.SSS]") + "===>jing.System: ";
     }
 
     private void init() {

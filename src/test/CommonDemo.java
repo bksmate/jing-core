@@ -1,5 +1,6 @@
 package test;
 
+import netscape.javascript.JSObject;
 import org.jing.core.lang.Carrier;
 import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.FileUtil;
@@ -14,9 +15,7 @@ import java.lang.Exception;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        String path = "E:\\W\\WorkSpace\\idea\\jing-jdbc\\out\\artifacts\\jing_jdbc_jar";
-        path = "/opt/s";
-        System.out.println(path.indexOf(":") != -1 || path.startsWith("\\") || path.startsWith("/"));
+        System.out.println("\t");
     }
 
     public static void main(String[] args) throws Exception {

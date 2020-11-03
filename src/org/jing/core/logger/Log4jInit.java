@@ -8,12 +8,16 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.Filter;
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.Configuration;
+import org.jing.core.lang.Const;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.itf.JInit;
 import org.jing.core.logger.log4j.Log4jLoggerLevel;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -38,7 +42,53 @@ public class Log4jInit implements JInit, Serializable {
     @Override
     public void init(Carrier params) throws JingException {
         parameter = params;
-        PropertyConfigurator.configure(FileUtil.buildPathWithHome(parameter.getStringByPath("path")));
+        String path = FileUtil.buildPathWithHome(parameter.getStringByPath("path"));
+        initByPath(path);
+    }
+
+    public void initByPath(String path) {
+        if (!loadConfigPropertyByPath(path)) {
+            loadByDefault();
+        }
+        operate();
+    }
+
+    public void initByString(String propertyContent) {
+        if (!loadConfigPropertyByString(propertyContent)) {
+            loadByDefault();
+        }
+        operate();
+    }
+
+    private boolean loadConfigPropertyByPath(String path) {
+        try {
+            File configFile = new File(path);
+            if (configFile.exists() && configFile.isFile()) {
+                PropertyConfigurator.configure(path);
+                return true;
+            }
+        }
+        catch (Exception ignored) {}
+        return false;
+    }
+
+    private boolean loadConfigPropertyByString(String propertyContent) {
+        try {
+            InputStream inputStream = new ByteArrayInputStream(propertyContent.getBytes());
+            PropertyConfigurator.configure(inputStream);
+            inputStream.close();
+            return true;
+        }
+        catch (Exception ignored) {}
+        return false;
+    }
+
+    private void loadByDefault() {
+        Configuration.log("Failed to read log4j's configuration property file, use default");
+        loadConfigPropertyByString(Const.SYSTEM_DEFAULT_LOG4J_CONFIG);
+    }
+
+    private void operate() {
         try {
             // 2.1. 加载特殊日志记录级别.
             registerLoggerLevel();
