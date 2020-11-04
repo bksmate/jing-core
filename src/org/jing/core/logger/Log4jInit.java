@@ -42,7 +42,7 @@ public class Log4jInit implements JInit, Serializable {
     @Override
     public void init(Carrier params) throws JingException {
         parameter = params;
-        String path = FileUtil.buildPathWithHome(parameter.getStringByPath("path"));
+        String path = FileUtil.buildPathWithHome(parameter.getStringByPath("path", ""));
         initByPath(path);
     }
 

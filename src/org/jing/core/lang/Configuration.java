@@ -1,6 +1,7 @@
 package org.jing.core.lang;
 
 import org.jing.core.lang.itf.JInit;
+import org.jing.core.logger.Log4jInit;
 import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
@@ -14,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -205,6 +207,7 @@ public class Configuration {
             initCarrierList.add(configCarrier.getCarrier("init", i$));
         }
         int size = initCarrierList.size();
+        boolean logInit = false;
         // sort
         Carrier aCarrier;
         Carrier bCarrier;
@@ -219,6 +222,18 @@ public class Configuration {
                     k$ = j$;
                 }
             }
+            if (!logInit) {
+                aCarrier = initCarrierList.get(i$);
+                Class<?> clazz = ClassUtil.loadClass(aCarrier.getString("implements"));
+                if (clazz == Log4jInit.class) {
+                    logInit = true;
+                }
+            }
+        }
+        if (!logInit) {
+            Log4jInit log4jInit = new Log4jInit();
+            log4jInit.init(CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_LOG4J_PARAM));
+            // log4jInit.initByString(Const.SYSTEM_DEFAULT_LOG4J_CONFIG);
         }
         // init
         String tempPath;

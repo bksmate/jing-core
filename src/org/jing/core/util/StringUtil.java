@@ -1,9 +1,11 @@
 package org.jing.core.util;
 
 import org.apache.log4j.Logger;
+import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -409,5 +411,31 @@ public class StringUtil {
             .replaceAll("\"", "\\\\\"")
             .replaceAll("\\t", "\\\\t");
         return string;
+    }
+
+    public static String readFromInputStream(InputStream inputStream, String charSet) throws JingException {
+        return readFromInputStream(inputStream, 1024, charSet);
+    }
+
+    public static String readFromInputStream(InputStream inputStream, int bufferSize, String charSet) throws JingException {
+        if (bufferSize % 2 != 0) {
+            ExceptionHandler.publish("invalid buffer size");
+        }
+        try {
+            byte[] buffer = new byte[bufferSize];
+            StringBuilder stbr = new StringBuilder();
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                stbr.append(new String(buffer, 0, length, charSet));
+                if (0 == inputStream.available()) {
+                    break;
+                }
+            }
+            return stbr.toString();
+        }
+        catch (Exception e) {
+            ExceptionHandler.publish(e);
+        }
+        return null;
     }
 }
