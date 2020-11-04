@@ -26,6 +26,8 @@ public class ServiceInit implements JInit {
 
     private static Carrier parameters = null;
 
+    private static HashMap<String, Class<? super JService>> serviceMap = new HashMap<String, Class<? super JService>>();
+
     public static Carrier getParameters() {
         return parameters;
     }
@@ -37,9 +39,12 @@ public class ServiceInit implements JInit {
             LOGGER.imp("Empty parameter for JService Initialize");
             return;
         }
-        Carrier carrier = CarrierUtil.string2Carrier(
-            FileUtil.readFile(FileUtil.buildPathWithHome(parameters.getString("path", "")), "UTF-8")
-        );
+        String path = FileUtil.buildPathWithHome(parameters.getString("path", ""));
+        addMapperByFilePath(path);
+    }
+
+    public void addMapperByFilePath(String filePath) throws JingException {
+        Carrier carrier = CarrierUtil.string2Carrier(FileUtil.readFile(filePath, "UTF-8"));
         int count = carrier.getCount("service");
         List<Carrier> mapperList = new ArrayList<Carrier>();
         for (int i$ = 0; i$ < count; i$++) {
@@ -66,7 +71,15 @@ public class ServiceInit implements JInit {
             classList.addAll(ClassUtil.getClassByPackageAndInterface(mapper.getString("path", ""), JService.class));
         }
 
-        serviceMap.clear();
+        operate(classList);
+    }
+
+    public void addMapperByPackagePath(String pkgPath) throws JingException {
+        List<Class<? super Class<JService>>> classList = new ArrayList<Class<? super Class<JService>>>(ClassUtil.getClassByPackageAndInterface(pkgPath, JService.class));
+        operate(classList);
+    }
+
+    private void operate(List<Class<? super Class<JService>>> classList) throws JingException {
         ServiceCode serviceCode;
         for (Class<?> clazz : classList) {
             serviceCode = clazz.getAnnotation(ServiceCode.class);
@@ -91,8 +104,6 @@ public class ServiceInit implements JInit {
             }
         }
     }
-
-    private static HashMap<String, Class<? super JService>> serviceMap = new HashMap<String, Class<? super JService>>();
 
     public static Class<? super JService> mappingService(String serviceCode) throws JingException {
         Class<? super JService> tempJService = serviceMap.get(serviceCode);
