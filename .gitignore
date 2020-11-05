@@ -7,3 +7,5 @@
 # igonre log directory
 /logs/
 
+# igonre temp directory
+/temp/

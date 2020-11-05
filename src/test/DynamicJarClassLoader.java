@@ -59,8 +59,7 @@ public class DynamicJarClassLoader extends URLClassLoader {
         }
     }
 
-    @Override
-    protected void addURL(URL url) {
+    public void addURL(URL url) {
         if (!canCloseJar) {
             try {
                 // 打开并缓存文件url连接
