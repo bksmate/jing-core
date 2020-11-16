@@ -12,11 +12,10 @@ public class Demo4JingLogger {
     private static final JingLogger LOGGER = JingLogger.getLogger(Demo4JingLogger.class);
 
     public Demo4JingLogger() {
-        LOGGER.debug("debug");
-        LOGGER.imp("imp");
-        LOGGER.sql("sql", 1);
-        LOGGER.error("err");
-        LOGGER.log(TempLoggerLevel.ABC, "??");
+        LOGGER.debug("中文debug");
+        LOGGER.imp("中文imp");
+        LOGGER.sql("中文sql", 1);
+        LOGGER.error("中文err");
     }
     public static void main(String[] args) {
         new Demo4JingLogger();
