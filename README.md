@@ -1,6 +1,6 @@
 # jing-core
 
-Lowest JDK `1.6`
+Lowest JDK `1.7`
 ---
 
 Email
@@ -30,4 +30,4 @@ Functions
 Attention
 ---
 
-* 在一些情况下配置文件可能不能如愿的在执行脚本所在目录, 在`1.06`的版本里已经更新了`JING_HOME`的使用, 可以在`JING_HOME`指定的目录下读取`config`子目录里的`system.xml`进行初始化.
+* 在一些情况下配置文件可能不能如愿的在执行脚本所在目录, 在`1.06`的版本里已经更新了环境变量`JING_HOME`的使用, 如果配置了环境变量就可以在指定的目录下读取`config`子目录里的`system.xml`进行初始化.
