@@ -17,8 +17,21 @@ public class Log4jLoggerLevel extends Level {
     public static final Log4jLoggerLevel IMP = new Log4jLoggerLevel(39999, "IMP", 0);
 
     public static final HashSet<Level> EQUALS_PRIORITY = new HashSet<Level>();
+
     public static final HashSet<Level> GORE_PRIORITY = new HashSet<Level>();
+
+    public static final HashSet<Level> LORE_PRIORITY = new HashSet<Level>();
+
     public static final HashSet<Level> IGNORE_PRIORITY = new HashSet<Level>();
+
+    public static boolean EQUALS_EMPTY = true;
+
+    public static boolean GORE_EMPTY = true;
+
+    public static boolean LORE_EMPTY = true;
+
+    public static boolean IGNORE_EMPTY = true;
+
     public static final HashMap<String, Level> LEVEL_MAPPING = new HashMap<String, Level>();
 
     protected Log4jLoggerLevel(int level, String levelStr, int syslogEquivalent) {

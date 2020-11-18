@@ -96,7 +96,9 @@ public class Log4jInit implements JInit, Serializable {
             bindAppender();
             // 2.3. 加载过滤器.
             bindFilter();
-            // 2.4 设置完成标志.
+            // 2.4. 手动设置当前日志级别.
+            setRootLevel();
+            // 设置完成标志.
             JingLogger.setInitFlag();
             Configuration.setInit();
         }
@@ -107,7 +109,8 @@ public class Log4jInit implements JInit, Serializable {
 
     @SuppressWarnings("unchecked")
     private void bindFilter() throws Exception {
-        Class<?> filterClass = Class.forName(parameter.getStringByPath("rootFilter"));
+        String rootFilter = parameter.getStringByPath("root-filter", "org.jing.core.logger.log4j.Log4jFilter");
+        Class<?> filterClass = Class.forName(rootFilter);
         Enumeration es = Logger.getRootLogger().getAllAppenders();
         Filter filter = (Filter) Configuration.getInstance().register((Class<? extends JInit>) filterClass);
         while (es.hasMoreElements()) {
@@ -131,30 +134,54 @@ public class Log4jInit implements JInit, Serializable {
         Field[] origLevels = Level.class.getDeclaredFields();
         ArrayList<Field> allFields = new ArrayList<Field>(Arrays.asList(origLevels));
         allFields.addAll(Arrays.asList(Log4jLoggerLevel.class.getDeclaredFields()));
-        int extendLevelCount = parameter.getCount("extendLevel");
+        int extendLevelCount = parameter.getCount("extend-level");
         for (int i$ = 0; i$ < extendLevelCount; i$ ++) {
-            allFields.addAll(Arrays.asList(Class.forName(parameter.getString(i$, "extendLevel")).getDeclaredFields()));
+            allFields.addAll(Arrays.asList(Class.forName(parameter.getString(i$, "extend-level")).getDeclaredFields()));
         }
         for (Field field: allFields) {
             if (Modifier.isStatic(field.getModifiers()) && Level.class.isAssignableFrom(field.getType())) {
                 Log4jLoggerLevel.LEVEL_MAPPING.put(field.getName(), (Level) field.get(null));
             }
         }
-        String equals = StringUtil.ifEmpty(parameter.getStringByPath("level.equals", ""));
+        String equals = StringUtil.ifEmpty(parameter.getStringByPath("appender-level.equals", ""));
         registerPriority(equals, Log4jLoggerLevel.EQUALS_PRIORITY);
-        String gore = StringUtil.ifEmpty(parameter.getStringByPath("logger.level.gore", ""));
+        if (!Log4jLoggerLevel.EQUALS_PRIORITY.isEmpty()) {
+            Log4jLoggerLevel.EQUALS_EMPTY = false;
+        }
+        String gore = StringUtil.ifEmpty(parameter.getStringByPath("appender-level.gore", ""));
         registerPriority(gore, Log4jLoggerLevel.GORE_PRIORITY);
-        String ignore = StringUtil.ifEmpty(parameter.getStringByPath("logger.level.ignore", ""));
+        if (!Log4jLoggerLevel.GORE_PRIORITY.isEmpty()) {
+            Log4jLoggerLevel.GORE_EMPTY = false;
+        }
+        String ignore = StringUtil.ifEmpty(parameter.getStringByPath("appender-level.ignore", ""));
         registerPriority(ignore, Log4jLoggerLevel.IGNORE_PRIORITY);
+        if (!Log4jLoggerLevel.IGNORE_PRIORITY.isEmpty()) {
+            Log4jLoggerLevel.IGNORE_EMPTY = false;
+        }
+        String lore = StringUtil.ifEmpty(parameter.getStringByPath("appender-level.lore", ""));
+        registerPriority(lore, Log4jLoggerLevel.LORE_PRIORITY);
+        if (!Log4jLoggerLevel.LORE_PRIORITY.isEmpty()) {
+            Log4jLoggerLevel.LORE_EMPTY = false;
+        }
     }
 
     private static void registerPriority(String property, HashSet<Level> hashSet) {
         String[] levels = property.split(",");
         for (String level$ : levels) {
+            level$ = level$.toUpperCase();
             Level l$ = Log4jLoggerLevel.LEVEL_MAPPING.get(level$);
             if (null != l$) {
                 hashSet.add(l$);
             }
         }
+    }
+
+    private void setRootLevel() throws JingException {
+        String rootLevelName = parameter.getStringByPath("root-level", "DEBUG");
+        Level rootLevel = Log4jLoggerLevel.LEVEL_MAPPING.get(rootLevelName);
+        if (null == rootLevel) {
+            rootLevel = Log4jLoggerLevel.LEVEL_MAPPING.get("DEBUG");
+        }
+        Logger.getRootLogger().setLevel(rootLevel);
     }
 }

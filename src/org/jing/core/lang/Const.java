@@ -42,12 +42,10 @@ public class Const {
     public static final String SYSTEM_DEFAULT_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<jing>\n"
         +"</jing>";
 
-    public static final String SYSTEM_DEFAULT_LOG4J_PARAM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<jing>\n"
-        + "\t<rootFilter>org.jing.core.logger.log4j.Log4jFilter</rootFilter>\n" + "</jing>";
+    public static final String SYSTEM_DEFAULT_LOG4J_PARAM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><path>config?log4j.properties</path><root-level>DEBUG</root-level><appender-level><gore>DEBUG</gore></appender-level></jing>";
 
-    public static final String SYSTEM_DEFAULT_LOG4J_CONFIG = "#you cannot specify every priority with different file for log4j\n"
-        + "#\n" + "log4j.rootLogger=debug,info,debug,warn,error,sql,trace,imp,stdout\n" + "\n" + "#console\n"
-        + "log4j.appender.stdout=org.apache.log4j.ConsoleAppender\n"
+    public static final String SYSTEM_DEFAULT_LOG4J_CONFIG = "log4j.rootLogger=debug,info,debug,warn,error,sql,trace,imp,stdout\n"
+        + "\n" + "#console\n" + "log4j.appender.stdout=org.apache.log4j.ConsoleAppender\n"
         + "log4j.appender.stdout.layout=org.apache.log4j.PatternLayout\n"
         + "log4j.appender.stdout.layout.ConversionPattern=[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n\n"
         + "#info log\n" + "log4j.logger.info=info\n"

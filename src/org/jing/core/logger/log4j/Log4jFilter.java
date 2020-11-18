@@ -45,8 +45,8 @@ public class Log4jFilter extends Filter implements JInit {
     public void init(Carrier params) {
         try {
             Carrier loggerCarrier = Log4jInit.getParameter();
-            if (loggerCarrier.getCount("extendFilter") != 0) {
-                Carrier extendCarrier = loggerCarrier.getCarrier("extendFilter");
+            if (loggerCarrier.getCount("level-filter") != 0) {
+                Carrier extendCarrier = loggerCarrier.getCarrier("level-filter");
                 HashMap<String, Object> extendMap = extendCarrier.getValueMap();
                 for (Map.Entry<String, Object> entry : extendMap.entrySet()) {
                     String propertyKey = entry.getKey().toUpperCase();

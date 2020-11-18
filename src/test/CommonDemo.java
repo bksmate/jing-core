@@ -44,7 +44,8 @@ public class CommonDemo {
             socket.close();
             Thread.sleep(new Random().nextInt(2000));
         }*/
-        System.out.println(Const.SYSTEM_DEFAULT_LOG4J_CONFIG);
+        FileUtil.copyFileByChannel("H:\\D\\Documents\\Desktop\\deete.bat", "H:\\D\\Documents\\Desktop\\deete.bat.bak");
+        FileUtil.mkdirs("H:\\D\\Documents\\Desktop\\deete");
     }
 
     public static void main(String[] args) throws Exception {

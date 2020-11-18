@@ -7,9 +7,12 @@ import org.jing.core.lang.JingException;
 import org.jing.core.logger.JingLogger;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -20,9 +23,9 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileUtil {
     /**
-     * logger. <br>
+     * LOGGER. <br>
      */
-    private static volatile InnerLogger logger = new InnerLogger();
+    private static volatile InnerLogger LOGGER = new InnerLogger();
 
     static class InnerLogger {
         JingLogger logger = null;
@@ -87,7 +90,7 @@ public class FileUtil {
 
     public static String readFile(File file, String encoding) throws JingException {
         String filePath = file.getAbsolutePath();
-        logger.info("Try To Read File [filePath: {}]", filePath);
+        LOGGER.info("Try To Read File [filePath: {}]", filePath);
         String retString = null;
         try {
             encoding = StringUtil.ifEmpty(encoding, "utf-8");
@@ -139,7 +142,7 @@ public class FileUtil {
     public static List<String> readFile2List(File file, String encoding) throws JingException {
         List<String> retList = null;
         String filePath = file.getAbsolutePath();
-        logger.info("Try To Read File [filePath: {}]", filePath);
+        LOGGER.info("Try To Read File [filePath: {}]", filePath);
         String retString = null;
         try {
             encoding = StringUtil.ifEmpty(encoding, "utf-8");
@@ -201,6 +204,115 @@ public class FileUtil {
         }
     }
 
+    public static ArrayList<ZipEntry> unzipFile(ZipFile zipFile) throws JingException {
+        ArrayList<ZipEntry> retList = new ArrayList<>();
+        Enumeration<? extends ZipEntry> zipFiles = zipFile.entries();
+        ZipEntry zipEntry;
+        while (zipFiles.hasMoreElements()) {
+            zipEntry = zipFiles.nextElement();
+            retList.add(zipEntry);
+        }
+        return retList;
+    }
+
+    public static boolean copyFileByChannel(File srcFile, File destFile) throws JingException {
+        FileChannel srcChannel = null;
+        FileChannel destChannel = null;
+        try {
+            srcChannel = new FileInputStream(srcFile).getChannel();
+            destChannel = new FileOutputStream(destFile).getChannel();
+            destChannel.transferFrom(srcChannel, 0, srcChannel.size());
+            return true;
+        }
+        catch (Exception e) {
+            ExceptionHandler.publish(e);
+        }
+        finally {
+            try {
+                if (null != srcChannel) {
+                    srcChannel.close();
+                }
+            }
+            catch (Exception e$) {
+                LOGGER.error("", e$);
+            }
+            finally {
+                srcChannel = null;
+            }
+            try {
+                if (null != destChannel) {
+                    destChannel.close();
+                }
+            }
+            catch (Exception e$) {
+                LOGGER.error("", e$);
+            }
+            finally {
+                destChannel = null;
+            }
+        }
+        return false;
+    }
+
+    public static boolean copyFileByChannel(String srcFilePath, String destFilePath) throws JingException {
+        return copyFileByChannel(new File(srcFilePath), new File(destFilePath));
+    }
+
+    public static boolean copyFileByStream(File srcFile, File destFile, int bufferSize) throws JingException {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(srcFile);
+            out = new FileOutputStream(destFile);
+            byte[] buffer = new byte[bufferSize];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+            return true;
+        }
+        catch (Exception e) {
+            ExceptionHandler.publish(e);
+        }
+        finally {
+            try {
+                if (null != in) {
+                    in.close();
+                }
+            }
+            catch (Exception e$) {
+                LOGGER.error("", e$);
+            }
+            finally {
+                in = null;
+            }
+            try {
+                if (null != out) {
+                    out.close();
+                }
+            }
+            catch (Exception e$) {
+                LOGGER.error("", e$);
+            }
+            finally {
+                out = null;
+            }
+        }
+        return false;
+    }
+
+    public static boolean copyFileByStream(File srcFile, File destFile) throws JingException {
+        return copyFileByStream(srcFile, destFile, 1024);
+    }
+
+    public static boolean copyFileByStream(String srcFilePath, String destFilePath) throws JingException {
+        return copyFileByStream(new File(srcFilePath), new File(destFilePath), 1024);
+    }
+
+    public static boolean copyFileByStream(String srcFilePath, String destFilePath, int bufferSize) throws JingException {
+        return copyFileByStream(new File(srcFilePath), new File(destFilePath), bufferSize);
+    }
+
     public static void deleteFile(File file) {
         if (null == file || !file.exists()) {
             return;
@@ -222,9 +334,17 @@ public class FileUtil {
         deleteFile(new File(filePath));
     }
 
+    public static boolean mkdirs(String directoryPath) {
+        return mkdirs(new File(directoryPath));
+    }
+
+    public static boolean mkdirs(File directory) {
+        return !((!directory.exists() || !directory.isDirectory()) && !directory.mkdirs());
+    }
+
     public static String readResource(String filePath, boolean log) throws JingException {
         /*if (log(log)) {
-            logger.info(new StringBuilder("Try To Read File [filePath: ").append(filePath).append("]").toString());
+            LOGGER.info(new StringBuilder("Try To Read File [filePath: ").append(filePath).append("]").toString());
         }*/
         try {
             ClassLoader[] classLoader = ClassUtil.getClassLoader(FileUtil.class);
@@ -290,7 +410,7 @@ public class FileUtil {
             }
         }
         catch (Exception e) {
-            logger.error("Failed to write file {}", e, file.getAbsolutePath());
+            LOGGER.error("Failed to write file {}", e, file.getAbsolutePath());
         }
         finally {
             if (null != writer) {
@@ -298,7 +418,7 @@ public class FileUtil {
                     writer.close();
                 }
                 catch (Exception e) {
-                    logger.error("Failed to close OutputStreamWriter", e);
+                    LOGGER.error("Failed to close OutputStreamWriter", e);
                 }
                 finally {
                     writer = null;
@@ -356,7 +476,7 @@ public class FileUtil {
             }
         }
         catch (Exception e) {
-            logger.error("Failed to write file {}", e, file.getAbsolutePath());
+            LOGGER.error("Failed to write file {}", e, file.getAbsolutePath());
         }
         finally {
             if (null != writer) {
@@ -364,7 +484,7 @@ public class FileUtil {
                     writer.close();
                 }
                 catch (Exception e) {
-                    logger.error("Failed to close OutputStreamWriter", e);
+                    LOGGER.error("Failed to close OutputStreamWriter", e);
                 }
                 finally {
                     writer = null;

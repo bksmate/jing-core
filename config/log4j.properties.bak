@@ -1,5 +1,3 @@
-#you cannot specify every priority with different file for log4j
-#
 log4j.rootLogger=debug,info,debug,warn,error,sql,trace,imp,stdout
 
 #console
