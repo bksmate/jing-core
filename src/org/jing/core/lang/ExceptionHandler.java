@@ -36,7 +36,7 @@ public class ExceptionHandler {
         throw new JingException(e);
     }
 
-    public static void publish(String msg, Exception e) throws JingException {
+    public static void publish(String msg, Throwable e) throws JingException {
         if (null != getLogger()) {
             getLogger().error("[{}]\r\n{}", msg, StringUtil.getErrorStack(e));
         }
@@ -49,7 +49,7 @@ public class ExceptionHandler {
         throw new JingException(String.format("[%s]", msg), e);
     }
 
-    public static void publish(String errorCode, String errorMsg, Exception e) throws JingException {
+    public static void publish(String errorCode, String errorMsg, Throwable e) throws JingException {
         if (null != getLogger()) {
             getLogger().error("[{}][{}]\r\n{}", errorCode, errorMsg, StringUtil.getErrorStack(e));
         }
@@ -59,7 +59,7 @@ public class ExceptionHandler {
         if (!Configuration.hasInit()) {
             System.exit(-1);
         }
-        throw new JingException(String.format("[%s][%s]", errorCode, errorMsg), e);
+        throw new JingExtraException(errorCode, errorMsg, e);
     }
 
     public static void publish(String errorCode, String errorMsg) throws JingException {
@@ -75,17 +75,27 @@ public class ExceptionHandler {
         throw new JingException(String.format("[%s][%s]", errorCode, errorMsg));
     }
 
-    public static void publish(Exception e, String msg, Object... parameters) throws JingException {
+    public static void publish(Throwable e, String msg, Object... parameters) throws JingException {
         publish(StringUtil.mixParameters(msg, parameters), e);
     }
 
-    public static void publish(Exception e, String errorCode, String errorMsg, Object... parameters) throws JingException {
+    public static void publish(Throwable e, String errorCode, String errorMsg, Object... parameters) throws JingException {
         publish(errorCode, StringUtil.mixParameters(errorMsg, parameters), e);
+    }
+
+    public static void publish(String errCode, String errMsg, Object... parameters) throws JingException {
+        publish(errCode, StringUtil.mixParameters(errMsg, parameters));
     }
 
     public static void publishWithCheck(boolean flag, String errorCode, String errorMsg) throws JingException {
         if (flag) {
             ExceptionHandler.publish(errorCode, errorMsg);
+        }
+    }
+
+    public static void publishWithCheck(boolean flag, String errorCode, String errorMsg, Object... parameters) throws JingException {
+        if (flag) {
+            ExceptionHandler.publish(errorCode, errorMsg, parameters);
         }
     }
 

@@ -1,8 +1,8 @@
 package org.jing.core.util;
 
-import org.apache.log4j.Logger;
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
+import org.jing.core.logger.JingLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,7 +25,7 @@ public class StringUtil {
      */
     public static final int COMPARE_STRING_NOT_NULL = 2;
 
-    private static Logger logger = Logger.getLogger(StringUtil.class);
+    private static final JingLogger LOGGER = JingLogger.getLogger(StringUtil.class);
 
     public final static int PAD_MODEL_LEFT = 0;
 
@@ -53,6 +52,14 @@ public class StringUtil {
      */
     public static String ifWildEmpty(String string, String defaultString) {
         return isEmpty(string) || "null".equalsIgnoreCase(string) ? defaultString : string;
+    }
+
+    public static boolean isWildEmpty(String string) {
+        return isEmpty(string) || "null".equalsIgnoreCase(string);
+    }
+
+    public static boolean isNotWildEmpty(String string) {
+        return isNotEmpty(string) && !"null".equalsIgnoreCase(string);
     }
 
     /**
@@ -213,7 +220,7 @@ public class StringUtil {
             sw.close();
         }
         catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
         return sw.toString();
     }
@@ -257,14 +264,6 @@ public class StringUtil {
         return xml;
     }
 
-    public static String mixParameters(String content, String... parameters) {
-        if (null != parameters) {
-            content = content.replaceAll("\\{}", "%s");
-            content = String.format(content, parameters);
-        }
-        return content;
-    }
-
     public static String mixParameters(String content, Object... parameters) {
         if (null != parameters) {
             content = content.replaceAll("\\{}", "%s");
@@ -272,7 +271,6 @@ public class StringUtil {
         }
         return content;
     }
-
 
     /**
      * Description: Remove All Space[" "], Line["-"] And UnderLine["_"]. <br>
@@ -374,10 +372,6 @@ public class StringUtil {
             }
         }
         return outPutString;
-    }
-
-    public static <K, V> String getString(HashMap<K, V> hashMap, K key) {
-        return parseString(hashMap.get(key));
     }
 
     public static String cutString(String origString, int length) {
