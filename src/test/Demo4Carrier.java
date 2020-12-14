@@ -15,7 +15,9 @@ import java.lang.Exception;
 public class Demo4Carrier {
     private Demo4Carrier() throws Exception {
         Carrier carrier = CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_CONFIG);
-        System.out.println(carrier.asXML());
+        Carrier newC = new Carrier();
+        newC.putAll(carrier.getValueMap());
+        System.out.println(newC.asXML());
     }
 
     public static void main(String[] args) throws Exception {

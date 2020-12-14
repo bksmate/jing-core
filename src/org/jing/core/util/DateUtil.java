@@ -52,4 +52,11 @@ public class DateUtil {
         return sdf.format(date);
     }
 
+    public static String getCurrentDateString(String dateFormat) {
+        return getDateString(new Date(), dateFormat);
+    }
+
+    public static String getCurrentDateString() {
+        return getDateString(new Date(), JAVA_DATE_TIME);
+    }
 }
