@@ -266,6 +266,7 @@ public class StringUtil {
 
     public static String mixParameters(String content, Object... parameters) {
         if (null != parameters) {
+            content = content.replaceAll("%", "%%");
             content = content.replaceAll("\\{}", "%s");
             content = String.format(content, parameters);
         }
@@ -408,7 +409,7 @@ public class StringUtil {
     }
 
     public static String readFromInputStream(InputStream inputStream, String charSet) throws JingException {
-        return readFromInputStream(inputStream, 1024, charSet);
+        return readFromInputStream(inputStream, 3072, charSet);
     }
 
     public static String readFromInputStream(InputStream inputStream, int bufferSize, String charSet) throws JingException {

@@ -16,9 +16,7 @@ import java.lang.Exception;
 public class CommonDemo {
     private static final JingLogger LOGGER = JingLogger.getLogger(CommonDemo.class);
     private CommonDemo() throws Exception {
-
-        Configuration.getInstance().reloadConfigFile();
-        ExceptionHandler.publish("9999", "errMsg: {}", "message");
+        LOGGER.debug("'%'{}", 123);
     }
 
     public static void main(String[] args) throws Exception {
