@@ -1,6 +1,7 @@
 package org.jing.core.lang;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,9 @@ public abstract class BaseDto {
         }
         boolean flag = false;
         for (Field field: fields) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
             if (flag) {
                 stbr.append(", ");
             }

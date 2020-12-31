@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jing>
+    <root-level>DEBUG</root-level>
+    <impl>org.jing.core.logger.JingLoggerLevelExtend</impl>
+    <logger>
+        <name>IMP</name>
+        <file>logs/jing.log</file>
+        <encoding>UTF-8</encoding>
+        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+    </logger>
+    <logger>
+        <name>DEBUG</name>
+        <file>logs/jing.log</file>
+        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+    </logger>
+    <logger>
+        <name>INFO</name>
+        <file>logs/jing.log</file>
+        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+    </logger>
+    <logger>
+        <name>ERROR</name>
+        <file>logs/jing.log</file>
+        <file>logs/error.log</file>
+        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+    </logger>
+</jing>

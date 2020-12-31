@@ -1,10 +1,7 @@
 package test;
 
-import org.jing.core.lang.Const;
 import org.jing.core.socket.SocketServer4Demo;
 import org.jing.core.socket.SocketServerMenu4Demo;
-
-import java.lang.Exception;
 
 /**
  * Description: <br>
@@ -15,7 +12,7 @@ import java.lang.Exception;
 public class Demo4Socket {
     private Demo4Socket() throws Exception {
         // System.out.println(Const.SYSTEM_DEFAULT_CONFIG);
-        SocketServerMenu4Demo menu = new SocketServerMenu4Demo(55555, 10, SocketServer4Demo.class);
+        SocketServerMenu4Demo menu = new SocketServerMenu4Demo(18999, 10, SocketServer4Demo.class);
         menu.execute();
     }
 

@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact name="testHotDeploy">
-    <output-path>$PROJECT_DIR$/out/artifacts/testHotDeploy</output-path>
+  <artifact name="jing-core:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/jing_core_jar2</output-path>
     <root id="root">
       <element id="archive" name="jing-core.jar">
         <element id="module-output" name="jing-core" />

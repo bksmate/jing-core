@@ -10,9 +10,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -213,8 +215,25 @@ public class ClassUtil {
                 retSet.add((Class<? super T>) clazz);
             }
         }
-
         return retSet;
+    }
+
+    public static boolean checkRelations(Class parent, Class child) {
+        return parent == child || child.getGenericSuperclass() == parent || Arrays.asList(child.getGenericInterfaces()).contains(parent);
+    }
+
+    public static ArrayList<Field> getDeclaredFieldsByType(Class clazz, Class type) {
+        Field[] fields = clazz.getDeclaredFields();
+        ArrayList<Field> fieldList = new ArrayList<>();
+        int size = GenericUtil.countArray(fields);
+        Field field;
+        for (int i$ = 0; i$ < size; i$++) {
+            field = fields[i$];
+            if (checkRelations(type, field.getType())) {
+                fieldList.add(field);
+            }
+        }
+        return fieldList;
     }
 
     public static <T> T createInstance(Class<T> clazz) throws JingException {
