@@ -1,28 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <jing>
-    <root-level>DEBUG</root-level>
+    <!-- root level -->
+    <root-level>ALL</root-level>
+    <!-- extra level implements -->
     <impl>org.jing.core.logger.JingLoggerLevelExtend</impl>
+    <!-- check if need stdout ignoring case, default true -->
+    <stdout>true</stdout>
+    <!-- global date format -->
+    <date-format>yyyy-MM-dd HH:mm:ss SSS</date-format>
+    <!-- global encoding -->
+    <encoding>UTF-8</encoding>
+    <!-- global logger format -->
+    <format>[%d][%t][%N->>-%M->>-%l][%p] - %m%n</format>
     <logger>
-        <name>IMP</name>
+        <name>ALL</name>
         <file>logs/jing.log</file>
-        <encoding>UTF-8</encoding>
-        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+        <!-- special date format -->
+        <!--<date-format>yyyy-MM-dd HH:mm:ss SSS</date-format>-->
+        <!-- special encoding -->
+        <!--<encoding>UTF-8</encoding>-->
+        <!-- special logger format -->
+        <!--<format>[%d][%t][%N->>-%M->>-%l][%p] - %m%n</format>-->
+    </logger>
+    <logger>
+        <name>TRACE</name>
+        <file>logs/jing.log</file>
     </logger>
     <logger>
         <name>DEBUG</name>
         <file>logs/jing.log</file>
-        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
     </logger>
     <logger>
         <name>INFO</name>
         <file>logs/jing.log</file>
-        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+    </logger>
+    <logger>
+        <name>WARN</name>
+        <file>logs/jing.log</file>
     </logger>
     <logger>
         <name>ERROR</name>
         <file>logs/jing.log</file>
         <file>logs/error.log</file>
-        <format>[%d{yyyy-MM-dd HH:mm:ss SSS}][%t][%c->>-%M][%p] - %m%n</format>
+    </logger>
+    <logger>
+        <name>IMP</name>
+        <file>logs/jing.log</file>
+    </logger>
+    <logger>
+        <name>FATAL</name>
+        <file>logs/jing.log</file>
     </logger>
 </jing>

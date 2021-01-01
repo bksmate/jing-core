@@ -117,8 +117,8 @@ public class Carrier {
         this.valueMap.remove(key);
     }
 
-    public String getString(int seq, String key, String deaultString) throws JingException {
-        Object retObject = getValueByKey(seq, key, deaultString);
+    public String getString(int seq, String key, String defaultString) throws JingException {
+        Object retObject = getValueByKey(seq, key, defaultString);
         return StringUtil.parseString(retObject);
     }
 
@@ -127,8 +127,8 @@ public class Carrier {
         return StringUtil.parseString(retObject);
     }
 
-    public String getString(String key, String deaultString) throws JingException {
-        Object retObject = getValueByKey(key, deaultString);
+    public String getString(String key, String defaultString) throws JingException {
+        Object retObject = getValueByKey(key, defaultString);
         return StringUtil.parseString(retObject);
     }
 

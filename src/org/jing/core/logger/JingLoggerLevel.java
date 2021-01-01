@@ -11,12 +11,14 @@ import java.util.HashSet;
  * @createDate: 2020-12-31 <br>
  */
 public class JingLoggerLevel extends BaseDto {
-    static final class LevelConfig extends BaseDto{
+    static final class LevelConfig extends BaseDto {
         HashSet<String> loggerPathSet;
 
         String format;
 
         String encoding;
+
+        String dateFormat;
 
         LevelConfig() {
             loggerPathSet = new HashSet<>();
@@ -59,6 +61,8 @@ public class JingLoggerLevel extends BaseDto {
     public static final JingLoggerLevel OFF = new JingLoggerLevel(Integer.MAX_VALUE, "OFF", true);
 
     public static final JingLoggerLevel FATAL = new JingLoggerLevel(50000, "FATAL", true);
+
+    public static final JingLoggerLevel IMP = new JingLoggerLevel(40000, "IMP", true);
 
     public static final JingLoggerLevel ERROR = new JingLoggerLevel(40000, "ERROR", true);
 

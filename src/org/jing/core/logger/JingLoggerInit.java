@@ -8,12 +8,16 @@ import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Description: <br>
@@ -33,11 +37,25 @@ public class JingLoggerInit implements JInit {
     }
 
     private void operate() throws JingException {
+        bindGlobalSettings();
+
         initLoggerLevels();
 
         bindLevelConfig();
 
+        bindWriter();
+
         System.out.println(JingLoggerConfiguration.levelList);
+    }
+
+    private void bindGlobalSettings() throws JingException {
+        JingLoggerConfiguration.stdout = !"FALSE".equalsIgnoreCase(JingLoggerConfiguration.configC.getString("stdout", "TRUE"));
+
+        JingLoggerConfiguration.dateFormat = JingLoggerConfiguration.configC.getString("date-format", "yyyy-MM-dd HH:mm:ss SSS");
+
+        JingLoggerConfiguration.format = JingLoggerConfiguration.configC.getString("format", "");
+
+        JingLoggerConfiguration.encoding = JingLoggerConfiguration.configC.getString("encoding", "");
     }
 
     private void initLoggerLevels() throws JingException {
@@ -88,22 +106,49 @@ public class JingLoggerInit implements JInit {
         String name, filePath;
         JingLoggerLevel.LevelConfig config;
         HashMap<String, JingLoggerLevel.LevelConfig> configMap = new HashMap<>();
+        File file, dir;
+        JingLoggerConfiguration.writerMap = new HashMap<>();
         for (int i$ = 0; i$ < size; i$++) {
             loggerC = JingLoggerConfiguration.configC.getCarrier("logger", i$);
             name = loggerC.getString("name", "").toUpperCase();
             size$ = loggerC.getCount("file");
             config = new JingLoggerLevel.LevelConfig();
+            config.format = loggerC.getString("format", JingLoggerConfiguration.format);
+            config.encoding = loggerC.getString("encoding", JingLoggerConfiguration.encoding);
+            config.dateFormat = loggerC.getString("date-format", JingLoggerConfiguration.dateFormat);
             for (int j$ = 0; j$ < size$; j$++) {
-                filePath = loggerC.getString(j$, "file");
+                filePath = FileUtil.buildPathWithHome(loggerC.getString(j$, "file"));
+                file = new File(filePath);
+                filePath = file.getAbsolutePath();
+                try {
+                    dir = file.getParentFile();
+                    if (null != dir && !FileUtil.mkdirs(dir)) {
+                        System.err.println("Failed to mkdir: " + dir.getAbsolutePath());
+                    }
+                }
+                catch (Exception ignored) {}
                 config.loggerPathSet.add(filePath);
+                JingLoggerConfiguration.writerMap.put(filePath, null);
             }
-            config.format = loggerC.getString("format", "%m%n");
-            config.encoding = loggerC.getString("encoding", "utf-8");
             configMap.put(name, config);
         }
         for (JingLoggerLevel level : JingLoggerConfiguration.levelList) {
             config = configMap.get(level.name);
             level.setLevelConfig(config);
+        }
+    }
+
+    private void bindWriter() {
+        String filePath;
+        for (Map.Entry<String, FileOutputStream> entry : JingLoggerConfiguration.writerMap.entrySet()) {
+            filePath = entry.getKey();
+            try {
+                entry.setValue(new FileOutputStream(filePath, true));
+            }
+            catch (Exception e) {
+                System.err.println("Failed to open FileOutputSteam: " + filePath);
+                entry.setValue(null);
+            }
         }
     }
 }
