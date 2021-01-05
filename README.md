@@ -10,9 +10,6 @@ Email
 Dependencies
 ---
 
-* `log4j-1.2.17.jar`
-* `log4j-api-2.3.jar`
-* `log4j-core-2.3.jar`
 * `dom4j-2.0.2.jar`
 
 Functions
@@ -25,7 +22,8 @@ Functions
 * 利用注解实现的服务映射;
 * 初始化时根据配置自动加载指定的类;
 * 随心所欲地为某个类分配一个多线程进行异步运行
-* 独特的载体类, 可以和XML/JSON进行互相转换.
+* 独特的载体类, 可以和XML/JSON进行互相转换;
+* 良好的Socket服务端父类.
 
 Attention
 ---
