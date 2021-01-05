@@ -113,7 +113,7 @@ public class ExceptionHandler {
     }
 
     private static JingLogger getLogger() {
-        if (null == logger && JingLogger.hasInit()) {
+        if (null == logger/* && JingLogger.hasInit()*/) {
             logger = JingLogger.getLogger(ExceptionHandler.class);
         }
         return logger;

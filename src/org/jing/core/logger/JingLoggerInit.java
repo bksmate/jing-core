@@ -1,7 +1,7 @@
 package org.jing.core.logger;
 
-import org.apache.log4j.Level;
 import org.jing.core.lang.Carrier;
+import org.jing.core.lang.Const;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.itf.JInit;
 import org.jing.core.util.CarrierUtil;
@@ -10,7 +10,6 @@ import org.jing.core.util.FileUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Description: <br>
@@ -26,12 +26,16 @@ import java.util.Map;
  * @createDate: 2020-12-31 <br>
  */
 public class JingLoggerInit implements JInit {
-    private static Carrier parameter;
 
     @Override public void init(Carrier params) throws JingException {
-        parameter = params;
-        String path = FileUtil.buildPathWithHome(parameter.getStringByPath("path", ""));
-        JingLoggerConfiguration.configC = CarrierUtil.string2Carrier(FileUtil.readFile(path));
+        String path = FileUtil.buildPathWithHome(params.getStringByPath("path", ""));
+        File configFile = new File(path);
+        if (configFile.exists() && configFile.isFile()) {
+            JingLoggerConfiguration.configC = CarrierUtil.string2Carrier(FileUtil.readFile(path));
+        }
+        else {
+            JingLoggerConfiguration.configC = CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_LOGGER_CONFIG);
+        }
 
         operate();
     }
@@ -44,18 +48,17 @@ public class JingLoggerInit implements JInit {
         bindLevelConfig();
 
         bindWriter();
-
-        System.out.println(JingLoggerConfiguration.levelList);
+        // System.out.println(JingLoggerConfiguration.levelList);
     }
 
     private void bindGlobalSettings() throws JingException {
         JingLoggerConfiguration.stdout = !"FALSE".equalsIgnoreCase(JingLoggerConfiguration.configC.getString("stdout", "TRUE"));
 
-        JingLoggerConfiguration.dateFormat = JingLoggerConfiguration.configC.getString("date-format", "yyyy-MM-dd HH:mm:ss SSS");
+        JingLoggerConfiguration.dateFormat = JingLoggerConfiguration.configC.getString("date-format", "yyyy-MM-dd HH:mm:ss.SSS");
 
-        JingLoggerConfiguration.format = JingLoggerConfiguration.configC.getString("format", "");
+        JingLoggerConfiguration.format = JingLoggerConfiguration.configC.getString("format", "[%d][%t][%N->>-%M][%p] - %m%n");
 
-        JingLoggerConfiguration.encoding = JingLoggerConfiguration.configC.getString("encoding", "");
+        JingLoggerConfiguration.encoding = JingLoggerConfiguration.configC.getString("encoding", "UTF-8");
     }
 
     private void initLoggerLevels() throws JingException {
@@ -63,7 +66,6 @@ public class JingLoggerInit implements JInit {
         int size = JingLoggerConfiguration.configC.getCount("impl");
         String impl;
         Class levelClass;
-        Field[] origLevels = Level.class.getDeclaredFields();
         ArrayList<Field> allFields = ClassUtil.getDeclaredFieldsByType(JingLoggerLevel.class, JingLoggerLevel.class);
         HashSet<Field> fieldSet = new HashSet<>(allFields);
         for (int i$ = 0; i$ < size; i$++) {
@@ -108,6 +110,7 @@ public class JingLoggerInit implements JInit {
         HashMap<String, JingLoggerLevel.LevelConfig> configMap = new HashMap<>();
         File file, dir;
         JingLoggerConfiguration.writerMap = new HashMap<>();
+        JingLoggerConfiguration.contentMap = new HashMap<>();
         for (int i$ = 0; i$ < size; i$++) {
             loggerC = JingLoggerConfiguration.configC.getCarrier("logger", i$);
             name = loggerC.getString("name", "").toUpperCase();
@@ -129,6 +132,7 @@ public class JingLoggerInit implements JInit {
                 catch (Exception ignored) {}
                 config.loggerPathSet.add(filePath);
                 JingLoggerConfiguration.writerMap.put(filePath, null);
+                JingLoggerConfiguration.contentMap.put(filePath, new ConcurrentLinkedQueue<byte[]>());
             }
             configMap.put(name, config);
         }

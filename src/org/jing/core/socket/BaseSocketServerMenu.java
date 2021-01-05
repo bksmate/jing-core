@@ -4,8 +4,6 @@ import org.jing.core.lang.itf.JThread;
 import org.jing.core.logger.JingLogger;
 import org.jing.core.util.StringUtil;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package org.jing.core.util;
 
-import org.apache.log4j.Logger;
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
+import org.jing.core.logger.JingLogger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,7 +15,7 @@ import java.util.Date;
  * @createDate: 2019-01-28 <br>
  */
 public class DateUtil {
-    private static Logger logger = Logger.getLogger(DateUtil.class);
+    private static JingLogger LOGGER = JingLogger.getLogger(DateUtil.class);
 
     public static final String DB_DATE_TIME = "YYYY-MM-DD HH24:MI:SS";
 

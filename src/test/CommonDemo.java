@@ -1,8 +1,5 @@
 package test;
 
-import org.jing.core.lang.Configuration;
-import org.jing.core.lang.ExceptionHandler;
-import org.jing.core.lang.JingExtraException;
 import org.jing.core.logger.JingLogger;
 
 import java.lang.Exception;
@@ -65,8 +62,6 @@ public class CommonDemo {
     }
 
     private CommonDemo() throws Exception {
-        // System.out.println(getJavaStackTrace());
-        test();
     }
 
     public static void main(String[] args) throws Exception {

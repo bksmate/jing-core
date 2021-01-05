@@ -37,7 +37,7 @@ public class FileUtil {
         }
 
         boolean checkLogger() {
-            return null != logger && JingLogger.hasInit();
+            return null != logger/* && JingLogger.hasInit()*/;
         }
 
         void info(String msg, String parameters) {
@@ -50,7 +50,7 @@ public class FileUtil {
             }
         }
 
-        void error(String msg, Throwable t, String... parameters) {
+        void error(String msg, Throwable t, Object... parameters) {
             createLogger();
             if (checkLogger()) {
                 logger.error(msg, t, parameters);

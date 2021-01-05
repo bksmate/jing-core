@@ -8,60 +8,23 @@
             <path>config?logger.xml</path>
         </parameters>
     </init>
-    <!-- 项目初始化加载的类, 必须要实现JInit接口 -->
-    <!-- 加载日志模块, 必填 -->
-    <!--<init>
-        &lt;!&ndash; 加载顺序 &ndash;&gt;
-        <index>1</index>
-        &lt;!&ndash; 类路径 &ndash;&gt;
-        <implements>org.jing.core.logger.Log4jInit</implements>
-        &lt;!&ndash; 初始化参数 &ndash;&gt;
-        <parameters>
-            &lt;!&ndash; 配置文件路径, 如果未指定则采用Const.SYSTEM_DEFAULT_LOG4J_CONFIG &ndash;&gt;
-            &lt;!&ndash; 推荐扩展时在默认的配置文件基础上进行修改, 尽量不要删除现有配置, 如果有不需要的日志级别可以在下面配置 &ndash;&gt;
-            <path>config?log4j.properties</path>
-            &lt;!&ndash; 设置根节点日志级别, 这个会影响到控制台的输出, 默认DEBUG &ndash;&gt;
-            <root-level>DEBUG</root-level>
-            &lt;!&ndash; appender用的级别控制, 需要都满足才会输出到appender里 &ndash;&gt;
-            &lt;!&ndash; equals: 等于配置级别的, 支持逗号分隔配置多个 &ndash;&gt;
-            &lt;!&ndash; ignore: 不等于配置级别的, 支持逗号分隔配置多个 &ndash;&gt;
-            &lt;!&ndash; gore: 大于等于配置级别的, 逗号分隔配置多个的话只会取第一个 &ndash;&gt;
-            &lt;!&ndash; lore: 小于等于配置级别的, 逗号分隔配置多个的话只会取第一个 &ndash;&gt;
-            <appender-level>
-                <gore>DEBUG</gore>
-                &lt;!&ndash;<gore>DEBUG</gore>
-                <lore>IMP</lore>
-                <ignore>INFO</ignore>
-                <equals>WARN</equals>&ndash;&gt;
-            </appender-level>
-            &lt;!&ndash; 默认根节点过滤器为下面配置的这个, 如果需要自定义则覆盖该配置 &ndash;&gt;
-            &lt;!&ndash;<root-filter>org.jing.core.logger.log4j.Log4jFilter</root-filter>&ndash;&gt;
-            &lt;!&ndash; 如果存在自定义的日志级别, 请继承log4j的Level, 然后仿造其构造增加静态Level &ndash;&gt;
-            &lt;!&ndash; 用例的话请看下面配置的路径 &ndash;&gt;
-            &lt;!&ndash; <extend-level>test.TempLoggerLevel</extend-level> &ndash;&gt;
-            &lt;!&ndash; 针对日志级别层级的过滤器, 需要继承AbstractLog4jFilter &ndash;&gt;
-            &lt;!&ndash;<level-filter>
-                <level>AbstractLog4jFilter</sql>
-            </level-filter>&ndash;&gt;
-        </parameters>
-    </init>-->
     <!-- 加载Service映射集, 没有用到Service就不用填. -->
-    <!--<init>
+    <init>
         <index>2</index>
         <implements>org.jing.core.service.ServiceInit</implements>
         <parameters>
             <path>config?service.xml</path>
         </parameters>
-    </init>-->
+    </init>
     <!-- 加载多线程模块, 选填, -->
     <!-- 比如在程序初始化的时候启动的多种不同监听类如NettySocket/Socket/UDP/TCP等. 实现类必须实现JThread接口 -->
-    <!--<init>
-        &lt;!&ndash; 加载顺序 &ndash;&gt;
+    <init>
+        <!-- 加载顺序 -->
         <index>3</index>
-        &lt;!&ndash; 类路径 &ndash;&gt;
+        <!-- 类路径 -->
         <implements>org.jing.core.thread.MultiplyThreadInit</implements>
         <parameters>
             <path>config?thread.xml</path>
         </parameters>
-    </init>-->
+    </init>
 </jing>

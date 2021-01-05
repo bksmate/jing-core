@@ -3,10 +3,9 @@ package org.jing.core.logger;
 import org.jing.core.lang.Carrier;
 
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Description: <br>
@@ -14,7 +13,7 @@ import java.util.HashSet;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
-public class JingLoggerConfiguration {
+class JingLoggerConfiguration {
     static Carrier configC;
 
     static ArrayList<JingLoggerLevel> levelList;
@@ -22,6 +21,8 @@ public class JingLoggerConfiguration {
     static JingLoggerLevel rootLevel;
 
     static HashMap<String, FileOutputStream> writerMap;
+
+    static HashMap<String, ConcurrentLinkedQueue<byte[]>> contentMap;
 
     static boolean stdout = true;
 
@@ -32,12 +33,4 @@ public class JingLoggerConfiguration {
     static String format;
 
     static final String newLine = "\r\n";
-
-    /*public static Carrier getConfigC() {
-        return configC;
-    }
-
-    public static ArrayList<JingLoggerLevel> getLevelList() {
-        return levelList;
-    }*/
 }

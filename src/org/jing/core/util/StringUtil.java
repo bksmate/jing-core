@@ -2,11 +2,8 @@ package org.jing.core.util;
 
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
-import org.jing.core.logger.JingLogger;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -19,13 +16,12 @@ import java.util.Map;
  * @author: bks <br>
  * @createDate: 2019-01-17 <br>
  */
+@SuppressWarnings({ "unused", "WeakerAccess" })
 public class StringUtil {
     /**
      * shouldn't be empty. <br>
      */
     public static final int COMPARE_STRING_NOT_NULL = 2;
-
-    private static final JingLogger LOGGER = JingLogger.getLogger(StringUtil.class);
 
     public final static int PAD_MODEL_LEFT = 0;
 
@@ -153,31 +149,6 @@ public class StringUtil {
     }
 
     /**
-     * Description: Get Error Information <br>
-     *
-     * @author bks <br>
-     * @param exception <br>
-     * @return <br>
-     * @throws JingException <br>
-     */
-    public static String getErrorInf(Throwable exception) throws JingException {
-        if (null == exception) return "";
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        exception.printStackTrace(new PrintStream(baos));
-        String retString = baos.toString();
-        try {
-            baos.close();
-            return retString;
-        }
-        catch (Exception e) {
-            throw new JingException("Fail To Get Error Information.");
-        }
-        finally {
-            baos = null;
-        }
-    }
-
-    /**
      * Description: Cut Or Add. <br>
      *
      * @author bks <br>
@@ -200,10 +171,10 @@ public class StringUtil {
         }
         else {
             if (model == PAD_MODEL_LEFT) {
-                return new StringBuilder(repeat(c, length - string.length())).append(string).toString();
+                return repeat(c, length - string.length()) + string;
             }
             else if (model == PAD_MODEL_RIGHT) {
-                return new StringBuilder(string).append(repeat(c, length - string.length())).toString();
+                return string + repeat(c, length - string.length());
             }
             else {
                 return string;
@@ -219,9 +190,7 @@ public class StringUtil {
             pw.close();
             sw.close();
         }
-        catch (Exception e) {
-            LOGGER.error(e);
-        }
+        catch (Exception ignored) {}
         return sw.toString();
     }
 
@@ -413,9 +382,6 @@ public class StringUtil {
     }
 
     public static String readFromInputStream(InputStream inputStream, int bufferSize, String charSet) throws JingException {
-        if (bufferSize % 2 != 0) {
-            ExceptionHandler.publish("invalid buffer size");
-        }
         try {
             byte[] buffer = new byte[bufferSize];
             StringBuilder stbr = new StringBuilder();

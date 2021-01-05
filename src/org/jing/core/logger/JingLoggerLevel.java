@@ -10,7 +10,7 @@ import java.util.HashSet;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
-public class JingLoggerLevel extends BaseDto {
+@SuppressWarnings({ "WeakerAccess", "UnusedReturnValue", "unused" }) public class JingLoggerLevel extends BaseDto {
     static final class LevelConfig extends BaseDto {
         HashSet<String> loggerPathSet;
 

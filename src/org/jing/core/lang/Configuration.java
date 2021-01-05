@@ -1,7 +1,8 @@
 package org.jing.core.lang;
 
 import org.jing.core.lang.itf.JInit;
-import org.jing.core.logger.Log4jInit;
+import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.JingLoggerInit;
 import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
@@ -15,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -170,7 +170,7 @@ public class Configuration {
         }
     }
 
-    public static void log(String content, String... parameters) {
+    public static void log(String content, Object... parameters) {
         content = StringUtil.mixParameters(content, parameters);
         content = getLogPrefix() + content;
         System.out.println(content);
@@ -211,7 +211,7 @@ public class Configuration {
         // sort
         Carrier aCarrier;
         Carrier bCarrier;
-        for (int i$ = 0, k$; i$ < size - 1; i$++) {
+        for (int i$ = 0, k$; i$ < size; i$++) {
             aCarrier = initCarrierList.get(i$);
             k$ = i$;
             for (int j$ = i$ + 1; j$ < size; j$++) {
@@ -225,15 +225,14 @@ public class Configuration {
             if (!logInit) {
                 aCarrier = initCarrierList.get(i$);
                 Class<?> clazz = ClassUtil.loadClass(aCarrier.getString("implements"));
-                if (clazz == Log4jInit.class) {
+                if (clazz == JingLoggerInit.class) {
                     logInit = true;
                 }
             }
         }
         if (!logInit) {
-            Log4jInit log4jInit = new Log4jInit();
-            log4jInit.init(CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_LOG4J_PARAM));
-            // log4jInit.initByString(Const.SYSTEM_DEFAULT_LOG4J_CONFIG);
+            JingLoggerInit log4jInit = new JingLoggerInit();
+            log4jInit.init(CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_LOGGER_PARAM));
         }
         // init
         String tempPath;
@@ -246,6 +245,8 @@ public class Configuration {
             Class<?> clazz = ClassUtil.loadClass(tempPath);
             register((Class<? extends JInit>) clazz, parameters);
         }
+        setInit();
+        JingLogger.getLogger("System").fatal("Success to initialize.");
     }
 
     /**
@@ -306,8 +307,10 @@ public class Configuration {
     }
 
     public static void setInit() {
-        synchronized (Configuration.class) {
-            initFlag = true;
+        if (!initFlag) {
+            synchronized (Configuration.class) {
+                initFlag = true;
+            }
         }
     }
 

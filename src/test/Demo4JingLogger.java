@@ -12,12 +12,16 @@ public class Demo4JingLogger {
     private static final JingLogger LOGGER = JingLogger.getLogger(Demo4JingLogger.class);
 
     public Demo4JingLogger() {
-        LOGGER.debug("中文debug");
-        LOGGER.info("中文info");
-        LOGGER.imp("中文imp");
-        LOGGER.warn("中文warn");
-        LOGGER.sql("中文sql", 1);
-        LOGGER.error("中文err");
+        for (int i$ = 0; i$ < 100; i$++) {
+            final int finalI$ = i$;
+            Runnable thread = new Runnable() {
+                @Override
+                public void run() {
+                    LOGGER.debug(finalI$);
+                }
+            };
+            new Thread(thread).start();
+        }
     }
     public static void main(String[] args) {
         new Demo4JingLogger();

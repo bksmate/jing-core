@@ -1,10 +1,10 @@
 package org.jing.core.util;
 
-import org.apache.log4j.Logger;
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.Pair2;
 import org.jing.core.lang.itf.JService;
+import org.jing.core.logger.JingLogger;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,7 +32,7 @@ import static java.lang.Thread.currentThread;
  */
 @SuppressWarnings({ "WeakerAccess", "unused" })
 public class ClassUtil {
-    private static Logger logger = Logger.getLogger(ClassUtil.class);
+    private static JingLogger LOGGER = JingLogger.getLogger(ClassUtil.class);
 
     private static ClassLoader defaultClassLoader;
 

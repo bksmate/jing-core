@@ -6,6 +6,7 @@ package org.jing.core.logger;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public class JingLoggerLevelExtend extends JingLoggerLevel {
     protected JingLoggerLevelExtend(int priority, String name, boolean synchronize) {
         super(priority, name, synchronize);
