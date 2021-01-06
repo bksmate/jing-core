@@ -49,6 +49,10 @@
         <file>logs/jing.log</file>
     </logger>
     <logger>
+        <name>SQL</name>
+        <file>logs/sql.log</file>
+    </logger>
+    <logger>
         <name>FATAL</name>
         <file>logs/jing.log</file>
     </logger>

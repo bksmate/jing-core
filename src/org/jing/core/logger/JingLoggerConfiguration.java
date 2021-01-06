@@ -20,9 +20,9 @@ class JingLoggerConfiguration {
 
     static JingLoggerLevel rootLevel;
 
-    static HashMap<String, FileOutputStream> writerMap;
-
     static HashMap<String, ConcurrentLinkedQueue<byte[]>> contentMap;
+
+    static HashMap<String, JingLoggerWriter> writerMap;
 
     static boolean stdout = true;
 

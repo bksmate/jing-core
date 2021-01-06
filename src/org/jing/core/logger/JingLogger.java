@@ -3,8 +3,10 @@ package org.jing.core.logger;
 import org.jing.core.lang.Configuration;
 import org.jing.core.util.DateUtil;
 import org.jing.core.util.StringUtil;
+import test.CommonDemo;
 
 import java.io.FileOutputStream;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -15,9 +17,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @createDate: 2020-12-31 <br>
  */
 @SuppressWarnings({ "unused", "WeakerAccess" }) public class JingLogger {
+
     private String name;
 
     private JingLogger() {}
+
+    @Override protected void finalize() throws Throwable {
+        System.out.println("===finalize===");
+    }
 
     public static JingLogger getLogger(Class clazz) {
         Configuration.getInstance();
@@ -46,7 +53,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void all(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.ALL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ALL, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.ALL, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -64,7 +71,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void trace(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.TRACE.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.TRACE, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.TRACE, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -82,7 +89,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void debug(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.DEBUG.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.DEBUG, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.DEBUG, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -100,7 +107,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void info(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.INFO.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.INFO, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.INFO, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -118,7 +125,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void warn(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.WARN.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.WARN, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.WARN, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -136,7 +143,26 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void imp(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.IMP.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.IMP, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.IMP, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
+        }
+    }
+
+
+    public void sql(String msg, int session) {
+        if (JingLoggerLevelExtend.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevelExtend.SQL, String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg));
+        }
+    }
+
+    public void sql(String msg, String parameters, int session) {
+        if (JingLoggerLevelExtend.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevelExtend.SQL, String.format("[Session: %s]%s%s [%s]", session, JingLoggerConfiguration.newLine, msg, parameters));
+        }
+    }
+
+    public void sql(String msg, int session, Object... parameters) {
+        if (JingLoggerLevelExtend.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevelExtend.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg), parameters));
         }
     }
 
@@ -148,7 +174,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void error(Throwable throwable) {
         if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.ERROR, JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -160,13 +186,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void error(String msg, Throwable throwable) {
         if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, msg + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.ERROR, msg + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
     public void error(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.ERROR, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -184,7 +210,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public void fatal(String msg, Throwable throwable, Object... parameters) {
         if (JingLoggerLevel.FATAL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.FATAL, StringUtil.mixParameters(msg, parameters) + "\r\n" + StringUtil.getErrorStack(throwable));
+            output(JingLoggerLevel.FATAL, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
@@ -226,28 +252,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
         if (JingLoggerConfiguration.stdout) {
             System.out.print(content);
         }
-        FileOutputStream writer;
+        JingLoggerWriter writer;
         for (String outputPath : level.levelConfig.loggerPathSet) {
             try {
-                JingLoggerConfiguration.contentMap.get(outputPath).offer(content.getBytes(level.levelConfig.encoding));
-            }
-            catch (Exception ignored) {}
-        }
-        write();
-    }
-
-    private void write() {
-        byte[] content;
-        FileOutputStream writer;
-        for (Map.Entry<String, ConcurrentLinkedQueue<byte[]>> entry : JingLoggerConfiguration.contentMap.entrySet()) {
-            try {
-                writer = JingLoggerConfiguration.writerMap.get(entry.getKey());
-                while (null != (content = entry.getValue().poll())) {
-                    if (writer.getFD().valid()) {
-                        writer.write(content);
-                        writer.flush();
-                    }
-                }
+                JingLoggerConfiguration.writerMap.get(outputPath).offer(content.getBytes(level.levelConfig.encoding));
             }
             catch (Exception ignored) {}
         }
@@ -349,7 +357,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
         logger.warn("all: {}", 123);
         logger.fatal("all: {}", 123);
         logger.imp("all: {}", 123);
+        logger.sql("SELECT * FROM SA", 123123);
         logger.error("error: {}", 123);
+        System.out.println(CommonDemo.getJavaStackTrace());
 
     }
 }

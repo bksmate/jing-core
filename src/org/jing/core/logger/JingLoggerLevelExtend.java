@@ -16,5 +16,5 @@ public class JingLoggerLevelExtend extends JingLoggerLevel {
         super(priority, name);
     }
 
-    public static final JingLoggerLevelExtend IMP = new JingLoggerLevelExtend(40000, "IMP", true);
+    public static final JingLoggerLevelExtend SQL = new JingLoggerLevelExtend(39999, "SQL", true);
 }

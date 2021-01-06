@@ -12,6 +12,60 @@ import java.util.Map;
  * @createDate: 2020-07-17 <br>
  */
 public class CommonDemo {
+    private static final Object LOCK = new Object();
+
+    private static class TestThread extends Thread {
+        private final Object lock = new Object();
+
+        private int serialNo;
+
+        TestThread(int serialNo) {
+            this.serialNo = serialNo;
+        }
+
+        public synchronized void unlock() {
+            System.out.println("unlock");
+            synchronized (lock) {
+                try {
+                    lock.notifyAll();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void lock() {
+            System.out.println("lock " + Thread.currentThread().getName());
+            synchronized (lock) {
+                while (true) {
+                    try {
+                        System.out.println("lock");
+                        lock.wait();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("running " + serialNo);
+                }
+            }
+        }
+
+        @Override public void run() {
+            System.out.println("run " + Thread.currentThread().getName());
+            /*synchronized (lock) {
+                try {
+                    System.out.println("lock");
+                    lock.wait();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.out.println("running " + serialNo);
+            }*/
+        }
+    }
+
     private static final JingLogger LOGGER = JingLogger.getLogger(CommonDemo.class);
 
     public static String getJavaStackTrace() {
@@ -19,9 +73,9 @@ public class CommonDemo {
         for (Map.Entry<Thread, StackTraceElement[]> stackTrace : Thread.getAllStackTraces().entrySet()) {
             Thread thread = (Thread) stackTrace.getKey();
             StackTraceElement[] stack = (StackTraceElement[]) stackTrace.getValue();
-            if (thread.equals(Thread.currentThread())) {
+            /*if (thread.equals(Thread.currentThread())) {
                 continue;
-            }
+            }*/
             msg.append("\n 线程:").append(thread.getName()).append("\n");
             for (StackTraceElement element : stack) {
                 msg.append("\t").append(element).append("\n");
@@ -62,6 +116,20 @@ public class CommonDemo {
     }
 
     private CommonDemo() throws Exception {
+        TestThread thread1 = new TestThread(1);
+        System.out.println(thread1.isAlive());
+        TestThread thread2 = new TestThread(2);
+        thread1.start();
+        System.out.println(thread1.isAlive());
+        thread1.lock();
+        thread2.start();
+        thread2.lock();
+        Thread.sleep(2000);
+        thread1.unlock();
+        Thread.sleep(2000);
+        thread2.unlock();
+
+        // System.out.println(getJavaStackTrace());
     }
 
     public static void main(String[] args) throws Exception {

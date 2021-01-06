@@ -46,9 +46,6 @@ public class JingLoggerInit implements JInit {
         initLoggerLevels();
 
         bindLevelConfig();
-
-        bindWriter();
-        // System.out.println(JingLoggerConfiguration.levelList);
     }
 
     private void bindGlobalSettings() throws JingException {
@@ -131,28 +128,16 @@ public class JingLoggerInit implements JInit {
                 }
                 catch (Exception ignored) {}
                 config.loggerPathSet.add(filePath);
-                JingLoggerConfiguration.writerMap.put(filePath, null);
                 JingLoggerConfiguration.contentMap.put(filePath, new ConcurrentLinkedQueue<byte[]>());
+                if (!JingLoggerConfiguration.writerMap.containsKey(filePath)) {
+                    JingLoggerConfiguration.writerMap.put(filePath, new JingLoggerWriter(filePath));
+                }
             }
             configMap.put(name, config);
         }
         for (JingLoggerLevel level : JingLoggerConfiguration.levelList) {
             config = configMap.get(level.name);
             level.setLevelConfig(config);
-        }
-    }
-
-    private void bindWriter() {
-        String filePath;
-        for (Map.Entry<String, FileOutputStream> entry : JingLoggerConfiguration.writerMap.entrySet()) {
-            filePath = entry.getKey();
-            try {
-                entry.setValue(new FileOutputStream(filePath, true));
-            }
-            catch (Exception e) {
-                System.err.println("Failed to open FileOutputSteam: " + filePath);
-                entry.setValue(null);
-            }
         }
     }
 }
