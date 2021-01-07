@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @createDate: 2020-12-31 <br>
  */
 public class JingLoggerConfiguration {
+    private JingLoggerConfiguration() {}
+
     static Carrier configC;
 
     static ArrayList<JingLoggerLevel> levelList;
@@ -25,51 +27,51 @@ public class JingLoggerConfiguration {
 
     static boolean stdOut = true;
 
-    public synchronized void setGlobalStdOut(boolean stdOut) {
+    public static synchronized void setGlobalStdOut(boolean stdOut) {
         JingLoggerConfiguration.stdOut = stdOut;
     }
 
-    public synchronized boolean getGlobalStdOut() {
+    public static synchronized boolean getGlobalStdOut() {
         return JingLoggerConfiguration.stdOut;
     }
 
     static String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
-    public synchronized void setGlobalDateFormat(String dateFormat) {
+    public static synchronized void setGlobalDateFormat(String dateFormat) {
         JingLoggerConfiguration.dateFormat = dateFormat;
     }
 
-    public synchronized String getGlobalDateFormat() {
+    public static synchronized String getGlobalDateFormat() {
         return JingLoggerConfiguration.dateFormat;
     }
 
     static String encoding = "utf-8";
 
-    public synchronized void setGlobalEncoding(String encoding) {
+    public static synchronized void setGlobalEncoding(String encoding) {
         JingLoggerConfiguration.encoding = encoding;
     }
 
-    public synchronized String getGlobalEncoding() {
+    public static synchronized String getGlobalEncoding() {
         return JingLoggerConfiguration.encoding;
     }
 
     static String format = "[%d][%t][%N->>-%M->>-%l][%p] - %m%n";
 
-    public synchronized void setGlobalFormat(String format) {
+    public static synchronized void setGlobalFormat(String format) {
         JingLoggerConfiguration.format = format;
     }
 
-    public synchronized String getGlobalFormat() {
+    public static synchronized String getGlobalFormat() {
         return JingLoggerConfiguration.format;
     }
 
     static String newLine = "\r\n";
 
-    public synchronized void setGlobalNewLine(String newLine) {
+    public static synchronized void setGlobalNewLine(String newLine) {
         JingLoggerConfiguration.newLine = newLine;
     }
 
-    public synchronized String getGlobalNewLine() {
+    public static synchronized String getGlobalNewLine() {
         return JingLoggerConfiguration.newLine;
     }
 }
