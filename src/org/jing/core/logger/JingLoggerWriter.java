@@ -16,12 +16,11 @@ public class JingLoggerWriter {
         // private static final int WAIT_TIMES = 1000;
         private static long serialNo = 0;
 
-        private ConcurrentLinkedQueue<byte[]> bufferQueue;
+        private final ConcurrentLinkedQueue<byte[]> bufferQueue = new ConcurrentLinkedQueue<>();
 
         private FileOutputStream writer;
 
         Dispatcher(FileOutputStream writer) {
-            bufferQueue = new ConcurrentLinkedQueue<>();
             this.writer = writer;
         }
 
@@ -30,25 +29,28 @@ public class JingLoggerWriter {
         }
 
         @Override public void run() {
-            Thread.currentThread().setName("JingLogger Dispatcher - " + (serialNo ++));
+            Thread.currentThread().setName("JingLogger Dispatcher - " + (serialNo++));
             // int times = 0;
             byte[] buffer;
             // while (times < WAIT_TIMES) {
-            while (true) {
-                try {
-                    while (!bufferQueue.isEmpty()) {
-                        // times = 0;
-                        buffer = bufferQueue.poll();
-                        if (null != buffer && writer.getFD().valid()) {
-                            writer.write(buffer);
-                            writer.flush();
+            synchronized (bufferQueue) {
+                while (true) {
+                    try {
+                        bufferQueue.wait();
+                        while (!bufferQueue.isEmpty()) {
+                            // times = 0;
+                            buffer = bufferQueue.poll();
+                            if (null != buffer && writer.getFD().valid()) {
+                                writer.write(buffer);
+                                writer.flush();
+                            }
                         }
+                        // times ++;
+                        // Thread.sleep(10);
                     }
-                    // times ++;
-                    Thread.sleep(10);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -78,5 +80,9 @@ public class JingLoggerWriter {
             createDispatcher();
         }
         dispatcher.bufferQueue.offer(buffer);
+        try {
+            dispatcher.bufferQueue.notifyAll();
+        }
+        catch (Exception ignored) {}
     }
 }
