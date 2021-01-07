@@ -5,11 +5,6 @@ import org.jing.core.util.DateUtil;
 import org.jing.core.util.StringUtil;
 import test.CommonDemo;
 
-import java.io.FileOutputStream;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 /**
  * Description: <br>
  *
@@ -249,7 +244,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
             return;
         }
         String content = generateMsg(level, msg);
-        if (JingLoggerConfiguration.stdout) {
+        if (JingLoggerConfiguration.stdOut) {
             System.out.print(content);
         }
         JingLoggerWriter writer;

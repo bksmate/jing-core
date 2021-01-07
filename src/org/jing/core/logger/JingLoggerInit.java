@@ -9,14 +9,12 @@ import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -49,7 +47,7 @@ public class JingLoggerInit implements JInit {
     }
 
     private void bindGlobalSettings() throws JingException {
-        JingLoggerConfiguration.stdout = !"FALSE".equalsIgnoreCase(JingLoggerConfiguration.configC.getString("stdout", "TRUE"));
+        JingLoggerConfiguration.stdOut = !"FALSE".equalsIgnoreCase(JingLoggerConfiguration.configC.getString("stdOut", "TRUE"));
 
         JingLoggerConfiguration.dateFormat = JingLoggerConfiguration.configC.getString("date-format", "yyyy-MM-dd HH:mm:ss.SSS");
 

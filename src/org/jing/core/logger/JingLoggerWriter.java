@@ -81,7 +81,9 @@ public class JingLoggerWriter {
         }
         dispatcher.bufferQueue.offer(buffer);
         try {
-            dispatcher.bufferQueue.notifyAll();
+            synchronized (dispatcher.bufferQueue) {
+                dispatcher.bufferQueue.notifyAll();
+            }
         }
         catch (Exception ignored) {}
     }
