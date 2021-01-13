@@ -128,6 +128,7 @@ public class JingLoggerEvent {
 
     public synchronized void stdOut() {
         if (stdOut) return;
+        if (!this.getLevel().isGreaterOrEquals(JingLoggerConfiguration.stdOutLevel)) return;
         stdOut = true;
         System.out.print(content);
     }

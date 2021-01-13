@@ -21,9 +21,11 @@ import java.util.HashMap;
 
     static ArrayList<JingLoggerLevel> levelList;
 
-    static JingLoggerLevel rootLevel;
+    static JingLoggerLevel rootLevel = null;
 
     static boolean stdOut = true;
+
+    static JingLoggerLevel stdOutLevel = null;
 
     public static synchronized void setGlobalStdOut(boolean stdOut) {
         JingLoggerConfiguration.stdOut = stdOut;

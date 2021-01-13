@@ -3,6 +3,7 @@
 <jing>
     <!-- root level -->
     <root-level>ALL</root-level>
+    <stdout-level>IMP</stdout-level>
     <!-- extra level implements -->
     <!--<impl>org.jing.core.logger.JingLoggerLevelExtend</impl>-->
     <!-- check if need stdout ignoring case, default true -->

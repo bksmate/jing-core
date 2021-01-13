@@ -103,6 +103,7 @@ public final class JingLoggerInit implements JInit {
 
     private void initLoggerLevels() throws JingException {
         String rootLevel = JingLoggerConfiguration.configC.getString("root-level", "ALL").toUpperCase();
+        String stdOutLevel = JingLoggerConfiguration.configC.getString("stdout-level", "ALL").toUpperCase();
         int size = JingLoggerConfiguration.configC.getCount("impl");
         String impl;
         Class levelClass;
@@ -123,6 +124,9 @@ public final class JingLoggerInit implements JInit {
                 if (level.name.equals(rootLevel)) {
                     JingLoggerConfiguration.rootLevel = level;
                 }
+                if (level.name.equals(stdOutLevel)) {
+                    JingLoggerConfiguration.stdOutLevel = level;
+                }
             }
         }
         catch (Exception e) {
@@ -140,6 +144,12 @@ public final class JingLoggerInit implements JInit {
                 return o1.priority - o2.priority;
             }
         });
+        if (null == JingLoggerConfiguration.rootLevel) {
+            JingLoggerConfiguration.rootLevel = JingLoggerLevel.ALL;
+        }
+        if (null == JingLoggerConfiguration.stdOutLevel) {
+            JingLoggerConfiguration.stdOutLevel = JingLoggerLevel.ALL;
+        }
     }
 
     private void bindLevelConfig() throws JingException {
