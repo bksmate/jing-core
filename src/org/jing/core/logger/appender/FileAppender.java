@@ -3,6 +3,7 @@ package org.jing.core.logger.appender;
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
 import org.jing.core.logger.JingLoggerEvent;
+import org.jing.core.logger.SingleLogger;
 import org.jing.core.logger.dispatcher.BaseDispatcher;
 import org.jing.core.logger.help.ResourcePool;
 import org.jing.core.util.FileUtil;
@@ -22,6 +23,8 @@ public class FileAppender extends BaseAppender {
 
     protected String absoluteFilePath;
 
+    protected File logFile;
+
     public FileAppender(Carrier paramC) throws JingException {
         super(paramC);
     }
@@ -34,7 +37,7 @@ public class FileAppender extends BaseAppender {
         if (StringUtil.isEmpty(filePath)) {
             throw new JingException("Empty file path");
         }
-        File logFile = new File(FileUtil.buildPathWithHome(filePath));
+        logFile = new File(FileUtil.buildPathWithHome(filePath));
         filePath = logFile.getAbsolutePath();
         FileOutputStream writer = ResourcePool.getInstance().getFileOutputStream(filePath);
         if (null != writer) {
@@ -53,7 +56,10 @@ public class FileAppender extends BaseAppender {
         catch (Exception e) {
             throw new JingException(e);
         }
+        extendInit();
     }
+
+    protected void extendInit() throws JingException {}
 
     @Override protected void createDispatcher() {
         dispatcher = new Dispatcher(this);
@@ -64,7 +70,12 @@ public class FileAppender extends BaseAppender {
 
     @Override public void write(JingLoggerEvent event) {
         try {
-            writer.write(event.getContent().getBytes(event.getLevel().getLevelConfig().getEncoding()));
+            synchronized (writeLocker) {
+                if (null == writer) {
+                    writeLocker.wait();
+                }
+                writer.write(event.getContent().getBytes(event.getLevel().getLevelConfig().getEncoding()));
+            }
         }
         catch (Exception ignored) {}
     }
@@ -74,6 +85,16 @@ public class FileAppender extends BaseAppender {
             writer.flush();
         }
         catch (Exception ignored) {}
+    }
+
+    @Override public void close() {
+        super.close();
+        try {
+            writer.close();
+        }
+        catch (Exception e) {
+            SingleLogger.err("Failed to close FileOutputStream");
+        }
     }
 
     protected static class Dispatcher extends BaseDispatcher {

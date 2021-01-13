@@ -2,7 +2,6 @@ package org.jing.core.logger.appender;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
-import org.jing.core.logger.JingLoggerConfiguration;
 import org.jing.core.logger.JingLoggerEvent;
 import org.jing.core.logger.dispatcher.BaseDispatcher;
 
@@ -23,6 +22,8 @@ public class BaseAppender {
 
     protected BaseDispatcher dispatcher;
 
+    protected final Object writeLocker = new Object();
+
     public BaseAppender(Carrier paramC) throws JingException {
         this.paramC = paramC;
         closed = false;
@@ -32,10 +33,12 @@ public class BaseAppender {
     }
 
     @Override protected void finalize() throws Throwable {
+        System.out.println("Fin");
         if (!closed) {
             close();
             closed = true;
         }
+        super.finalize();
     }
 
     protected void init() throws JingException {}
@@ -53,7 +56,8 @@ public class BaseAppender {
                     this.buffer.notifyAll();
                 }
             }
-        }}
+        }
+    }
 
     public void close() {
         synchronized (this.buffer) {
@@ -72,6 +76,10 @@ public class BaseAppender {
 
     public ArrayList<JingLoggerEvent> getBuffer() {
         return this.buffer;
+    }
+
+    public Object getWriteLocker() {
+        return writeLocker;
     }
 
     public boolean isClosed() {

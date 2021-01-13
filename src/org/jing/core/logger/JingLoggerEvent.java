@@ -10,6 +10,8 @@ import org.jing.core.util.DateUtil;
  */
 @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" })
 public class JingLoggerEvent {
+    private String loggerName;
+
     private JingLoggerLevel level;
 
     private String content;
@@ -22,6 +24,11 @@ public class JingLoggerEvent {
 
     public synchronized JingLoggerEvent setLevel(JingLoggerLevel level) {
         this.level = level;
+        return this;
+    }
+
+    public synchronized JingLoggerEvent setLoggerName(String loggerName) {
+        this.loggerName = loggerName;
         return this;
     }
 
@@ -104,7 +111,7 @@ public class JingLoggerEvent {
                         break;
                     // %N - name
                     case 'N':
-                        stbr.append(level.name);
+                        stbr.append(loggerName);
                         break;
                     default:
                         stbr.append('%').append(c);

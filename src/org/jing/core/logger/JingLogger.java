@@ -238,9 +238,11 @@ import org.jing.core.util.StringUtil;
             return;
         }
         JingLoggerEvent event = new JingLoggerEvent();
-        event.setLevel(level);
-        event.setContent(msg);
-        event.generateContent();
+        event
+            .setLoggerName(this.name)
+            .setLevel(level)
+            .setContent(msg)
+            .generateContent();
 
         level.loopAppend(event);
     }
@@ -255,7 +257,7 @@ import org.jing.core.util.StringUtil;
         logger.info("info: {}", 123);
         logger.warn("warn: {}", 123);
         logger.fatal("fatal: {}", 123);
-        logger.imp("imp(: {}", 123);
+        logger.imp("imp: {}", 123);
         logger.sql("SELECT * FROM SA", 123123);
         logger.error("error: {}", 123);
         // System.out.println(CommonDemo.getJavaStackTrace());

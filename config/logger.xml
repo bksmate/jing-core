@@ -51,6 +51,7 @@
     <logger>
         <name>SQL</name>
         <appender>file-sql</appender>
+        <appender>file-daily</appender>
     </logger>
     <logger>
         <name>FATAL</name>
@@ -65,9 +66,22 @@
     </appender>
     <appender>
         <name>file-sql</name>
-        <impl>org.jing.core.logger.appender.FileAppender</impl>
+        <impl>org.jing.core.logger.appender.FileSizeAppender</impl>
         <param>
             <file>logs/sql.log</file>
+            <!-- 分割大小, 单位为Mb -->
+            <size>0.0001</size>
+        </param>
+    </appender>
+    <appender>
+        <name>file-daily</name>
+        <impl>org.jing.core.logger.appender.FileDailyAppender</impl>
+        <param>
+            <file>logs/daily.log</file>
+            <!-- 备份日志的时间格式 -->
+            <date-format>yyyyMMdd</date-format>
+            <!-- 间隔多久, 单位: 天 -->
+            <times>1</times>
         </param>
     </appender>
     <appender>

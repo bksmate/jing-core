@@ -6,8 +6,6 @@ import org.jing.core.lang.JingException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -212,11 +210,6 @@ public class StringUtil {
         return origString;
     }
 
-    public static String getDate(String format) {
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        return sdf.format(new Date());
-    }
-
     /**
      * 去掉可能有的空格/BOM头. <br>
      *
@@ -294,13 +287,58 @@ public class StringUtil {
      * @return <br>
      */
     public static int parseInteger(String string, int defaultInteger) {
-        int defaultInt = defaultInteger;
+        int retInt = defaultInteger;
         try {
-            defaultInt = Integer.parseInt(string);
-            return defaultInt;
+            retInt = Integer.parseInt(string);
+            return retInt;
         }
         catch (Exception e) {
-            return defaultInt;
+            return retInt;
+        }
+    }
+
+    public static long parseLong(String string) {
+        return parseLong(string, 0);
+    }
+
+    public static long parseLong(String string, long defaultLong) {
+        long retLong = defaultLong;
+        try {
+            retLong = Long.parseLong(string);
+            return retLong;
+        }
+        catch (Exception e) {
+            return retLong;
+        }
+    }
+
+    public static float parseFloat(String string) {
+        return parseFloat(string, 0);
+    }
+
+    public static float parseFloat(String string, float defaultFloat) {
+        float retFloat = defaultFloat;
+        try {
+            retFloat = Float.parseFloat(string);
+            return retFloat;
+        }
+        catch (Exception e) {
+            return retFloat;
+        }
+    }
+
+    public static double parseDouble(String string) {
+        return parseDouble(string, 0);
+    }
+
+    public static double parseDouble(String string, double defaultDouble) {
+        double retDouble = defaultDouble;
+        try {
+            retDouble = Double.parseDouble(string);
+            return retDouble;
+        }
+        catch (Exception e) {
+            return retDouble;
         }
     }
 

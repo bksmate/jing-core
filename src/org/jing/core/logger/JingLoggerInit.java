@@ -71,13 +71,12 @@ public final class JingLoggerInit implements JInit {
             paramC = appenderC.getCount("param") > 0 ? appenderC.getCarrier("param") : null;
             name = appenderC.getString("name", "");
             if (null != ResourcePool.getInstance().getAppenderByName(name)) {
-                // TODO
-                // 存在重名Appender
+                SingleLogger.err("Duplicate appender: {}", name);
                 continue;
             }
             impl = appenderC.getString("impl", "");
             if (StringUtil.isEmpty(impl)) {
-                // TODO
+                SingleLogger.err("Empty appender impl: {}", name);
                 continue;
             }
             try {
@@ -90,15 +89,14 @@ public final class JingLoggerInit implements JInit {
                         appender = (BaseAppender) ClassUtil.createInstance(clazz, new Pair2<Class<?>, Object>(Carrier.class, paramC));
                     }
                     catch (Exception e) {
-                        // TODO
+                        SingleLogger.err("Failed to create appender: {}: {}", name, impl);
                         continue;
                     }
                 }
                 ResourcePool.getInstance().addAppender(name, appender);
             }
             catch (Exception e) {
-                // TODO
-                continue;
+                SingleLogger.err("Failed to create appender: {}: {}", name, impl);
             }
         }
     }
@@ -147,15 +145,12 @@ public final class JingLoggerInit implements JInit {
     private void bindLevelConfig() throws JingException {
         int size = JingLoggerConfiguration.configC.getCount("logger"), size$;
         Carrier loggerC;
-        String name, filePath, appenderName;
+        String name, appenderName;
         JingLoggerLevel.LevelConfig config;
         HashMap<String, JingLoggerLevel.LevelConfig> configMap = new HashMap<>();
-        File file, dir;
         boolean hasAppender;
         BaseAppender appender;
         JingLoggerConfiguration.writerMap = new HashMap<>();
-        HashMap<String, JingLoggerWriter> writerMap = new HashMap<>();
-        JingLoggerWriter writer;
         for (int i$ = 0; i$ < size; i$++) {
             loggerC = JingLoggerConfiguration.configC.getCarrier("logger", i$);
             name = loggerC.getString("name", "").toUpperCase();
@@ -163,24 +158,6 @@ public final class JingLoggerInit implements JInit {
             config.format = loggerC.getString("format", JingLoggerConfiguration.format);
             config.encoding = loggerC.getString("encoding", JingLoggerConfiguration.encoding);
             config.dateFormat = loggerC.getString("date-format", JingLoggerConfiguration.dateFormat);
-            // file
-            /*size$ = loggerC.getCount("file");
-            for (int j$ = 0; j$ < size$; j$++) {
-                filePath = FileUtil.buildPathWithHome(loggerC.getString(j$, "file"));
-                file = new File(filePath);
-                filePath = file.getAbsolutePath();
-                try {
-                    dir = file.getParentFile();
-                    if (null != dir && !FileUtil.mkdirs(dir)) {
-                        System.err.println("Failed to mkdir: " + dir.getAbsolutePath());
-                    }
-                }
-                catch (Exception ignored) {}
-                if (null == (writer = writerMap.get(filePath))) {
-                    writerMap.put(filePath, (writer = new JingLoggerWriter(filePath)));
-                }
-                config.writerSet.add(writer);
-            }*/
             // appender
             size$ = loggerC.getCount("appender");
             hasAppender = false;
@@ -192,8 +169,7 @@ public final class JingLoggerInit implements JInit {
                     config.appenderSet.add(appender);
                 }
                 else {
-                    // TODO
-                    // 提示没找到appender
+                    SingleLogger.err("No appender match: {}", appenderName);
                 }
             }
             if (!hasAppender) {

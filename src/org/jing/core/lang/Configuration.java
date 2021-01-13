@@ -3,18 +3,17 @@ package org.jing.core.lang;
 import org.jing.core.lang.itf.JInit;
 import org.jing.core.logger.JingLogger;
 import org.jing.core.logger.JingLoggerInit;
+import org.jing.core.logger.SingleLogger;
 import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,12 +33,10 @@ public class Configuration {
 
     private static String jingHome;
 
-    private static String logDir;
-
     /**
      * 存储继承了JInit接口的类和对应实例的map. <br>
      */
-    private static final Hashtable<Class<? extends JInit>, JInit> jInitMap = new Hashtable<Class<? extends JInit>, JInit>();
+    private static final Hashtable<Class<? extends JInit>, JInit> jInitMap = new Hashtable<>();
 
     private void loadConfigFile() {
         synchronized (Configuration.class) {
@@ -49,7 +46,7 @@ public class Configuration {
             }
             jingHome = StringUtil.isEmpty(jingHome) ? "" : jingHome + File.separator;
             System.setProperty("JING_HOME", jingHome);
-            logDir = System.getProperty("JING_LOG_DIR");
+            String logDir = System.getProperty("JING_LOG_DIR");
             if (StringUtil.isEmpty(logDir)) {
                 logDir = System.getenv("JING_LOG_DIR");
             }
@@ -60,12 +57,12 @@ public class Configuration {
             String systemConfigFile = FileUtil.buildPathWithHome("config?system.xml");
             String configContent = readFile(systemConfigFile);
             if (StringUtil.isEmpty(configContent)) {
-                log("Use default configuration");
+                SingleLogger.log("Use default configuration");
                 try {
                     configCarrier = CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_CONFIG);
                 }
                 catch (Exception e) {
-                    log("Failed to use default configuration.");
+                    SingleLogger.err("Failed to use default configuration.");
                 }
             }
             else {
@@ -74,7 +71,7 @@ public class Configuration {
                     configCarrier = CarrierUtil.string2Carrier(configContent);
                 }
                 catch (Exception e) {
-                    log("Failed to transfer configuration xml.");
+                    SingleLogger.err("Failed to transfer configuration xml.");
                 }
             }
         }
@@ -136,7 +133,8 @@ public class Configuration {
     private String readFile(String filePath) {
         StringBuilder stbr = new StringBuilder();
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filePath)), "utf-8"));
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(new FileInputStream(new File(filePath)), StandardCharsets.UTF_8));
             String row;
             boolean newLineFlag = false;
             while (null != (row = br.readLine())) {
@@ -151,40 +149,10 @@ public class Configuration {
             br.close();
         }
         catch (Exception e) {
-            log("Failed to read file: {}", filePath);
+            SingleLogger.err("Failed to read file: {}", filePath);
         }
 
         return stbr.toString();
-    }
-
-    private static void writeFile(String filePath, String content) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(filePath), true), "utf-8"));
-            bw.write(content);
-            bw.newLine();
-            bw.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
-
-    public static void log(String content, Object... parameters) {
-        content = StringUtil.mixParameters(content, parameters);
-        content = getLogPrefix() + content;
-        System.out.println(content);
-        File logFile = new File(logDir);
-        if (logFile.exists() || logFile.mkdirs()) {
-            writeFile(logDir + File.separator + "start.log", content);
-        }
-        else {
-            System.out.println("Failed to create start.log, shut down.");
-        }
-    }
-
-    private static String getLogPrefix() {
-        return StringUtil.getDate("[yyyy-MM-dd HH:mm:ss.SSS]") + "===>jing.System: ";
     }
 
     private void init() {
@@ -194,15 +162,15 @@ public class Configuration {
             register();
         }
         catch (Exception e) {
-            log("Failed to initialize configuration.");
-            log(StringUtil.getErrorStack(e));
+            SingleLogger.err("Failed to initialize configuration.");
+            SingleLogger.err(StringUtil.getErrorStack(e));
             System.exit(-1);
         }
     }
 
     private void register() throws JingException {
         int count = configCarrier.getCount("init");
-        List<Carrier> initCarrierList = new ArrayList<Carrier>();
+        List<Carrier> initCarrierList = new ArrayList<>();
         for (int i$ = 0; i$ < count; i$++) {
             initCarrierList.add(configCarrier.getCarrier("init", i$));
         }
@@ -251,28 +219,29 @@ public class Configuration {
 
     /**
      * Description:  <br>
-     *     初始化继承了JInit接口的类. <br>
-     *     通过这个方式初始化的话, 在整个系统生命力只会初始化一次, 算是个伪造的单例模式. <br>
+     * 初始化继承了JInit接口的类. <br>
+     * 通过这个方式初始化的话, 在整个系统生命力只会初始化一次, 算是个伪造的单例模式. <br>
      *
-     * @author: bks <br>
      * @param type <br>
      * @return org.jing.core.lang.itf.JInit <br>
+     * @author: bks <br>
      */
-    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    public JInit register(Class<? extends JInit> type, Carrier... parameters) {
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter") public JInit register(
+        Class<? extends JInit> type, Carrier... parameters) {
         if (!jInitMap.containsKey(type)) {
             synchronized (type) {
                 if (!jInitMap.containsKey(type)) {
                     try {
                         JInit init = type.newInstance();
-                        type.getDeclaredMethod("init", Carrier.class).invoke(init, null != parameters && parameters.length > 0 ? parameters[0] : null);
+                        type.getDeclaredMethod("init", Carrier.class)
+                            .invoke(init, null != parameters && parameters.length > 0 ? parameters[0] : null);
                         jInitMap.put(type, init);
-                        log("Success to register class: {}", type.getName());
+                        SingleLogger.log("Success to register class: {}", type.getName());
                         return init;
                     }
                     catch (Exception e) {
-                        log("Failed to register: {}.", type.getName());
-                        log(StringUtil.getErrorStack(e));
+                        SingleLogger.err("Failed to register: {}.", type.getName());
+                        SingleLogger.err(StringUtil.getErrorStack(e));
                         System.exit(-1);
                     }
                 }
@@ -283,12 +252,12 @@ public class Configuration {
 
     /**
      * Description:  <br>
-     *     获取继承了JInit接口的类的实例. <br>
-     *     假如缓存里没有该实例, 直接初始化一个并存入缓存里. <br>
+     * 获取继承了JInit接口的类的实例. <br>
+     * 假如缓存里没有该实例, 直接初始化一个并存入缓存里. <br>
      *
-     * @author: bks <br>
      * @param type <br>
      * @return org.jing.core.lang.itf.JInit <br>
+     * @author: bks <br>
      */
     public JInit getRegisterClass(Class<? extends JInit> type, Carrier... parameters) {
         if (!jInitMap.containsKey(type)) {
@@ -298,7 +267,7 @@ public class Configuration {
                 }
             }
         }
-        log("Success to get class: {}", type.getName());
+        SingleLogger.log("Success to get class: {}", type.getName());
         return jInitMap.get(type);
     }
 
