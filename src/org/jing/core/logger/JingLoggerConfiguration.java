@@ -23,8 +23,6 @@ import java.util.HashMap;
 
     static JingLoggerLevel rootLevel;
 
-    static HashMap<String, JingLoggerWriter> writerMap;
-
     static boolean stdOut = true;
 
     public static synchronized void setGlobalStdOut(boolean stdOut) {

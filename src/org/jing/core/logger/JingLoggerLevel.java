@@ -19,12 +19,9 @@ import java.util.HashSet;
 
         String dateFormat;
 
-        HashSet<JingLoggerWriter> writerSet;
-
         HashSet<BaseAppender> appenderSet;
 
         LevelConfig() {
-            writerSet = new HashSet<>();
             appenderSet = new HashSet<>();
         }
 

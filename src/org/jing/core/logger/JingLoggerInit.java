@@ -150,7 +150,6 @@ public final class JingLoggerInit implements JInit {
         HashMap<String, JingLoggerLevel.LevelConfig> configMap = new HashMap<>();
         boolean hasAppender;
         BaseAppender appender;
-        JingLoggerConfiguration.writerMap = new HashMap<>();
         for (int i$ = 0; i$ < size; i$++) {
             loggerC = JingLoggerConfiguration.configC.getCarrier("logger", i$);
             name = loggerC.getString("name", "").toUpperCase();

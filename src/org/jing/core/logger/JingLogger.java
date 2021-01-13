@@ -138,20 +138,20 @@ import org.jing.core.util.StringUtil;
 
 
     public void sql(String msg, int session) {
-        if (JingLoggerLevelExtend.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevelExtend.SQL, String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg));
+        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg));
         }
     }
 
     public void sql(String msg, String parameters, int session) {
-        if (JingLoggerLevelExtend.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevelExtend.SQL, String.format("[Session: %s]%s%s [%s]", session, JingLoggerConfiguration.newLine, msg, parameters));
+        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s [%s]", session, JingLoggerConfiguration.newLine, msg, parameters));
         }
     }
 
     public void sql(String msg, int session, Object... parameters) {
-        if (JingLoggerLevelExtend.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevelExtend.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg), parameters));
+        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevel.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg), parameters));
         }
     }
 

@@ -4,7 +4,7 @@
     <!-- root level -->
     <root-level>ALL</root-level>
     <!-- extra level implements -->
-    <impl>org.jing.core.logger.JingLoggerLevelExtend</impl>
+    <!--<impl>org.jing.core.logger.JingLoggerLevelExtend</impl>-->
     <!-- check if need stdout ignoring case, default true -->
     <stdout>true</stdout>
     <!-- global date format -->
