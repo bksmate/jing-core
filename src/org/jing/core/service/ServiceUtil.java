@@ -6,6 +6,7 @@ import org.jing.core.lang.JingException;
 import org.jing.core.lang.annotation.ServiceCode;
 import org.jing.core.lang.itf.JService;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.JingLoggerConfiguration;
 import org.jing.core.util.StringUtil;
 
 import java.lang.reflect.Method;
@@ -25,7 +26,7 @@ public class ServiceUtil {
 
     public static Object callService(String serviceCode, Object param) throws JingException {
         ExceptionHandler.publishWithCheck(StringUtil.isEmpty(serviceCode), "PATH-0002", "Service Code is empty");
-        LOGGER.debug("[request:\r\n{}]", param instanceof Carrier ? ((Carrier) param).asXML() : param);
+        LOGGER.debug("[request:{}{}]", JingLoggerConfiguration.getGlobalNewLine(), param instanceof Carrier ? ((Carrier) param).asXML() : param);
         // 1. 找映射类
         Class<? super JService> tempJService = ServiceInit.mappingService(serviceCode);
         ExceptionHandler.publishWithCheck(null == tempJService, "PATH-0003", "Cannot find Service: " + serviceCode);
@@ -63,7 +64,7 @@ public class ServiceUtil {
             ExceptionHandler.publish("PATH-0004", "Service Inner Exception", e);
             retObject = null;
         }
-        LOGGER.debug("[response:\r\n{}]", param instanceof Carrier ? ((Carrier) param).asXML() : param);
+        LOGGER.debug("[response:{}{}]", JingLoggerConfiguration.getGlobalNewLine(), param instanceof Carrier ? ((Carrier) param).asXML() : param);
         return retObject;
     }
 }

@@ -15,7 +15,7 @@
     <format>[%d][%t][%N->>-%M->>-%l][%p] - %m%n</format>
     <logger>
         <name>ALL</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
         <!-- special date format -->
         <!--<date-format>yyyy-MM-dd HH:mm:ss SSS</date-format>-->
         <!-- special encoding -->
@@ -25,35 +25,56 @@
     </logger>
     <logger>
         <name>TRACE</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
     </logger>
     <logger>
         <name>DEBUG</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
     </logger>
     <logger>
         <name>INFO</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
     </logger>
     <logger>
         <name>WARN</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
     </logger>
     <logger>
         <name>ERROR</name>
-        <file>logs/jing.log</file>
-        <file>logs/error.log</file>
+        <appender>file-jing</appender>
+        <appender>file-err</appender>
     </logger>
     <logger>
         <name>IMP</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
     </logger>
     <logger>
         <name>SQL</name>
-        <file>logs/sql.log</file>
+        <appender>file-sql</appender>
     </logger>
     <logger>
         <name>FATAL</name>
-        <file>logs/jing.log</file>
+        <appender>file-jing</appender>
     </logger>
+    <appender>
+        <name>file-jing</name>
+        <impl>org.jing.core.logger.appender.FileAppender</impl>
+        <param>
+            <file>logs/jing.log</file>
+        </param>
+    </appender>
+    <appender>
+        <name>file-sql</name>
+        <impl>org.jing.core.logger.appender.FileAppender</impl>
+        <param>
+            <file>logs/sql.log</file>
+        </param>
+    </appender>
+    <appender>
+        <name>file-err</name>
+        <impl>org.jing.core.logger.appender.FileAppender</impl>
+        <param>
+            <file>logs/err.log</file>
+        </param>
+    </appender>
 </jing>

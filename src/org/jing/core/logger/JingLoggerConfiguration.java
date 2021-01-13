@@ -1,10 +1,12 @@
 package org.jing.core.logger;
 
 import org.jing.core.lang.Carrier;
+import org.jing.core.lang.JingException;
+import org.jing.core.logger.appender.EmptyAppender;
+import org.jing.core.logger.appender.BaseAppender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Description: <br>
@@ -12,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
-public class JingLoggerConfiguration {
+@SuppressWarnings("unused") public final class JingLoggerConfiguration {
     private JingLoggerConfiguration() {}
 
     static Carrier configC;
@@ -20,8 +22,6 @@ public class JingLoggerConfiguration {
     static ArrayList<JingLoggerLevel> levelList;
 
     static JingLoggerLevel rootLevel;
-
-    static HashMap<String, ConcurrentLinkedQueue<byte[]>> contentMap;
 
     static HashMap<String, JingLoggerWriter> writerMap;
 
@@ -73,5 +73,16 @@ public class JingLoggerConfiguration {
 
     public static synchronized String getGlobalNewLine() {
         return JingLoggerConfiguration.newLine;
+    }
+
+    private static BaseAppender emptyAppender = null;
+
+    public static BaseAppender getEmptyAppender() throws JingException {
+        synchronized (JingLoggerConfiguration.class) {
+            if (null == emptyAppender) {
+                emptyAppender = new EmptyAppender(null);
+            }
+        }
+        return emptyAppender;
     }
 }

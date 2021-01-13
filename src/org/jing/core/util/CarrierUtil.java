@@ -3,6 +3,7 @@ package org.jing.core.util;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.jing.core.json.CharReader;
 import org.jing.core.json.Parser;
 import org.jing.core.json.TokenList;
@@ -249,5 +250,19 @@ public class CarrierUtil {
         CharReader charReader = new CharReader(new StringReader(jsonContent));
         TokenList tokens = new Tokenizer().tokenize(charReader);
         return new Parser().parse(tokens, rootNodeName);
+    }
+
+    public static OutputFormat generateXMLFormat(boolean needHead, boolean expandEmptyElements, boolean newLines, String indent) {
+        OutputFormat format = new OutputFormat();
+        format.setExpandEmptyElements(expandEmptyElements);
+        format.setNewlines(newLines);
+        if (StringUtil.isNotEmpty(indent)) {
+            format.setIndent(true);
+            format.setIndent(indent);
+        }
+        else {
+            format.setIndent(false);
+        }
+        return format;
     }
 }

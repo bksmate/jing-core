@@ -7,6 +7,7 @@ package org.jing.core.logger;
  * @createDate: 2020-12-31 <br>
  */
 @SuppressWarnings({ "WeakerAccess", "unused" })
+@Deprecated
 public class JingLoggerLevelExtend extends JingLoggerLevel {
     protected JingLoggerLevelExtend(int priority, String name, boolean synchronize) {
         super(priority, name, synchronize);
@@ -16,5 +17,5 @@ public class JingLoggerLevelExtend extends JingLoggerLevel {
         super(priority, name);
     }
 
-    public static final JingLoggerLevelExtend SQL = new JingLoggerLevelExtend(39999, "SQL", true);
+    public static final JingLoggerLevelExtend TEMP = new JingLoggerLevelExtend(39999, "TEMP", true);
 }

@@ -1,9 +1,7 @@
 package org.jing.core.logger;
 
 import org.jing.core.lang.Configuration;
-import org.jing.core.util.DateUtil;
 import org.jing.core.util.StringUtil;
-import test.CommonDemo;
 
 /**
  * Description: <br>
@@ -16,10 +14,6 @@ import test.CommonDemo;
     private String name;
 
     private JingLogger() {}
-
-    @Override protected void finalize() throws Throwable {
-        System.out.println("===finalize===");
-    }
 
     public static JingLogger getLogger(Class clazz) {
         Configuration.getInstance();
@@ -243,118 +237,28 @@ import test.CommonDemo;
         if (null == level.levelConfig) {
             return;
         }
-        String content = generateMsg(level, msg);
-        if (JingLoggerConfiguration.stdOut) {
-            System.out.print(content);
-        }
-        JingLoggerWriter writer;
-        for (String outputPath : level.levelConfig.loggerPathSet) {
-            try {
-                JingLoggerConfiguration.writerMap.get(outputPath).offer(content.getBytes(level.levelConfig.encoding));
-            }
-            catch (Exception ignored) {}
-        }
-    }
+        JingLoggerEvent event = new JingLoggerEvent();
+        event.setLevel(level);
+        event.setContent(msg);
+        event.generateContent();
 
-    private String generateMsg(JingLoggerLevel level, String msg) {
-        String template = level.levelConfig.format;
-        int length = template.length();
-        char c;
-        StackTraceElement trace = null;
-        StringBuilder stbr = new StringBuilder();
-        boolean flag = false;
-        for (int i$ = 0; i$ < length; i$++) {
-            c = template.charAt(i$);
-            if (c == '%') {
-                if (!flag) {
-                    flag = true;
-                }
-                else {
-                    stbr.append(c);
-                }
-            }
-            else if (flag) {
-                switch (c) {
-                    // %d - timestamp
-                    case 'd':
-                        stbr.append(DateUtil.getCurrentDateString(level.levelConfig.dateFormat));
-                        break;
-                    // %t - threadName
-                    case 't':
-                        stbr.append(Thread.currentThread().getName());
-                        break;
-                    // %c - class
-                    case 'c':
-                        if (null == trace) {
-                            StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-                            trace = stack[stack.length - 1];
-                        }
-                        stbr.append(null == trace ? "null" : trace.getClassName());
-                        break;
-                    // %M - method
-                    case 'M':
-                        if (null == trace) {
-                            StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-                            if (stack.length > 4) {
-                                trace = stack[4];
-                            }
-                            else {
-                                trace = stack[stack.length - 1];
-                            }
-                        }
-                        stbr.append(null == trace ? "null" : trace.getMethodName());
-                        break;
-                    // %l - line
-                    case 'l':
-                        if (null == trace) {
-                            StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-                            trace = stack[stack.length - 1];
-                        }
-                        stbr.append(trace.getLineNumber());
-                        break;
-                    // %p - priority
-                    case 'p':
-                        stbr.append(level.name);
-                        break;
-                    // %m - message
-                    case 'm':
-                        stbr.append(msg);
-                        break;
-                    // %n - newline
-                    case 'n':
-                        stbr.append(JingLoggerConfiguration.newLine);
-                        break;
-                    // %N - name
-                    case 'N':
-                        stbr.append(name);
-                        break;
-                    default:
-                        stbr.append('%').append(c);
-                        break;
-                }
-                flag = false;
-            }
-            else {
-                stbr.append(c);
-            }
-        }
-        return stbr.toString();
+        level.loopAppend(event);
     }
 
     public static void main(String[] args) {
-        Configuration.getInstance();
+        // Configuration.getInstance();
         JingLogger logger = JingLogger.getLogger(JingLoggerLevel.class);
         logger.log(JingLoggerLevel.ALL, "test: {}", 123);
         logger.all("all: {}", 123);
-        logger.debug("all: {}", 123);
-        logger.trace("all: {}", 123);
-        logger.info("all: {}", 123);
-        logger.warn("all: {}", 123);
-        logger.fatal("all: {}", 123);
-        logger.imp("all: {}", 123);
+        logger.debug("debug: {}", 123);
+        logger.trace("trace: {}", 123);
+        logger.info("info: {}", 123);
+        logger.warn("warn: {}", 123);
+        logger.fatal("fatal: {}", 123);
+        logger.imp("imp(: {}", 123);
         logger.sql("SELECT * FROM SA", 123123);
         logger.error("error: {}", 123);
-        System.out.println(CommonDemo.getJavaStackTrace());
+        // System.out.println(CommonDemo.getJavaStackTrace());
 
     }
 }

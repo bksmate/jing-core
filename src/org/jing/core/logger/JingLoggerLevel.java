@@ -1,6 +1,7 @@
 package org.jing.core.logger;
 
 import org.jing.core.lang.BaseDto;
+import org.jing.core.logger.appender.BaseAppender;
 
 import java.util.HashSet;
 
@@ -10,18 +11,49 @@ import java.util.HashSet;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
-@SuppressWarnings({ "WeakerAccess", "UnusedReturnValue", "unused" }) public class JingLoggerLevel extends BaseDto {
-    static final class LevelConfig extends BaseDto {
-        HashSet<String> loggerPathSet;
-
+@SuppressWarnings({ "WeakerAccess", "unused" }) public class JingLoggerLevel extends BaseDto {
+    public static final class LevelConfig extends BaseDto {
         String format;
 
         String encoding;
 
         String dateFormat;
 
+        HashSet<JingLoggerWriter> writerSet;
+
+        HashSet<BaseAppender> appenderSet;
+
         LevelConfig() {
-            loggerPathSet = new HashSet<>();
+            writerSet = new HashSet<>();
+            appenderSet = new HashSet<>();
+        }
+
+        public synchronized void setFormat(String format) {
+            this.format = format;
+        }
+
+        public synchronized String getFormat() {
+            return this.format;
+        }
+
+        public synchronized void setEncoding(String encoding) {
+            this.encoding = encoding;
+        }
+
+        public synchronized String getEncoding() {
+            return this.encoding;
+        }
+
+        public synchronized void setDateFormat(String dateFormat) {
+            this.dateFormat = dateFormat;
+        }
+
+        public synchronized String getDateFormat() {
+            return this.dateFormat;
+        }
+
+        public synchronized void addAppender(BaseAppender appender) {
+            appenderSet.add(appender);
         }
     }
 
@@ -49,13 +81,18 @@ import java.util.HashSet;
         return levelConfig;
     }
 
-    JingLoggerLevel setLevelConfig(LevelConfig levelConfig) {
+    void setLevelConfig(LevelConfig levelConfig) {
         this.levelConfig = levelConfig;
-        return this;
     }
 
     public boolean isGreaterOrEquals(JingLoggerLevel level) {
         return this.priority == Integer.MAX_VALUE || this.priority >= level.priority;
+    }
+
+    public void loopAppend(JingLoggerEvent event) {
+        for (BaseAppender appender : levelConfig.appenderSet) {
+            appender.append(event);
+        }
     }
 
     public static final JingLoggerLevel OFF = new JingLoggerLevel(Integer.MAX_VALUE, "OFF", true);
@@ -65,6 +102,8 @@ import java.util.HashSet;
     public static final JingLoggerLevel IMP = new JingLoggerLevel(40000, "IMP", true);
 
     public static final JingLoggerLevel ERROR = new JingLoggerLevel(40000, "ERROR", true);
+
+    public static final JingLoggerLevel SQL = new JingLoggerLevel(39999, "SQL", true);
 
     public static final JingLoggerLevel WARN = new JingLoggerLevel(30000, "WARN", true);
 

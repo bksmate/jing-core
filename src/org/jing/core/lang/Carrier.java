@@ -183,11 +183,13 @@ public class Carrier {
     }
 
     public String asXML() {
-        OutputFormat xmlFormat = new OutputFormat();
-        xmlFormat.setNewlines(true);
-        xmlFormat.setIndent(true);
-        xmlFormat.setIndent("    ");
+        OutputFormat xmlFormat = CarrierUtil.generateXMLFormat(true, false, true, "    ");
         return asXML(xmlFormat, true);
+    }
+
+    public String asLightXML(boolean needHead) {
+        OutputFormat xmlFormat = CarrierUtil.generateXMLFormat(true, false, false, null);
+        return asXML(xmlFormat, needHead);
     }
 
     public String asXML(OutputFormat xmlFormat, boolean needHead) {

@@ -8,7 +8,7 @@ package org.jing.core.lang;
  * @createDate: 2019-01-25 <br>
  */
 @SuppressWarnings("unused")
-public class Const {
+public final class Const {
     /**
      * 起效状态. <br>
      */
@@ -43,5 +43,5 @@ public class Const {
 
     public static final String SYSTEM_DEFAULT_LOGGER_PARAM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><path>config?logger.xml</path></jing>";
 
-    public static final String SYSTEM_DEFAULT_LOGGER_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><logger><name>ALL</name><file>logs/jing.log</file></logger><logger><name>TRACE</name><file>logs/jing.log</file></logger><logger><name>DEBUG</name><file>logs/jing.log</file></logger><logger><name>INFO</name><file>logs/jing.log</file></logger><logger><name>WARN</name><file>logs/jing.log</file></logger><logger><name>ERROR</name><file>logs/jing.log</file><file>logs/error.log</file></logger><logger><name>IMP</name><file>logs/jing.log</file></logger><logger><name>FATAL</name><file>logs/jing.log</file></logger></jing>";
+    public static final String SYSTEM_DEFAULT_LOGGER_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><logger><name>ALL</name><appender>file-jing</appender></logger><logger><name>TRACE</name><appender>file-jing</appender></logger><logger><name>DEBUG</name><appender>file-jing</appender></logger><logger><name>INFO</name><appender>file-jing</appender></logger><logger><name>WARN</name><appender>file-jing</appender></logger><logger><name>ERROR</name><appender>file-jing</appender><appender>file-err</appender></logger><logger><name>IMP</name><appender>file-jing</appender></logger><logger><name>SQL</name><appender>file-sql</appender></logger><logger><name>FATAL</name><appender>file-jing</appender></logger><appender><impl>org.jing.core.logger.appender.FileAppender</impl><param><file>logs/jing.log</file></param><name>file-jing</name></appender><appender><impl>org.jing.core.logger.appender.FileAppender</impl><param><file>logs/sql.log</file></param><name>file-sql</name></appender><appender><impl>org.jing.core.logger.appender.FileAppender</impl><param><file>logs/err.log</file></param><name>file-err</name></appender></jing>";
 }

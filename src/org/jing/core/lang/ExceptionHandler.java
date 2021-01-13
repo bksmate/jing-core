@@ -1,6 +1,7 @@
 package org.jing.core.lang;
 
 import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.JingLoggerConfiguration;
 import org.jing.core.util.StringUtil;
 
 import java.text.SimpleDateFormat;
@@ -38,10 +39,10 @@ public class ExceptionHandler {
 
     public static void publish(String msg, Throwable e) throws JingException {
         if (null != getLogger()) {
-            getLogger().error("[{}]\r\n{}", msg, StringUtil.getErrorStack(e));
+            getLogger().error("[{}]{}{}", msg, JingLoggerConfiguration.getGlobalNewLine(), StringUtil.getErrorStack(e));
         }
         else {
-            console("[{}]\r\n{}", msg, StringUtil.getErrorStack(e));
+            console("[{}]{}{}", msg, JingLoggerConfiguration.getGlobalNewLine(), StringUtil.getErrorStack(e));
         }
         if (!Configuration.hasInit()) {
             System.exit(-1);
@@ -51,10 +52,10 @@ public class ExceptionHandler {
 
     public static void publish(String errorCode, String errorMsg, Throwable e) throws JingException {
         if (null != getLogger()) {
-            getLogger().error("[{}][{}]\r\n{}", errorCode, errorMsg, StringUtil.getErrorStack(e));
+            getLogger().error("[{}][{}]{}{}", errorCode, errorMsg, JingLoggerConfiguration.getGlobalNewLine(), StringUtil.getErrorStack(e));
         }
         else {
-            console("[{}][{}]\r\n{}", errorCode, errorMsg, StringUtil.getErrorStack(e));
+            console("[{}][{}]{}{}", errorCode, errorMsg, JingLoggerConfiguration.getGlobalNewLine(), StringUtil.getErrorStack(e));
         }
         if (!Configuration.hasInit()) {
             System.exit(-1);

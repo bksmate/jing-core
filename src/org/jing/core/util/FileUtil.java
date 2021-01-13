@@ -400,7 +400,7 @@ public class FileUtil {
         BufferedWriter writer = null;
         try {
             File parent = file.getParentFile();
-            if ((parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
+            if (null == parent || (parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
                 writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
                 writer.write(content);
                 writer.flush();
@@ -410,7 +410,7 @@ public class FileUtil {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Failed to write file {}", e, file.getAbsolutePath());
+            LOGGER.error("Failed to append file {}", e, file.getAbsolutePath());
         }
         finally {
             if (null != writer) {
@@ -460,7 +460,7 @@ public class FileUtil {
         BufferedWriter writer = null;
         try {
             File parent = file.getParentFile();
-            if ((parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
+            if (null == parent || (parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
                 writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
                 int count = GenericUtil.countList(rowList);
                 for (int i$ = 0; i$ < count; i$++) {
@@ -476,7 +476,7 @@ public class FileUtil {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Failed to write file {}", e, file.getAbsolutePath());
+            LOGGER.error("Failed to append file {}", e, file.getAbsolutePath());
         }
         finally {
             if (null != writer) {

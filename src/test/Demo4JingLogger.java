@@ -1,6 +1,7 @@
 package test;
 
 import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.JingLoggerLevel;
 
 /**
  * Description: <br>
@@ -12,16 +13,9 @@ public class Demo4JingLogger {
     private static final JingLogger LOGGER = JingLogger.getLogger(Demo4JingLogger.class);
 
     public Demo4JingLogger() {
-        for (int i$ = 0; i$ < 100; i$++) {
-            final int finalI$ = i$;
-            Runnable thread = new Runnable() {
-                @Override
-                public void run() {
-                    LOGGER.debug(finalI$);
-                }
-            };
-            new Thread(thread).start();
-        }
+        LOGGER.imp("imp1");
+        JingLoggerLevel.IMP.getLevelConfig().setFormat("%m%n");
+        LOGGER.imp("imp2");
     }
     public static void main(String[] args) {
         new Demo4JingLogger();

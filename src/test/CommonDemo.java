@@ -1,6 +1,9 @@
 package test;
 
+import org.jing.core.lang.Carrier;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.util.CarrierUtil;
+import org.jing.core.util.FileUtil;
 
 import java.lang.Exception;
 import java.util.Map;
@@ -116,20 +119,15 @@ public class CommonDemo {
     }
 
     private CommonDemo() throws Exception {
-        TestThread thread1 = new TestThread(1);
-        System.out.println(thread1.isAlive());
-        TestThread thread2 = new TestThread(2);
-        thread1.start();
-        System.out.println(thread1.isAlive());
-        thread1.lock();
-        thread2.start();
-        thread2.lock();
-        Thread.sleep(2000);
-        thread1.unlock();
-        Thread.sleep(2000);
-        thread2.unlock();
-
-        // System.out.println(getJavaStackTrace());
+        String content  = FileUtil.readFile("config/logger.xml");
+        Carrier carrier = CarrierUtil.string2Carrier(content);
+        carrier.removeByKey("stdout");
+        carrier.removeByKey("impl");
+        carrier.removeByKey("root-level");
+        carrier.removeByKey("encoding");
+        carrier.removeByKey("date-format");
+        carrier.removeByKey("format");
+        System.out.println(carrier.asLightXML(true));
     }
 
     public static void main(String[] args) throws Exception {
