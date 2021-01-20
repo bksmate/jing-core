@@ -40,8 +40,8 @@ import java.util.Date;
     @Override public void append(JingLoggerEvent event) {
         try {
             Date newDate = new Date();
-            if (Math.abs(newDate.getTime() - logFileDate.getTime()) >= timeSize) {
-                synchronized (writeLocker) {
+            synchronized (writeLocker) {
+                if (Math.abs(newDate.getTime() - logFileDate.getTime()) >= timeSize) {
                     writer.close();
                     writer = null;
                     renameToNewFile(newDate);

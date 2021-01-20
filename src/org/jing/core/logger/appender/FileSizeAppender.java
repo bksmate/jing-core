@@ -43,8 +43,8 @@ public class FileSizeAppender extends FileAppender {
 
     @Override public void append(JingLoggerEvent event) {
         try {
-            if (logFile.length() >= maxSize) {
-                synchronized (writeLocker) {
+            synchronized (writeLocker) {
+                if (logFile.length() >= maxSize) {
                     writer.close();
                     writer = null;
                     renameToNewFile();
