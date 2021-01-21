@@ -88,7 +88,7 @@ public class ServiceInit implements JInit {
                 for (String serviceCode$ : serviceCodes) {
                     if (null != serviceCode$ && serviceCode$.length() != 0) {
                         if (serviceMap.containsKey(serviceCode$)) {
-                            ExceptionHandler.publish("PATH-0000", "Duplicate Path Mapping Configuration: " + serviceCode$);
+                            throw new JingException("Duplicate Path Mapping Configuration: " + serviceCode$);
                         }
                         else {
                             try {
@@ -96,7 +96,7 @@ public class ServiceInit implements JInit {
                                 serviceMap.put(serviceCode$, (Class<? super JService>) clazz);
                             }
                             catch (Exception e) {
-                                ExceptionHandler.publish("PATH-0001", "Invalid Implements: " + clazz.getName());
+                                throw new JingException(e, "Invalid Implements: " + clazz.getName());
                             }
                         }
                     }
@@ -108,7 +108,7 @@ public class ServiceInit implements JInit {
     public static Class<? super JService> mappingService(String serviceCode) throws JingException {
         Class<? super JService> tempJService = serviceMap.get(serviceCode);
         if (null == tempJService) {
-            ExceptionHandler.publish("Failed to get service mapping: {}", serviceCode);
+            throw new JingException("Failed to get service mapping: " + serviceCode);
         }
         else {
             LOGGER.debug("Get service mapping: [serviceCode: {}][serviceImpl: {}]", serviceCode, tempJService.getName());

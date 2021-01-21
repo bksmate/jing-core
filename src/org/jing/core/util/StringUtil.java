@@ -433,8 +433,7 @@ public class StringUtil {
             return stbr.toString();
         }
         catch (Exception e) {
-            ExceptionHandler.publish(e);
+            throw new JingException(e);
         }
-        return null;
     }
 }

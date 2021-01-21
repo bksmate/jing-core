@@ -78,9 +78,7 @@ public class FileUtil {
             return new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
         }
         catch (Exception e) {
-            ExceptionHandler.publish("UTIL-FILE-00005",
-                new StringBuilder("Failed to get BufferedReader [filePath: ").append(file.getAbsolutePath()).append("]").toString(), e);
-            return null;
+            throw new JingException(e, "Failed to get bufferedReader [filePath: {}]", file.getAbsolutePath());
         }
     }
 
@@ -113,8 +111,7 @@ public class FileUtil {
             retString = stbr.toString();
         }
         catch (Exception e) {
-            ExceptionHandler.publish("UTIL-FILE-00003",
-                new StringBuilder("Failed To Read File [filePath: ").append(filePath).append("]").toString(), e);
+            throw new JingException(e, "Failed To Read File [filePath: ]", filePath);
         }
         return retString;
     }
@@ -159,8 +156,7 @@ public class FileUtil {
             br.close();
         }
         catch (Exception e) {
-            ExceptionHandler.publish("UTIL-FILE-00003",
-                new StringBuilder("Failed To Read File [filePath: ").append(filePath).append("]").toString(), e);
+            throw new JingException(e, "Failed To Read File [filePath: {}]", filePath);
         }
         return retList;
     }
@@ -216,42 +212,16 @@ public class FileUtil {
     }
 
     public static boolean copyFileByChannel(File srcFile, File destFile) throws JingException {
-        FileChannel srcChannel = null;
-        FileChannel destChannel = null;
-        try {
-            srcChannel = new FileInputStream(srcFile).getChannel();
-            destChannel = new FileOutputStream(destFile).getChannel();
+        try (
+            FileChannel srcChannel =  new FileInputStream(srcFile).getChannel();
+            FileChannel destChannel = new FileOutputStream(destFile).getChannel()
+        ) {
             destChannel.transferFrom(srcChannel, 0, srcChannel.size());
             return true;
         }
         catch (Exception e) {
-            ExceptionHandler.publish(e);
+            throw new JingException(e);
         }
-        finally {
-            try {
-                if (null != srcChannel) {
-                    srcChannel.close();
-                }
-            }
-            catch (Exception e$) {
-                LOGGER.error("", e$);
-            }
-            finally {
-                srcChannel = null;
-            }
-            try {
-                if (null != destChannel) {
-                    destChannel.close();
-                }
-            }
-            catch (Exception e$) {
-                LOGGER.error("", e$);
-            }
-            finally {
-                destChannel = null;
-            }
-        }
-        return false;
     }
 
     public static boolean copyFileByChannel(String srcFilePath, String destFilePath) throws JingException {
@@ -259,11 +229,10 @@ public class FileUtil {
     }
 
     public static boolean copyFileByStream(File srcFile, File destFile, int bufferSize) throws JingException {
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(srcFile);
-            out = new FileOutputStream(destFile);
+        try (
+            InputStream in = new FileInputStream(srcFile);
+            OutputStream out = new FileOutputStream(destFile)
+        ) {
             byte[] buffer = new byte[bufferSize];
             int len;
             while ((len = in.read(buffer)) > 0) {
@@ -272,33 +241,8 @@ public class FileUtil {
             return true;
         }
         catch (Exception e) {
-            ExceptionHandler.publish(e);
+            throw new JingException(e);
         }
-        finally {
-            try {
-                if (null != in) {
-                    in.close();
-                }
-            }
-            catch (Exception e$) {
-                LOGGER.error("", e$);
-            }
-            finally {
-                in = null;
-            }
-            try {
-                if (null != out) {
-                    out.close();
-                }
-            }
-            catch (Exception e$) {
-                LOGGER.error("", e$);
-            }
-            finally {
-                out = null;
-            }
-        }
-        return false;
     }
 
     public static boolean copyFileByStream(File srcFile, File destFile) throws JingException {
@@ -343,9 +287,6 @@ public class FileUtil {
     }
 
     public static String readResource(String filePath, boolean log) throws JingException {
-        /*if (log(log)) {
-            LOGGER.info(new StringBuilder("Try To Read File [filePath: ").append(filePath).append("]").toString());
-        }*/
         try {
             ClassLoader[] classLoader = ClassUtil.getClassLoader(FileUtil.class);
             int size = classLoader.length;
@@ -377,10 +318,9 @@ public class FileUtil {
             }
         }
         catch (Exception e) {
-            ExceptionHandler.publish("UTIL-FILE-00004",
-                new StringBuilder("Failed To Read Properties [filePath: ").append(filePath).append("]").toString(), e);
+            throw new JingException(e, "Failed To Read Properties [filePath: {}]", filePath);
         }
-        return null;
+        return "";
     }
 
     public static void writeFile(File file, String content, String encoding) {
@@ -406,7 +346,7 @@ public class FileUtil {
                 writer.flush();
             }
             else {
-                ExceptionHandler.publish("Failed to mkdirs");
+                throw new JingException("Failed to mkdirs");
             }
         }
         catch (Exception e) {
@@ -472,7 +412,7 @@ public class FileUtil {
                 writer.flush();
             }
             else {
-                ExceptionHandler.publish("Failed to mkdirs");
+                throw new JingException("Failed to mkdirs");
             }
         }
         catch (Exception e) {

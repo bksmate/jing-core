@@ -5,27 +5,22 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.jing.core.lang.Carrier;
-import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 
 import java.util.List;
-import java.util.Map;
 
-public class ToUtil {
+@SuppressWarnings("WeakerAccess") public class ToUtil {
     public static Document string2xml(String content) throws JingException {
-        Document document = null;
         try {
-            document = DocumentHelper.parseText(content);
+            return DocumentHelper.parseText(content);
         }
         catch (DocumentException e) {
-            ExceptionHandler.publish("JING-TO-0001", "Failed To Transfer String To XML Document", e);
+            throw new JingException(e, "Failed To Transfer String To XML Document");
         }
-        return document;
     }
 
     public static Carrier document2Carrier(Document document) throws JingException {
         Carrier retCarrier = new Carrier();
-
         try {
             Element rootEle = document.getRootElement();
             // 装载扩展属性.
@@ -35,7 +30,7 @@ public class ToUtil {
             element2Carrier(document.getRootElement(), retCarrier, true);
         }
         catch (Exception e) {
-            ExceptionHandler.publish("JING-TO-0003", "Invalid XML format.", e);
+            throw new JingException(e, "Invalid XML format.");
         }
 
         return retCarrier;
@@ -59,34 +54,6 @@ public class ToUtil {
             }
             else {
                 parentCarrier.setValueMap(newCarrier.getValueMap());
-            }
-        }
-    }
-
-    public static int parserInteger(Object object) {
-        if (object instanceof Integer) {
-            return (Integer) object;
-        }
-        else {
-            try {
-                return Integer.parseInt(String.valueOf(object));
-            }
-            catch (Exception e) {
-                return -1;
-            }
-        }
-    }
-
-    public static long parserLong(Object object) {
-        if (object instanceof Long) {
-            return (Long) object;
-        }
-        else {
-            try {
-                return Long.parseLong(String.valueOf(object));
-            }
-            catch (Exception e) {
-                return -1;
             }
         }
     }

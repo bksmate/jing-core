@@ -136,22 +136,39 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-
-    public void sql(String msg, int session) {
+    public void sql(int session, String msg) {
         if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg));
         }
     }
 
-    public void sql(String msg, String parameters, int session) {
+    public void sqlWithHash(Object hashObject, String msg) {
+        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s", hashObject.hashCode(), JingLoggerConfiguration.newLine, msg));
+        }
+    }
+
+    public void sql(int session, String msg, String parameters) {
         if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s [%s]", session, JingLoggerConfiguration.newLine, msg, parameters));
         }
     }
 
-    public void sql(String msg, int session, Object... parameters) {
+    public void sqlWithHash(Object hashObject, String msg, String parameters) {
+        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s [%s]", hashObject.hashCode(), JingLoggerConfiguration.newLine, msg, parameters));
+        }
+    }
+
+    public void sql(int session, String msg, Object... parameters) {
         if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg), parameters));
+        }
+    }
+
+    public void sqlWithHash(Object hashObject, String msg, Object... parameters) {
+        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
+            output(JingLoggerLevel.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", hashObject.hashCode(), JingLoggerConfiguration.newLine, msg), parameters));
         }
     }
 
@@ -258,7 +275,7 @@ import org.jing.core.util.StringUtil;
         logger.warn("warn: {}", 123);
         logger.fatal("fatal: {}", 123);
         logger.imp("imp: {}", 123);
-        logger.sql("SELECT * FROM SA", 123123);
+        logger.sql(112233, "SELECT * FROM SA", 123123);
         logger.error("error: {}", 123);
         // System.out.println(CommonDemo.getJavaStackTrace());
 

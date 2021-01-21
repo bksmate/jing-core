@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
+import org.jing.core.lang.JingExtraException;
 
 public class GenericUtil {
 
@@ -143,76 +144,5 @@ public class GenericUtil {
 
     public static <T> int countArray(T[] array) {
         return null == array ? 0 : array.length;
-    }
-
-    public static void throwNullException(Object object) throws JingException {
-        if (null == object) {
-            ExceptionHandler.publish("");
-        }
-    }
-
-    public static void throwNullException(Object object, String errorCode, String errorDescription) throws JingException {
-        if (null == object) {
-            ExceptionHandler.publish(errorCode, errorDescription);
-        }
-    }
-
-    public static void throwNullException(Object object, String msg) throws JingException {
-        if (null == object) {
-            throw new JingException(msg);
-        }
-    }
-
-    public static HashMap<String, String> clone(HashMap<String, String> hashMap) throws JingException {
-        throwNullException(hashMap, "JING-UTIL-0001", "Failed To Clone A Null HashMap");
-        return (HashMap<String, String>) hashMap.clone();
-    }
-
-    public static boolean isPrimitive(Object object) {
-        try {
-            return ((Class<?>) object.getClass().getField("TYPE").get(null)).isPrimitive();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static void setByForce(Object object, String name, Object value) throws JingException {
-        try {
-            Field field = object.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            field.set(object, value);
-        }
-        catch (Exception e) {
-            ExceptionHandler.publish("UTIL-00000",
-                new StringBuilder("Failed to set the value [").append(name).append("] of ").append(object.getClass().getName()).toString());
-        }
-    }
-
-    public static Object getByForce(Object object, String name) throws JingException {
-        try {
-            Field field = object.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            return field.get(object);
-        }
-        catch (Exception e) {
-            ExceptionHandler.publish("UTIL-00001",
-                new StringBuilder("Failed to get the value [").append(name).append("] of ").append(object.getClass().getName()).toString());
-        }
-        return null;
-    }
-
-    public static void batchSetByForce(Object object, String[] names, Object[] values) throws JingException {
-        try {
-            int count = names.length;
-            for (int i$ = 0; i$ < count; i$++) {
-                Field field$ = object.getClass().getDeclaredField(names[i$]);
-                field$.setAccessible(true);
-                field$.set(object, values[i$]);
-            }
-        }
-        catch (Exception e) {
-            ExceptionHandler.publish("UTIL-00000",
-                new StringBuilder("Failed to set the value [").append(Arrays.toString(names)).append("] of ").append(object.getClass().getName()).toString());
-        }
     }
 }

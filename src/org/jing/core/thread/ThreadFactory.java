@@ -185,11 +185,10 @@ public class ThreadFactory implements Runnable {
     public static void createThreadByIncident(Object incident, Method method, boolean forceAccess, boolean wait) throws JingException {
         ThreadFactory thread = new ThreadFactory();
         if (null == incident) {
-            ExceptionHandler.publish("Incident cannot be empty.");
-            return;
+            throw new JingException("Incident cannot be empty.");
         }
         if (null == method || StringUtil.isEmpty(method.getMethodName())) {
-            ExceptionHandler.publish("Method cannot be empty.");
+            throw new JingException("Method cannot be empty.");
         }
         thread.type = incident.getClass();
         thread.incident = incident;
@@ -212,8 +211,7 @@ public class ThreadFactory implements Runnable {
     public static void createThreadByType(Class<?> type, Constructor constructor, Method method, boolean forceAccess, boolean wait) throws JingException {
         ThreadFactory thread = new ThreadFactory();
         if (null == type) {
-            ExceptionHandler.publish("Type cannot be empty.");
-            return;
+            throw new JingException("Type cannot be empty.");
         }
         thread.type = type;
         thread.incident = null;

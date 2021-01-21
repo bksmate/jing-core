@@ -19,7 +19,6 @@ import java.util.Map;
  * @author: lxd <br>
  * @createDate 2019-01-10 17:11:02 <br>
  */
-@SuppressWarnings({ "WeakerAccess", "unused" })
 public class Carrier {
     /**
      * Description: Value Map. <br>
@@ -140,7 +139,7 @@ public class Carrier {
     public Carrier getCarrier(String key, int seq) throws JingException {
         Object temp = getValueByKey(seq, key, null);
         if (null == temp) {
-            ExceptionHandler.publish("JING-CARR-0003", "Invalid key: " + key);
+            throw new JingException("Invalid key: " + key);
         }
         if (temp instanceof Carrier) {
             return (Carrier) temp;
@@ -156,9 +155,8 @@ public class Carrier {
             return tempC;
         }
         else {
-            ExceptionHandler.publish("JING-CARR-0003", "Invalid key: " + key);
+            throw new JingException("Invalid key: " + key);
         }
-        return null;
     }
 
     public Carrier getCarrier(String key) throws JingException {

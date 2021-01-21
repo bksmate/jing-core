@@ -22,8 +22,7 @@ import java.util.Map.Entry;
 
 public class CarrierUtil {
     public static void checkFeasibility(HashMap<String, Object> valueMap) throws JingException {
-        // 检测valueMap是不是为空
-        GenericUtil.throwNullException(valueMap, "JING-CARR-0001", "Value Map Is Null");
+        ExceptionHandler.checkNull(valueMap, "Value Map Is Null");
     }
 
     public static Carrier string2Carrier(String content) throws JingException {

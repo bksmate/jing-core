@@ -27,9 +27,8 @@ public class DateUtil {
             return sdf.parse(dateStr);
         }
         catch (ParseException e) {
-            ExceptionHandler.publish("DATE-00000", "Failed to transfer String to Date", e);
+            throw new JingException(e, "Failed to transfer String to Date: [{}] with [{}]", dateStr, dateFormat);
         }
-        return null;
     }
 
     public static java.sql.Date getSqlDate(String dateStr, String dateFormat) throws JingException {

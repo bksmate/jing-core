@@ -1,6 +1,5 @@
 package org.jing.core.util;
 
-import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.Pair2;
 import org.jing.core.lang.itf.JService;
@@ -54,11 +53,8 @@ public class ClassUtil {
             }
         }
         catch (ClassNotFoundException e) {
-            ExceptionHandler.publish("UTIL-CLASS-0000",
-                new StringBuilder("Failed to load class [fullClassName: ").append(fullClassName).append("][loader: ")
-                    .append(loader.toString()).append("]").toString(), e);
+            throw new JingException(e, "Failed to load class [fullClassName: {}][loader: {}]", fullClassName, loader);
         }
-        return null;
     }
 
     public static Class<?> loadClass(String fullClassName, ClassLoader[] loaders) throws JingException {
@@ -199,8 +195,7 @@ public class ClassUtil {
                 }
             }
         } catch (IOException e) {
-            ExceptionHandler.publish("UTIL-CLASS-0001",
-                new StringBuilder("Failed to get class [packagePath: ").append(packagePath).toString(), e);
+            throw new JingException(e, "Failed to get class [packagePath: {}]", packagePath);
         }
 
         return classes;
@@ -241,8 +236,7 @@ public class ClassUtil {
             return clazz.newInstance();
         }
         catch (Exception e) {
-            ExceptionHandler.publish(e, "UTIL-CLASS-0002","Failed to create instace for class {}", clazz);
-            return null;
+            throw new JingException(e, "Failed to create instance for class [{}]", clazz.getName());
         }
     }
 
@@ -264,8 +258,51 @@ public class ClassUtil {
             }
         }
         catch (Exception e) {
-            ExceptionHandler.publish(e, "UTIL-CLASS-0002","Failed to create instace for class {}", clazz);
-            return null;
+            throw new JingException(e, "Failed to create instance for class [{}]", clazz.getName());
+        }
+    }
+
+    public static boolean isPrimitive(Object object) {
+        try {
+            return ((Class<?>) object.getClass().getField("TYPE").get(null)).isPrimitive();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static void setByForce(Object object, String name, Object value) throws JingException {
+        try {
+            Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            field.set(object, value);
+        }
+        catch (Exception e) {
+            throw new JingException(e, "Failed to set the value [{}] of [{}]", name, object.getClass().getName());
+        }
+    }
+
+    public static Object getByForce(Object object, String name) throws JingException {
+        try {
+            Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(object);
+        }
+        catch (Exception e) {
+            throw new JingException(e, "Failed to get the value [{}] of [{}]", name, object.getClass().getName());
+        }
+    }
+
+    public static void batchSetByForce(Object object, String[] names, Object[] values) throws JingException {
+        try {
+            int count = names.length;
+            for (int i$ = 0; i$ < count; i$++) {
+                Field field$ = object.getClass().getDeclaredField(names[i$]);
+                field$.setAccessible(true);
+                field$.set(object, values[i$]);
+            }
+        }
+        catch (Exception e) {
+            throw new JingException(e, "Failed to set the value [{}] of [{}]", names, object.getClass().getName());
         }
     }
 }
