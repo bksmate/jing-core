@@ -40,7 +40,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void all(String msg, Throwable throwable, Object... parameters) {
+    public void all(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.ALL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.ALL, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -58,7 +58,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void trace(String msg, Throwable throwable, Object... parameters) {
+    public void trace(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.TRACE.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.TRACE, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -76,7 +76,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void debug(String msg, Throwable throwable, Object... parameters) {
+    public void debug(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.DEBUG.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.DEBUG, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -94,7 +94,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void info(String msg, Throwable throwable, Object... parameters) {
+    public void info(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.INFO.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.INFO, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -112,7 +112,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void warn(String msg, Throwable throwable, Object... parameters) {
+    public void warn(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.WARN.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.WARN, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -130,7 +130,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void imp(String msg, Throwable throwable, Object... parameters) {
+    public void imp(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.IMP.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.IMP, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -190,13 +190,13 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void error(String msg, Throwable throwable) {
+    public void error(Throwable throwable, String msg) {
         if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.ERROR, msg + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
-    public void error(String msg, Throwable throwable, Object... parameters) {
+    public void error(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.ERROR, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -214,7 +214,7 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void fatal(String msg, Throwable throwable, Object... parameters) {
+    public void fatal(Throwable throwable, String msg, Object... parameters) {
         if (JingLoggerLevel.FATAL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(JingLoggerLevel.FATAL, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
@@ -226,19 +226,19 @@ import org.jing.core.util.StringUtil;
         }
     }
 
-    public void log(JingLoggerLevel level, Throwable throwable) {
+    public void log(Throwable throwable, JingLoggerLevel level) {
         if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(level, JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
-    public void log(JingLoggerLevel level, Throwable throwable, String msg) {
+    public void log(Throwable throwable, JingLoggerLevel level, String msg) {
         if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(level, msg+ JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
     }
 
-    public void log(JingLoggerLevel level, Throwable throwable, String msg, Object... parameters) {
+    public void log(Throwable throwable, JingLoggerLevel level, String msg, Object... parameters) {
         if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
             output(level, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
         }
