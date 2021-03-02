@@ -110,7 +110,7 @@ public class Tokenizer {
     private boolean isEscape() throws JingException {
         char ch = charReader.next();
         return (ch == '"' || ch == '\\' || ch == 'u' || ch == 'r'
-                || ch == 'n' || ch == 'b' || ch == 't' || ch == 'f');
+                || ch == 'n' || ch == 'b' || ch == 't' || ch == 'f' || ch == '/');
 
     }
 
