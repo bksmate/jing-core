@@ -292,6 +292,18 @@ public class Carrier {
         p.setValueByKey(key, value);
     }
 
+    public String asJson() {
+        return CarrierUtil.carrier2JsonContent(this);
+    }
+
+    public static Carrier parseJson(String json) throws JingException {
+        return CarrierUtil.jsonContent2Carrier(json);
+    }
+
+    public static Carrier parseXML(String xml) throws JingException {
+        return CarrierUtil.string2Carrier(xml);
+    }
+
     @Override
     public String toString() {
         return null == valueMap ? null : valueMap.toString();

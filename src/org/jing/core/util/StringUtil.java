@@ -411,7 +411,8 @@ public class StringUtil {
             .replaceAll("\\r", "\\\\r")
             .replaceAll("\\n", "\\\\n")
             .replaceAll("\"", "\\\\\"")
-            .replaceAll("\\t", "\\\\t");
+            .replaceAll("\\t", "\\\\t")
+            .replace("\\", "\\\\");
         return string;
     }
 
