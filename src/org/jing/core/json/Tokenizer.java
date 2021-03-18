@@ -84,7 +84,7 @@ public class Tokenizer {
                 if (!isEscape()) {
                     throw new JingException("Invalid escape character");
                 }
-                sb.append('\\');
+                // sb.append('\\');
                 ch = charReader.peek();
                 sb.append(ch);
                 if (ch == 'u') {

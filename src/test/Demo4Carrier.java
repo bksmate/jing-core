@@ -3,6 +3,7 @@ package test;
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.Const;
 import org.jing.core.util.CarrierUtil;
+import org.jing.core.util.FileUtil;
 
 import java.lang.Exception;
 
@@ -14,9 +15,11 @@ import java.lang.Exception;
  */
 public class Demo4Carrier {
     private Demo4Carrier() throws Exception {
-        Carrier carrier = new Carrier();
-        carrier.setValueByKey("data", "files\\upload\\QQ图片20180822172522.jpg");
-        System.out.println(CarrierUtil.carrier2JsonContent(carrier));
+        String json = FileUtil.readFile("temp/temp.json");
+        System.out.println(json);
+        Carrier carrier = Carrier.parseJson(json);
+        System.out.println(carrier.asXML());
+        System.out.println(carrier.asJson());
 
     }
 

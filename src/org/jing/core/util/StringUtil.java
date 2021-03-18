@@ -408,11 +408,11 @@ public class StringUtil {
 
     public static String escape4Json(String string) {
         string = string
+            .replace("\\", "\\\\")
             .replaceAll("\\r", "\\\\r")
             .replaceAll("\\n", "\\\\n")
             .replaceAll("\"", "\\\\\"")
-            .replaceAll("\\t", "\\\\t")
-            .replace("\\", "\\\\");
+            .replaceAll("\\t", "\\\\t");
         return string;
     }
 
