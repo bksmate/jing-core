@@ -4,6 +4,7 @@ import org.jing.core.lang.Configuration;
 import org.jing.core.lang.Const;
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
+import org.jing.core.lang.Pair2;
 import org.jing.core.logger.JingLogger;
 
 import java.io.*;
@@ -483,5 +484,29 @@ public class FileUtil {
             path = Configuration.getJingHome() + path;
             return path;
         }
+    }
+
+    /**
+     * Description: 根据文件大小获得最适合得表达式. <br>
+     * @param fileSize 文件大小 <br>
+     * @return &lt;单位(0->b, 1->kb, 2->mb, 3->gb, 4->tb), 大小&gt;
+     */
+    public static Pair2<Integer, Float> getFileSizeString(long fileSize) {
+        float rest = fileSize, temp;
+        int index = 0;
+        while (1 <= (temp = rest / 1024)) {
+            index ++;
+            rest = temp;
+            if (index == 4) {
+                break;
+            }
+        }
+        return new Pair2<>(index, rest);
+    }
+
+    public static String getGeneralFileSizeString(long fileSize) {
+        String[] units = {"b", "kb", "mb", "gb", "tb"};
+        Pair2<Integer, Float> res = getFileSizeString(fileSize);
+        return String.format("%.2f", res.getB()) + " " + units[res.getA()];
     }
 }
