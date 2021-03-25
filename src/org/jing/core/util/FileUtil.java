@@ -509,4 +509,16 @@ public class FileUtil {
         Pair2<Integer, Float> res = getFileSizeString(fileSize);
         return String.format("%.2f", res.getB()) + " " + units[res.getA()];
     }
+
+    public static String getFileSuffix(File file) {
+        return getFileSuffix(file.getName());
+    }
+
+    public static String getFileSuffix(String fileName) {
+        int potIndex = fileName.lastIndexOf(".");
+        if (-1 != potIndex) {
+            return fileName.substring(potIndex + 1);
+        }
+        return "";
+    }
 }

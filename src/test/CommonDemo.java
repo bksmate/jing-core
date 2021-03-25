@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 public class CommonDemo {
     private CommonDemo() throws Exception {
         System.out.println(FileUtil.getGeneralFileSizeString(4467982336L));
+        System.out.println(FileUtil.getFileSuffix("123456.jpg"));
     }
 
     public static void main(String[] args) throws Exception {
