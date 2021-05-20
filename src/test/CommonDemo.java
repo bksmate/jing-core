@@ -1,12 +1,6 @@
 package test;
 
-import org.jing.core.lang.Pair3;
-import org.jing.core.logger.help.LoggerUtil;
-import org.jing.core.util.FileUtil;
-import org.jing.core.util.StringUtil;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jing.core.lang.JingException;
 
 /**
  * Description: <br>
@@ -16,8 +10,14 @@ import java.util.regex.Pattern;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        System.out.println(FileUtil.getGeneralFileSizeString(4467982336L));
-        System.out.println(FileUtil.getFileSuffix("123456.jpg"));
+        try {
+            Integer.parseInt("s");
+        }
+        catch (Exception e) {
+            JingException je = new JingException(e, e.getMessage());
+            System.out.println(je.getMessage());
+            throw je;
+        }
     }
 
     public static void main(String[] args) throws Exception {

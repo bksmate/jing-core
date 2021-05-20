@@ -8,6 +8,7 @@ import org.jing.core.logger.JingLogger;
 import org.jing.core.logger.JingLoggerConfiguration;
 import org.jing.core.util.StringUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -62,8 +63,11 @@ import java.lang.reflect.Method;
                 retObject = service.execute(param);
             }
         }
+        catch (InvocationTargetException e) {
+            throw new JingException(e.getTargetException(), e.getTargetException().getMessage());
+        }
         catch (Exception e) {
-            throw new JingException(e, "Service Inner Exception");
+            throw new JingException(e, e.getMessage());
         }
         LOGGER.debug("[response:{}{}]", JingLoggerConfiguration.getGlobalNewLine(), param instanceof Carrier ? ((Carrier) param).asXML() : param);
         return retObject;

@@ -434,7 +434,30 @@ public class StringUtil {
             return stbr.toString();
         }
         catch (Exception e) {
-            throw new JingException(e);
+            throw new JingException(e, e.getMessage());
+        }
+    }
+
+    public static String getStringFromArray(String[] arr, int index, String defaultString) {
+        if (null == arr || arr.length <= index) {
+            return defaultString;
+        }
+        else {
+            return arr[index];
+        }
+    }
+
+    public static String getStringFromArray(String[] arr, int index) {
+        return getStringFromArray(arr, index, "");
+    }
+
+    public static String cutStringByMaxBytesLength(String string, String charset, int maxBytesLength) throws JingException {
+        try {
+            byte[] bytes = string.getBytes(charset);
+            return new String(bytes, 0, Math.min(maxBytesLength, bytes.length), charset);
+        }
+        catch (Exception e) {
+            throw new JingException(e, e.getMessage());
         }
     }
 }

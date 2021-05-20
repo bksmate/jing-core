@@ -221,7 +221,7 @@ public class FileUtil {
             return true;
         }
         catch (Exception e) {
-            throw new JingException(e);
+            throw new JingException(e, e.getMessage());
         }
     }
 
@@ -242,7 +242,7 @@ public class FileUtil {
             return true;
         }
         catch (Exception e) {
-            throw new JingException(e);
+            throw new JingException(e, e.getMessage());
         }
     }
 

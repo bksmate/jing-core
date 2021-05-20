@@ -118,7 +118,7 @@ public class Carrier {
 
     public String getString(int seq, String key, String defaultString) throws JingException {
         Object retObject = getValueByKey(seq, key, defaultString);
-        return StringUtil.parseString(retObject);
+        return StringUtil.ifEmpty(StringUtil.parseString(retObject), defaultString);
     }
 
     public String getString(int seq, String key) throws JingException {
@@ -128,7 +128,7 @@ public class Carrier {
 
     public String getString(String key, String defaultString) throws JingException {
         Object retObject = getValueByKey(key, defaultString);
-        return StringUtil.parseString(retObject);
+        return StringUtil.ifEmpty(StringUtil.parseString(retObject), defaultString);
     }
 
     public String getString(String key) throws JingException {
@@ -153,6 +153,9 @@ public class Carrier {
                 tempC.valueMap = new HashMap<String, Object> ((Map<? extends String, ?>) temp);
             }
             return tempC;
+        }
+        else if (temp instanceof String && StringUtil.isEmpty((String) temp)) {
+            return new Carrier();
         }
         else {
             throw new JingException("Invalid key: " + key);

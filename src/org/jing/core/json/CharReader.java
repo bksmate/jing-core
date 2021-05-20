@@ -47,7 +47,7 @@ public class CharReader {
             }
         }
         catch (Exception e) {
-            throw new JingException(e);
+            throw new JingException(e, e.getMessage());
         }
         return buffer[pos++];
     }
@@ -65,7 +65,7 @@ public class CharReader {
             return pos < size;
         }
         catch (Exception e) {
-            throw new JingException(e);
+            throw new JingException(e, e.getMessage());
         }
     }
 

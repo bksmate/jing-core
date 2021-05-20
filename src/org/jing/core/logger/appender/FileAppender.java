@@ -54,7 +54,7 @@ public class FileAppender extends BaseAppender {
             this.absoluteFilePath = filePath;
         }
         catch (Exception e) {
-            throw new JingException(e);
+            throw new JingException(e, e.getMessage());
         }
         extendInit();
     }
