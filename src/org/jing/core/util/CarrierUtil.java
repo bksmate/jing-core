@@ -5,6 +5,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.jing.core.json.CharReader;
+import org.jing.core.json.JsonFormat;
 import org.jing.core.json.Parser;
 import org.jing.core.json.TokenList;
 import org.jing.core.json.Tokenizer;
@@ -168,45 +169,52 @@ public class CarrierUtil {
         return retElement;
     }
 
-    public static String carrier2JsonContent(Carrier carrier) {
-        return carrier2JsonContent(carrier, false);
+    public static String carrier2JsonContent(Carrier carrier, JsonFormat format) {
+        return carrier2JsonContent(carrier, false, format);
     }
 
-    public static String carrier2JsonContent(Carrier carrier, boolean needRootNode) {
+    public static String carrier2JsonContent(Carrier carrier) {
+        return carrier2JsonContent(carrier, false, new JsonFormat());
+    }
+
+    public static String carrier2JsonContent(Carrier carrier, boolean needRootNode, JsonFormat format) {
         if (needRootNode) {
             StringBuilder stbr = new StringBuilder("{");
-            carrierKey2JsonContent(stbr, carrier.getRootNodeName())
-                .append(carrierValue2JsonContent(carrier.getValueMap())).append("}");
+            carrierKey2JsonContent(stbr, carrier.getRootNodeName(), format)
+                .append(carrierValue2JsonContent(carrier.getValueMap(), format)).append("}");
             return stbr.toString();
         }
         else {
-            return carrierValue2JsonContent(carrier.getValueMap());
+            return carrierValue2JsonContent(carrier.getValueMap(), format);
         }
     }
 
-    private static StringBuilder carrierKey2JsonContent(StringBuilder stbr, Object keyNode) {
-        stbr.append("\"").append(StringUtil.escape4Json(StringUtil.parseString(keyNode))).append("\":");
+    private static StringBuilder carrierKey2JsonContent(StringBuilder stbr, Object keyNode, JsonFormat format) {
+        stbr.append(format.getNewline()).append(format.getIndent()).append("\"").append(StringUtil.escape4Json(StringUtil.parseString(keyNode))).append("\":");
         return stbr;
     }
 
-    private static String carrierValue2JsonContent(Object valueNode) {
+    private static String carrierValue2JsonContent(Object valueNode, JsonFormat format) {
         StringBuilder stbr = new StringBuilder("");
         if (null == valueNode) {
             stbr.append("null");
         }
         else if (valueNode instanceof List) {
             stbr.append("[");
+            format.addLevel();
             int count = GenericUtil.countList((List<?>) valueNode);
             for (int i$ = 0; i$ < count; i$++) {
                 if (i$ > 0) {
                     stbr.append(",");
                 }
-                stbr.append(carrierValue2JsonContent(((List<?>) valueNode).get(i$)));
+                stbr.append(carrierValue2JsonContent(((List<?>) valueNode).get(i$), format));
             }
-            stbr.append("]");
+            format.reduceLevel();
+            stbr.append(format.getNewline()).append(format.getIndent()).append("]");
         }
         else if (valueNode instanceof Map) {
             stbr.append("{");
+            format.addLevel();
             Iterator iterator = ((Map) valueNode).keySet().iterator();
             Object key;
             Object value;
@@ -220,9 +228,10 @@ public class CarrierUtil {
                 else {
                     f$ = true;
                 }
-                carrierKey2JsonContent(stbr, key).append(carrierValue2JsonContent(value));
+                carrierKey2JsonContent(stbr, key, format).append(carrierValue2JsonContent(value, format));
             }
-            stbr.append("}");
+            format.reduceLevel();
+            stbr.append(format.getNewline()).append(format.getIndent()).append("}");
         }
         else if (valueNode instanceof Carrier) {
             stbr.append(carrier2JsonContent(((Carrier) valueNode)));

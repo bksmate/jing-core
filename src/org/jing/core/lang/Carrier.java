@@ -5,6 +5,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.jing.core.json.JsonFormat;
 import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.StringUtil;
 
@@ -297,6 +298,26 @@ public class Carrier {
 
     public String asJson() {
         return CarrierUtil.carrier2JsonContent(this);
+    }
+
+    public String asJson(JsonFormat format) {
+        return CarrierUtil.carrier2JsonContent(this, format);
+    }
+
+    public String asJson(String newline, String indent) {
+        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(newline, indent));
+    }
+
+    public String asJson(String newline, boolean needIndent) {
+        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(newline, needIndent));
+    }
+
+    public String asJson(boolean needNewline, String indent) {
+        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(needNewline, indent));
+    }
+
+    public String asJson(boolean needNewline, boolean needIndent) {
+        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(needNewline, needIndent));
     }
 
     public static Carrier parseJson(String json) throws JingException {

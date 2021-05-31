@@ -1,5 +1,6 @@
 package test;
 
+import org.jing.core.json.JsonFormat;
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.Const;
 import org.jing.core.util.CarrierUtil;
@@ -21,6 +22,7 @@ public class Demo4Carrier {
         System.out.println(carrier.asXML());
         System.out.println(carrier.asJson());
         System.out.println(carrier.getString("CONTENT"));
+        System.out.println(carrier.asJson(new JsonFormat(true, true)));
 
     }
 
