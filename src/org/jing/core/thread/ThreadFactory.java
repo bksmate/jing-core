@@ -1,6 +1,5 @@
 package org.jing.core.thread;
 
-import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.Pair2;
 import org.jing.core.logger.JingLogger;
@@ -199,12 +198,12 @@ public class ThreadFactory implements Runnable {
             new Thread(thread).start();
         }
         else if (wait) {
-            LOGGER.imp("No available thread. [incident: {}]", incident.getClass().getName());
-            LOGGER.imp("Try to wait. [incident: {}]", incident.getClass().getName());
+            LOGGER.debug("No available thread. [incident: {}]", incident.getClass().getName());
+            LOGGER.debug("Try to wait. [incident: {}]", incident.getClass().getName());
             addWaiting(thread);
         }
         else {
-            LOGGER.imp("No available thread for no wait. [incident: {}]", incident.getClass().getName());
+            LOGGER.debug("No available thread for no wait. [incident: {}]", incident.getClass().getName());
         }
     }
 
@@ -222,12 +221,12 @@ public class ThreadFactory implements Runnable {
             new Thread(thread).start();
         }
         else if (wait) {
-            LOGGER.imp("No available thread. [type: {}]", type.getName());
-            LOGGER.imp("Try to wait. [type: {}]", type.getName());
+            LOGGER.debug("No available thread. [type: {}]", type.getName());
+            LOGGER.debug("Try to wait. [type: {}]", type.getName());
             addWaiting(thread);
         }
         else {
-            LOGGER.imp("No available thread for no wait. [type: {}]", type.getName());
+            LOGGER.debug("No available thread for no wait. [type: {}]", type.getName());
         }
     }
 
@@ -276,5 +275,6 @@ public class ThreadFactory implements Runnable {
             removeThread(this);
             notifyAvailableThread();
         }
+        Thread.currentThread().interrupt();
     }
 }

@@ -1,6 +1,8 @@
 package test;
 
-import org.jing.core.lang.JingException;
+import org.jing.core.util.DateUtil;
+
+import java.util.Calendar;
 
 /**
  * Description: <br>
@@ -10,14 +12,7 @@ import org.jing.core.lang.JingException;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        try {
-            Integer.parseInt("s");
-        }
-        catch (Exception e) {
-            JingException je = new JingException(e, e.getMessage());
-            System.out.println(je.getMessage());
-            throw je;
-        }
+        System.out.println(DateUtil.getTimeBetween("20210524", "yyyyMMdd", "2021052301", "yyyyMMddHH", Calendar.DATE));
     }
 
     public static void main(String[] args) throws Exception {

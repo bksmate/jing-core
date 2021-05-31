@@ -81,21 +81,40 @@ public class Tokenizer {
         for (;;) {
             char ch = charReader.next();
             if (ch == '\\') {
-                if (!isEscape()) {
-                    throw new JingException("Invalid escape character");
-                }
-                // sb.append('\\');
-                ch = charReader.peek();
-                sb.append(ch);
-                if (ch == 'u') {
-                    for (int i = 0; i < 4; i++) {
-                        ch = charReader.next();
-                        if (isHex(ch)) {
-                            sb.append(ch);
-                        } else {
-                            throw new JingException("Invalid character");
+                ch = charReader.next();
+                switch (ch) {
+                    case '"':
+                    case '\\':
+                    case '/':
+                        sb.append(ch);
+                        break;
+                    case 'u':
+                        for (int i = 0; i < 4; i++) {
+                            ch = charReader.next();
+                            if (isHex(ch)) {
+                                sb.append(ch);
+                            } else {
+                                throw new JingException("Invalid character");
+                            }
                         }
-                    }
+                        break;
+                    case 'r':
+                        sb.append('\r');
+                        break;
+                    case 'n':
+                        sb.append('\n');
+                        break;
+                    case 'b':
+                        sb.append('\b');
+                        break;
+                    case 't':
+                        sb.append('\t');
+                        break;
+                    case 'f':
+                        sb.append('\f');
+                        break;
+                    default:
+                        throw new JingException("Invalid escape character");
                 }
             } else if (ch == '"') {
                 return new Token(TokenType.STRING, sb.toString());
@@ -107,16 +126,17 @@ public class Tokenizer {
         }
     }
 
+    @Deprecated
     private boolean isEscape() throws JingException {
         char ch = charReader.next();
         return (ch == '"' || ch == '\\' || ch == 'u' || ch == 'r'
-                || ch == 'n' || ch == 'b' || ch == 't' || ch == 'f' || ch == '/');
+            || ch == 'n' || ch == 'b' || ch == 't' || ch == 'f' || ch == '/');
 
     }
 
     private boolean isHex(char ch) {
         return ((ch >= '0' && ch <= '9') || ('a' <= ch && ch <= 'f')
-                || ('A' <= ch && ch <= 'F'));
+            || ('A' <= ch && ch <= 'F'));
     }
 
     private Token readNumber() throws JingException {
@@ -235,7 +255,7 @@ public class Tokenizer {
             return new Token(TokenType.BOOLEAN, "true");
         } else {
             if (!(charReader.next() == 'a' && charReader.next() == 'l'
-                    && charReader.next() == 's' && charReader.next() == 'e')) {
+                && charReader.next() == 's' && charReader.next() == 'e')) {
                 throw new JingException("Invalid json string");
             }
 

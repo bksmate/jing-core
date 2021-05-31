@@ -20,6 +20,7 @@ public class Demo4Carrier {
         Carrier carrier = Carrier.parseJson(json);
         System.out.println(carrier.asXML());
         System.out.println(carrier.asJson());
+        System.out.println(carrier.getString("CONTENT"));
 
     }
 
