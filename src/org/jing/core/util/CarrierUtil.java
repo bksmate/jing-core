@@ -190,12 +190,15 @@ public class CarrierUtil {
     }
 
     private static StringBuilder carrierKey2JsonContent(StringBuilder stbr, Object keyNode, JsonFormat format) {
-        stbr.append(format.getNewline()).append(format.getIndent()).append("\"").append(StringUtil.escape4Json(StringUtil.parseString(keyNode))).append("\":");
+        if (StringUtil.isNotEmpty(format.getNewline())) {
+            stbr.append(format.getNewline()).append(format.getIndent());
+        }
+        stbr.append("\"").append(StringUtil.escape4Json(StringUtil.parseString(keyNode))).append("\":");
         return stbr;
     }
 
     private static String carrierValue2JsonContent(Object valueNode, JsonFormat format) {
-        StringBuilder stbr = new StringBuilder("");
+        StringBuilder stbr = new StringBuilder();
         if (null == valueNode) {
             stbr.append("null");
         }
@@ -206,6 +209,9 @@ public class CarrierUtil {
             for (int i$ = 0; i$ < count; i$++) {
                 if (i$ > 0) {
                     stbr.append(",");
+                    if (StringUtil.isEmpty(format.getNewline())) {
+                        stbr.append(format.getSpace());
+                    }
                 }
                 stbr.append(format.getNewline()).append(format.getIndent()).append(carrierValue2JsonContent(((List<?>) valueNode).get(i$), format));
             }
@@ -224,6 +230,9 @@ public class CarrierUtil {
                 value = ((Map) valueNode).get(key);
                 if (f$) {
                     stbr.append(",");
+                    if (StringUtil.isEmpty(format.getNewline())) {
+                        stbr.append(format.getSpace());
+                    }
                 }
                 else {
                     f$ = true;
@@ -241,10 +250,10 @@ public class CarrierUtil {
             || valueNode instanceof Short
             || valueNode instanceof Double
             || valueNode instanceof Float) {
-            stbr.append(StringUtil.escape4Json(StringUtil.parseString(valueNode)));
+            stbr.append(format.getSpace()).append(StringUtil.escape4Json(StringUtil.parseString(valueNode)));
         }
         else {
-            stbr.append("\"").append(StringUtil.escape4Json(StringUtil.parseString(valueNode))).append("\"");
+            stbr.append(format.getSpace()).append("\"").append(StringUtil.escape4Json(StringUtil.parseString(valueNode))).append("\"");
         }
         return stbr.toString();
     }

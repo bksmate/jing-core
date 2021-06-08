@@ -13,9 +13,13 @@ public class JsonFormat {
 
     private static final String DEFAULT_NEWLINE = "\r\n";
 
+    private static final String DEFAULT_SPACE = " ";
+
     private String newline;
 
     private String indent;
+
+    private String space = DEFAULT_SPACE;
 
     private int level;
 
@@ -46,6 +50,14 @@ public class JsonFormat {
     public JsonFormat() {
         this.newline = null;
         this.indent = null;
+    }
+
+    public String getSpace() {
+        return space;
+    }
+
+    public void setSpace(String space) {
+        this.space = space;
     }
 
     public String getNewline() {
