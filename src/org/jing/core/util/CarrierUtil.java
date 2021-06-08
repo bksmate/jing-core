@@ -207,7 +207,7 @@ public class CarrierUtil {
                 if (i$ > 0) {
                     stbr.append(",");
                 }
-                stbr.append(carrierValue2JsonContent(((List<?>) valueNode).get(i$), format));
+                stbr.append(format.getNewline()).append(format.getIndent()).append(carrierValue2JsonContent(((List<?>) valueNode).get(i$), format));
             }
             format.reduceLevel();
             stbr.append(format.getNewline()).append(format.getIndent()).append("]");
@@ -234,7 +234,7 @@ public class CarrierUtil {
             stbr.append(format.getNewline()).append(format.getIndent()).append("}");
         }
         else if (valueNode instanceof Carrier) {
-            stbr.append(carrier2JsonContent(((Carrier) valueNode)));
+            stbr.append(carrier2JsonContent((Carrier) valueNode, format));
         }
         else if (valueNode instanceof Long
             || valueNode instanceof Integer

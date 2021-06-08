@@ -83,4 +83,8 @@ public class JsonFormat {
     public void reduceLevel() {
         this.level --;
     }
+
+    public String getDefaultNewline() {
+        return DEFAULT_NEWLINE;
+    }
 }
