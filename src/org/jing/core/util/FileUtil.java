@@ -162,42 +162,66 @@ public class FileUtil {
         return retList;
     }
 
-    public static void zip(String zipFilePath, String srcFilePath) throws Exception {
+    public static void zip(String zipFilePath, String srcFilePath) throws JingException {
+        zip(zipFilePath, srcFilePath, false);
+    }
+
+    public static void zip(String zipFilePath, String srcFilePath, boolean skipParentDirectory) throws JingException {
         File zipFile = new File(zipFilePath);
         if (zipFile.exists()) {
             zipFile.delete();
         }
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
-        File sourceFile = new File(srcFilePath);
-        zipSubFunc(out, sourceFile, sourceFile.getName());
-        out.close();
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            File sourceFile = new File(srcFilePath);
+            if (skipParentDirectory && !sourceFile.isDirectory()) {
+                throw new JingException("Src file must be directory");
+            }
+            String base = sourceFile.getName();
+            if (skipParentDirectory) {
+                File[] fileList = sourceFile.listFiles();
+                int count = GenericUtil.countArray(fileList);
+                for (int i$ = 0; i$ < count; i$++) {
+                    zipSubFunc(out, fileList[i$], fileList[i$].getName());
+                }
+            }
+            else {
+                zipSubFunc(out, sourceFile, base);
+            }
+        }
+        catch (JingException e) {
+            throw e;
+        }
+        catch (Throwable t) {
+            throw new JingException(t, t.getMessage());
+        }
     }
 
-    public static void zipSubFunc(ZipOutputStream out, File srcFile, String base)
-        throws Exception {
+    private static void zipSubFunc(ZipOutputStream out, File srcFile, String base) throws Exception {
         if (srcFile.isDirectory()) {
-            File[] flist = srcFile.listFiles();
-            int count = GenericUtil.countArray(flist);
+            File[] fileList = srcFile.listFiles();
+            int count = GenericUtil.countArray(fileList);
             if (count == 0) {
                 out.putNextEntry(new ZipEntry(base + File.separator));
             }
             else {
                 for (int i$ = 0; i$ < count; i$++) {
-                    zipSubFunc(out, flist[i$], base + File.separator + flist[i$].getName());
+                    zipSubFunc(out, fileList[i$], base + File.separator + fileList[i$].getName());
                 }
             }
         }
         else {
             out.putNextEntry(new ZipEntry(base));
-            FileInputStream fos = new FileInputStream(srcFile);
-            BufferedInputStream bis = new BufferedInputStream(fos);
-            int tag;
-            while ((tag = bis.read()) != -1) {
-                out.write(tag);
+            try (
+                FileInputStream fos = new FileInputStream(srcFile);
+                BufferedInputStream bis = new BufferedInputStream(fos)
+            ) {
+                int tag;
+                while ((tag = bis.read()) != -1) {
+                    out.write(tag);
+                }
+                bis.close();
+                fos.close();
             }
-            bis.close();
-            fos.close();
-
         }
     }
 

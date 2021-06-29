@@ -20,17 +20,7 @@ import java.util.regex.Pattern;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        String xml = FileUtil.readFile("temp/temp.xml");
-        System.out.println(xml);
-        xml = xml.replaceAll(">\\s+?<", "><");
-        System.out.println(xml);
-        /*Pattern pattern = Pattern.compile(">\\s+?<");
-        Matcher matcher = pattern.matcher(xml);
-        if (matcher.find()) {
-            System.out.println(matcher.group());
-        }*/
-        Document document = DocumentHelper.parseText(xml);
-        System.out.println(document);
+        FileUtil.zip("temp.zip", "src", true);
     }
 
     public static void main(String[] args) throws Exception {
