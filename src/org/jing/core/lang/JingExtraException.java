@@ -32,13 +32,13 @@ public class JingExtraException extends JingException {
     }
 
     public JingExtraException(Throwable throwable, String errCode, String errMsg) {
-        super(String.format(ERR_MSG_FORMAT, errCode, errMsg), throwable);
+        super(throwable, String.format(ERR_MSG_FORMAT, errCode, errMsg));
         this.errCode = errCode;
         this.errMsg = errMsg;
     }
 
     public JingExtraException(Throwable throwable, String errCode, String errMsg, Object parameters) {
-        super(String.format(ERR_MSG_FORMAT, errCode, StringUtil.mixParameters(errMsg, parameters)), throwable);
+        super(throwable, String.format(ERR_MSG_FORMAT, errCode, StringUtil.mixParameters(errMsg, parameters)));
         this.errCode = errCode;
         this.errMsg = StringUtil.mixParameters(errMsg, parameters);
     }

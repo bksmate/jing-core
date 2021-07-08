@@ -30,6 +30,6 @@ public class JingException extends Exception {
     }
 
     public JingException(Throwable cause) {
-        super(cause);
+        super("", cause);
     }
 }

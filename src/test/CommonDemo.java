@@ -1,16 +1,8 @@
 package test;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.jing.core.util.DateUtil;
-import org.jing.core.util.FileUtil;
-import org.jing.core.util.GenericUtil;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jing.core.lang.Carrier;
+import org.jing.core.lang.JingException;
+import org.jing.core.lang.JingExtraException;
 
 /**
  * Description: <br>
@@ -20,7 +12,13 @@ import java.util.regex.Pattern;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        FileUtil.zip("temp.zip", "src", true);
+        try {
+            Carrier carrier = new Carrier();
+            Carrier.class.getMethod("getCarrier", String.class).invoke(carrier, "123");
+        }
+        catch (Throwable t) {
+            throw new JingExtraException(t, "E003", "Msg");
+        }
     }
 
     public static void main(String[] args) throws Exception {
