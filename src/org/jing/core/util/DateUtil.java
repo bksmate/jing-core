@@ -1,6 +1,5 @@
 package org.jing.core.util;
 
-import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 import org.jing.core.logger.JingLogger;
 

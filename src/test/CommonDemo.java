@@ -1,8 +1,8 @@
 package test;
 
-import org.jing.core.lang.Carrier;
-import org.jing.core.lang.JingException;
-import org.jing.core.lang.JingExtraException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 /**
  * Description: <br>
@@ -12,13 +12,21 @@ import org.jing.core.lang.JingExtraException;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        try {
-            Carrier carrier = new Carrier();
-            Carrier.class.getMethod("getCarrier", String.class).invoke(carrier, "123");
+        Socket socket = new Socket("127.0.0.1", 15999);
+        OutputStream writer = socket.getOutputStream();
+        InputStream reader = socket.getInputStream();
+        writer.write("123123".getBytes("GBK"));
+        writer.flush();
+        byte[] buffer = new byte[1024];
+        int pos;
+        StringBuilder stbr = new StringBuilder();
+        while (-1 != (pos = reader.read(buffer))) {
+            stbr.append(new String(buffer, 0, pos, "gbk"));
         }
-        catch (Throwable t) {
-            throw new JingExtraException(t, "E003", "Msg");
-        }
+        String response = stbr.toString();
+        reader.close();
+        writer.close();
+        socket.close();
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,7 +1,6 @@
 package org.jing.core.service;
 
 import org.jing.core.lang.Carrier;
-import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.annotation.ServiceCode;
 import org.jing.core.lang.itf.JInit;
