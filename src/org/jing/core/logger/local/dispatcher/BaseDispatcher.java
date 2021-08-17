@@ -1,8 +1,8 @@
-package org.jing.core.logger.dispatcher;
+package org.jing.core.logger.local.dispatcher;
 
-import org.jing.core.logger.JingLoggerConfiguration;
-import org.jing.core.logger.JingLoggerEvent;
-import org.jing.core.logger.appender.BaseAppender;
+import org.jing.core.logger.local.LocalLoggerConfiguration;
+import org.jing.core.logger.local.LocalLoggerEvent;
+import org.jing.core.logger.local.appender.BaseAppender;
 import org.jing.core.util.StringUtil;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class BaseDispatcher extends Thread {
     protected final BaseAppender appender;
 
-    protected final ArrayList<JingLoggerEvent> buffer;
+    protected final ArrayList<LocalLoggerEvent> buffer;
 
     protected BaseDispatcher(BaseAppender appender) {
         this.appender = appender;
@@ -35,7 +35,7 @@ public class BaseDispatcher extends Thread {
         boolean isActive = true;
         try {
             while (isActive && validate()) {
-                JingLoggerEvent[] events = null;
+                LocalLoggerEvent[] events = null;
                 synchronized (this.buffer) {
                     int bufferSize = this.buffer.size();
 
@@ -45,16 +45,16 @@ public class BaseDispatcher extends Thread {
                     }
 
                     if (bufferSize > 0) {
-                        events = new JingLoggerEvent[bufferSize];
+                        events = new LocalLoggerEvent[bufferSize];
                         this.buffer.toArray(events);
                         this.buffer.clear();
                         this.buffer.notifyAll();
                     }
                 }
                 if (events != null) {
-                    for (JingLoggerEvent event : events) {
+                    for (LocalLoggerEvent event : events) {
                         appender.write(event);
-                        if (JingLoggerConfiguration.getGlobalStdOut()) {
+                        if (LocalLoggerConfiguration.getGlobalStdOut()) {
                             event.stdOut();
                         }
                     }
@@ -65,7 +65,7 @@ public class BaseDispatcher extends Thread {
         catch (Exception e) {
             Thread.currentThread().interrupt();
             System.err.println("Failed to run dispatch: " + Thread.currentThread().getName() +
-                JingLoggerConfiguration.getGlobalNewLine() + StringUtil.getErrorStack(e));
+                LocalLoggerConfiguration.getGlobalNewLine() + StringUtil.getErrorStack(e));
         }
     }
 }

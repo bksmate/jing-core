@@ -1,6 +1,5 @@
 package org.jing.core.json;
 
-import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
 
 import java.io.IOException;
@@ -9,7 +8,7 @@ import java.io.Reader;
 /**
  * Created by code4wt on 17/5/11.
  */
-public class CharReader {
+@SuppressWarnings("BooleanMethodIsAlwaysInverted") public class CharReader {
 
     private static final int BUFFER_SIZE = 1024;
 
@@ -29,7 +28,7 @@ public class CharReader {
     /**
      * 返回 pos 下标处的字符，并返回
      */
-    public char peek() {
+    char peek() {
         if (pos - 1 >= size) {
             return (char) -1;
         }
@@ -40,7 +39,7 @@ public class CharReader {
     /**
      * 返回 pos 下标处的字符，并将 pos + 1，最后返回字符
      */
-    public char next() throws JingException {
+    char next() throws JingException {
         try {
             if (!hasMore()) {
                 return (char) -1;
@@ -52,11 +51,11 @@ public class CharReader {
         return buffer[pos++];
     }
 
-    public void back() {
+    void back() {
         pos = Math.max(0, --pos);
     }
 
-    public boolean hasMore() throws JingException {
+    boolean hasMore() throws JingException {
         try {
             if (pos < size) {
                 return true;
@@ -69,7 +68,7 @@ public class CharReader {
         }
     }
 
-    void fillBuffer() throws IOException {
+    private void fillBuffer() throws IOException {
         int n = reader.read(buffer);
         if (n == -1) {
             return;

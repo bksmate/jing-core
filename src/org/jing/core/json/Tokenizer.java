@@ -5,7 +5,7 @@ import org.jing.core.lang.JingException;
 /**
  * Created by code4wt on 17/5/10.
  */
-public class Tokenizer {
+@SuppressWarnings("Duplicates") public class Tokenizer {
 
     private CharReader charReader;
 
@@ -30,16 +30,14 @@ public class Tokenizer {
 
     private Token start() throws JingException {
         char ch;
-        for(;;) {
+        do {
             if (!charReader.hasMore()) {
                 return new Token(TokenType.END_DOCUMENT, null);
             }
 
             ch = charReader.next();
-            if (!isWhiteSpace(ch)) {
-                break;
-            }
         }
+        while (isWhiteSpace(ch));
 
         switch (ch) {
             case '{':
@@ -126,14 +124,14 @@ public class Tokenizer {
         }
     }
 
-    @Deprecated
+    /*@Deprecated
     private boolean isEscape() throws JingException {
         char ch = charReader.next();
         return (ch == '"' || ch == '\\' || ch == 'u' || ch == 'r'
             || ch == 'n' || ch == 'b' || ch == 't' || ch == 'f' || ch == '/');
 
     }
-
+    */
     private boolean isHex(char ch) {
         return ((ch >= '0' && ch <= '9') || ('a' <= ch && ch <= 'f')
             || ('A' <= ch && ch <= 'F'));
@@ -145,7 +143,7 @@ public class Tokenizer {
         if (ch == '-') {    // 处理负数
             sb.append(ch);
             ch = charReader.next();
-            if (ch == '0') {    // 处理 -0.xxxx
+            if (ch == '0') {    // 处理 -0
                 sb.append(ch);
                 sb.append(readFracAndExp());
             } else if (isDigitOne2Nine(ch)) {

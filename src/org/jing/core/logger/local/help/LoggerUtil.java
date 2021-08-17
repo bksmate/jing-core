@@ -1,4 +1,4 @@
-package org.jing.core.logger.help;
+package org.jing.core.logger.local.help;
 
 import org.jing.core.lang.Pair3;
 

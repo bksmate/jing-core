@@ -1,9 +1,9 @@
-package org.jing.core.logger.appender;
+package org.jing.core.logger.local.appender;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
-import org.jing.core.logger.JingLoggerEvent;
-import org.jing.core.logger.dispatcher.BaseDispatcher;
+import org.jing.core.logger.local.LocalLoggerEvent;
+import org.jing.core.logger.local.dispatcher.BaseDispatcher;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ public class BaseAppender {
 
     protected boolean closed;
 
-    protected final ArrayList<JingLoggerEvent> buffer;
+    protected final ArrayList<LocalLoggerEvent> buffer;
 
     protected BaseDispatcher dispatcher;
 
@@ -47,7 +47,7 @@ public class BaseAppender {
         dispatcher = null;
     }
 
-    public void append(JingLoggerEvent event) {
+    public void append(LocalLoggerEvent event) {
         if (this.dispatcher != null && this.dispatcher.isAlive()) {
             synchronized (this.buffer) {
                 int previousSize = this.buffer.size();
@@ -74,7 +74,7 @@ public class BaseAppender {
         }
     }
 
-    public ArrayList<JingLoggerEvent> getBuffer() {
+    public ArrayList<LocalLoggerEvent> getBuffer() {
         return this.buffer;
     }
 
@@ -86,7 +86,7 @@ public class BaseAppender {
         return closed;
     }
 
-    public void write(JingLoggerEvent event) {}
+    public void write(LocalLoggerEvent event) {}
 
-    public void flush(JingLoggerEvent[] events) {}
+    public void flush(LocalLoggerEvent[] events) {}
 }

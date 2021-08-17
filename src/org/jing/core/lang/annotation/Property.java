@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * @author: bks <br>
  * @createDate: 2019-01-31 <br>
  */
+@SuppressWarnings("unused")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD})
 public @interface Property {

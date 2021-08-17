@@ -5,6 +5,7 @@
         <index>1</index>
         <implements>org.jing.core.logger.JingLoggerInit</implements>
         <parameters>
+            <frame>LOG4J</frame>
             <path>config?logger.xml</path>
         </parameters>
     </init>

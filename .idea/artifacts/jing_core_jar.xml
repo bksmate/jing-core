@@ -6,6 +6,9 @@
         <element id="module-output" name="jing-core" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/lib/dom4j-2.0.2.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/log4j-1.2.17.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/log4j-api-2.3.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/log4j-core-2.3.jar" />
     </root>
   </artifact>
 </component>

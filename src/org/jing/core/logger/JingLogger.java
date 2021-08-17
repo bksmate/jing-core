@@ -1,283 +1,139 @@
 package org.jing.core.logger;
 
 import org.jing.core.lang.Configuration;
-import org.jing.core.util.StringUtil;
+import org.jing.core.lang.JingException;
+import org.jing.core.logger.itf.JingLoggerFactoryItf;
+import org.jing.core.logger.itf.JingLoggerLevelItf;
+import org.jing.core.logger.local.LocalLoggerLevel;
+
+import java.util.Hashtable;
 
 /**
  * Description: <br>
  *
  * @author: bks <br>
- * @createDate: 2020-12-31 <br>
+ * @createDate: 2021-08-16 <br>
  */
-@SuppressWarnings({ "unused", "WeakerAccess" }) public class JingLogger {
+public abstract class JingLogger {
+    private static JingLoggerFactoryItf factory;
 
-    private String name;
+    private static Hashtable<String, JingLogger> repository = new Hashtable<>();
 
-    private JingLogger() {}
+    public synchronized static void setFactory(JingLoggerFactoryItf factory) {
+        JingLogger.factory = factory;
+    }
 
-    public static JingLogger getLogger(Class clazz) {
+    public static JingLogger getLogger(String name, boolean remake) {
         Configuration.getInstance();
-        JingLogger logger = new JingLogger();
-        logger.name = clazz.getName();
+        JingLogger logger;
+        if (remake || null == (logger = repository.get(name))) {
+            logger = factory.getLogger(name);
+            repository.put(name, logger);
+        }
         return logger;
     }
 
     public static JingLogger getLogger(String name) {
-        JingLogger logger = new JingLogger();
-        logger.name = name;
-        return logger;
+        return getLogger(name, false);
     }
 
-    public void all(Object object) {
-        if (JingLoggerLevel.ALL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ALL, StringUtil.parseString(object));
-        }
+    public static JingLogger getLogger(Class clazz, boolean remake) {
+        String name = clazz.getName();
+        return getLogger(name, remake);
     }
 
-    public void all(String msg, Object... parameters) {
-        if (JingLoggerLevel.ALL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ALL, StringUtil.mixParameters(msg, parameters));
-        }
+    public static JingLogger getLogger(Class clazz) {
+        String name = clazz.getName();
+        return getLogger(name, false);
     }
 
-    public void all(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.ALL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ALL, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void all(Object object);
 
-    public void trace(Object object) {
-        if (JingLoggerLevel.TRACE.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.TRACE, StringUtil.parseString(object));
-        }
-    }
+    public abstract void all(Throwable throwable);
 
-    public void trace(String msg, Object... parameters) {
-        if (JingLoggerLevel.TRACE.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.TRACE, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void all(String msg, Object... parameters);
 
-    public void trace(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.TRACE.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.TRACE, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void all(Throwable throwable, String msg);
 
-    public void debug(Object object) {
-        if (JingLoggerLevel.DEBUG.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.DEBUG, StringUtil.parseString(object));
-        }
-    }
+    public abstract void all(Throwable throwable, String msg, Object... parameters);
 
-    public void debug(String msg, Object... parameters) {
-        if (JingLoggerLevel.DEBUG.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.DEBUG, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void trace(Object object);
 
-    public void debug(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.DEBUG.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.DEBUG, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void trace(Throwable throwable);
 
-    public void info(Object object) {
-        if (JingLoggerLevel.INFO.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.INFO, StringUtil.parseString(object));
-        }
-    }
+    public abstract void trace(String msg, Object... parameters);
 
-    public void info(String msg, Object... parameters) {
-        if (JingLoggerLevel.INFO.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.INFO, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void trace(Throwable throwable, String msg);
 
-    public void info(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.INFO.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.INFO, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void trace(Throwable throwable, String msg, Object... parameters);
 
-    public void warn(Object object) {
-        if (JingLoggerLevel.WARN.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.WARN, StringUtil.parseString(object));
-        }
-    }
+    public abstract void debug(Object object);
 
-    public void warn(String msg, Object... parameters) {
-        if (JingLoggerLevel.WARN.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.WARN, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void debug(Throwable throwable);
 
-    public void warn(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.WARN.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.WARN, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void debug(String msg, Object... parameters);
 
-    public void imp(Object object) {
-        if (JingLoggerLevel.IMP.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.IMP, StringUtil.parseString(object));
-        }
-    }
+    public abstract void debug(Throwable throwable, String msg);
 
-    public void imp(String msg, Object... parameters) {
-        if (JingLoggerLevel.IMP.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.IMP, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void debug(Throwable throwable, String msg, Object... parameters);
 
-    public void imp(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.IMP.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.IMP, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void info(Object object);
 
-    public void sql(int session, String msg) {
-        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg));
-        }
-    }
+    public abstract void info(Throwable throwable);
 
-    public void sqlWithHash(Object hashObject, String msg) {
-        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s", hashObject.hashCode(), JingLoggerConfiguration.newLine, msg));
-        }
-    }
+    public abstract void info(String msg, Object... parameters);
 
-    public void sql(int session, String msg, String parameters) {
-        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s [%s]", session, JingLoggerConfiguration.newLine, msg, parameters));
-        }
-    }
+    public abstract void info(Throwable throwable, String msg);
 
-    public void sqlWithHash(Object hashObject, String msg, String parameters) {
-        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.SQL, String.format("[Session: %s]%s%s [%s]", hashObject.hashCode(), JingLoggerConfiguration.newLine, msg, parameters));
-        }
-    }
+    public abstract void info(Throwable throwable, String msg, Object... parameters);
 
-    public void sql(int session, String msg, Object... parameters) {
-        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", session, JingLoggerConfiguration.newLine, msg), parameters));
-        }
-    }
+    public abstract void warn(Object object);
 
-    public void sqlWithHash(Object hashObject, String msg, Object... parameters) {
-        if (JingLoggerLevel.SQL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.SQL, StringUtil.mixParameters(String.format("[Session: %s]%s%s", hashObject.hashCode(), JingLoggerConfiguration.newLine, msg), parameters));
-        }
-    }
+    public abstract void warn(Throwable throwable);
 
-    public void error(Object object) {
-        if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, StringUtil.parseString(object));
-        }
-    }
+    public abstract void warn(String msg, Object... parameters);
 
-    public void error(Throwable throwable) {
-        if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void warn(Throwable throwable, String msg);
 
-    public void error(String msg, Object... parameters) {
-        if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void warn(Throwable throwable, String msg, Object... parameters);
 
-    public void error(Throwable throwable, String msg) {
-        if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, msg + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void imp(Object object);
 
-    public void error(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.ERROR.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.ERROR, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void imp(Throwable throwable);
 
-    public void fatal(Object object) {
-        if (JingLoggerLevel.FATAL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.FATAL, StringUtil.parseString(object));
-        }
-    }
+    public abstract void imp(String msg, Object... parameters);
 
-    public void fatal(String msg, Object... parameters) {
-        if (JingLoggerLevel.FATAL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.FATAL, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void imp(Throwable throwable, String msg);
 
-    public void fatal(Throwable throwable, String msg, Object... parameters) {
-        if (JingLoggerLevel.FATAL.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(JingLoggerLevel.FATAL, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void imp(Throwable throwable, String msg, Object... parameters);
 
-    public void log(JingLoggerLevel level, Object object) {
-        if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(level, StringUtil.parseString(object));
-        }
-    }
+    public abstract void error(Object object);
 
-    public void log(Throwable throwable, JingLoggerLevel level) {
-        if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(level, JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void error(Throwable throwable);
 
-    public void log(Throwable throwable, JingLoggerLevel level, String msg) {
-        if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(level, msg+ JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
+    public abstract void error(String msg, Object... parameters);
 
-    public void log(Throwable throwable, JingLoggerLevel level, String msg, Object... parameters) {
-        if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(level, StringUtil.mixParameters(msg, parameters) + JingLoggerConfiguration.newLine + StringUtil.getErrorStack(throwable));
-        }
-    }
-    
-    public void log(JingLoggerLevel level, String msg, Object... parameters) {
-        if (level.isGreaterOrEquals(JingLoggerConfiguration.rootLevel)) {
-            output(level, StringUtil.mixParameters(msg, parameters));
-        }
-    }
+    public abstract void error(Throwable throwable, String msg);
 
-    private void output(JingLoggerLevel level, String msg) {
-        if (null == level.levelConfig) {
-            return;
-        }
-        JingLoggerEvent event = new JingLoggerEvent();
-        event
-            .setLoggerName(this.name)
-            .setLevel(level)
-            .setContent(msg)
-            .generateContent();
+    public abstract void error(Throwable throwable, String msg, Object... parameters);
 
-        level.loopAppend(event);
-    }
+    public abstract void fatal(Object object);
 
-    public static void main(String[] args) {
-        // Configuration.getInstance();
-        JingLogger logger = JingLogger.getLogger(JingLoggerLevel.class);
-        logger.log(JingLoggerLevel.ALL, "test: {}", 123);
-        logger.all("all: {}", 123);
-        logger.debug("debug: {}", 123);
-        logger.trace("trace: {}", 123);
-        logger.info("info: {}", 123);
-        logger.warn("warn: {}", 123);
-        logger.fatal("fatal: {}", 123);
-        logger.imp("imp: {}", 123);
-        logger.sql(112233, "SELECT * FROM SA", 123123);
-        logger.error("error: {}", 123);
-        // System.out.println(CommonDemo.getJavaStackTrace());
+    public abstract void fatal(Throwable throwable);
 
-    }
+    public abstract void fatal(String msg, Object... parameters);
+
+    public abstract void fatal(Throwable throwable, String msg);
+
+    public abstract void fatal(Throwable throwable, String msg, Object... parameters);
+
+    public abstract void log(JingLoggerLevelItf level, Object object);
+
+    public abstract void log(JingLoggerLevelItf level, Throwable throwable);
+
+    public abstract void log(JingLoggerLevelItf level, Throwable throwable, String msg);
+
+    public abstract void log(JingLoggerLevelItf level, Throwable throwable, String msg, Object... parameters);
+
+    public abstract void log(JingLoggerLevelItf level, String msg, Object... parameters);
 }

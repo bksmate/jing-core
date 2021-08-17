@@ -1,11 +1,9 @@
-package org.jing.core.logger.appender;
+package org.jing.core.logger.local.appender;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
-import org.jing.core.lang.Pair3;
-import org.jing.core.logger.JingLoggerEvent;
-import org.jing.core.logger.SingleLogger;
-import org.jing.core.logger.help.LoggerUtil;
+import org.jing.core.logger.local.LocalLoggerEvent;
+import org.jing.core.logger.sys.SingleLogger;
 import org.jing.core.util.DateUtil;
 import org.jing.core.util.GenericUtil;
 import org.jing.core.util.StringUtil;
@@ -37,7 +35,7 @@ import java.util.Date;
         this.timeSize = StringUtil.parseInteger(paramC.getString("times", ""), 1) * 24 * 60 * 60 * 1000;
     }
 
-    @Override public void append(JingLoggerEvent event) {
+    @Override public void append(LocalLoggerEvent event) {
         try {
             Date newDate = new Date();
             synchronized (writeLocker) {

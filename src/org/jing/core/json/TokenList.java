@@ -5,7 +5,7 @@ import java.util.LinkedList;
 /**
  * Created by code4wt on 17/5/19.
  */
-public class TokenList {
+@SuppressWarnings("unused") public class TokenList {
 
     private LinkedList<Token> tokens = new LinkedList<Token>();
 
@@ -23,15 +23,15 @@ public class TokenList {
         return pos < tokens.size() ? tokens.get(pos) : null;
     }
 
-    public Token peekPrevious() {
+    Token peekPrevious() {
         return pos - 1 < 0 ? null : tokens.get(pos - 2);
     }
 
-    public Token next() {
+    Token next() {
         return tokens.get(pos++);
     }
 
-    public boolean hasMore() {
+    boolean hasMore() {
         return pos < tokens.size();
     }
 

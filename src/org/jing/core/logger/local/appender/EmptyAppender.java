@@ -1,4 +1,4 @@
-package org.jing.core.logger.appender;
+package org.jing.core.logger.local.appender;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;

@@ -1,7 +1,8 @@
-package org.jing.core.logger;
+package org.jing.core.logger.local;
 
 import org.jing.core.lang.BaseDto;
-import org.jing.core.logger.appender.BaseAppender;
+import org.jing.core.logger.itf.JingLoggerLevelItf;
+import org.jing.core.logger.local.appender.BaseAppender;
 
 import java.util.HashSet;
 
@@ -11,7 +12,9 @@ import java.util.HashSet;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
-@SuppressWarnings({ "WeakerAccess", "unused" }) public class JingLoggerLevel extends BaseDto {
+@SuppressWarnings({ "WeakerAccess", "unused" })
+public class LocalLoggerLevel extends BaseDto implements JingLoggerLevelItf {
+
     public static final class LevelConfig extends BaseDto {
         String format;
 
@@ -62,13 +65,13 @@ import java.util.HashSet;
 
     protected LevelConfig levelConfig;
 
-    protected JingLoggerLevel(int priority, String name, boolean synchronize) {
+    protected LocalLoggerLevel(int priority, String name, boolean synchronize) {
         this.name = name.toUpperCase();
         this.priority = priority;
         this.synchronize = synchronize;
     }
 
-    protected JingLoggerLevel(int priority, String name) {
+    protected LocalLoggerLevel(int priority, String name) {
         this.name = name.toUpperCase();
         this.priority = priority;
         this.synchronize = true;
@@ -82,33 +85,37 @@ import java.util.HashSet;
         this.levelConfig = levelConfig;
     }
 
-    public boolean isGreaterOrEquals(JingLoggerLevel level) {
+    public boolean isGreaterOrEquals(LocalLoggerLevel level) {
         return this.priority == Integer.MAX_VALUE || this.priority >= level.priority;
     }
 
-    public void loopAppend(JingLoggerEvent event) {
+    @Override public boolean isGreaterOrEquals(JingLoggerLevelItf e) {
+        return isGreaterOrEquals((LocalLoggerLevel) e);
+    }
+
+    public void loopAppend(LocalLoggerEvent event) {
         for (BaseAppender appender : levelConfig.appenderSet) {
             appender.append(event);
         }
     }
 
-    public static final JingLoggerLevel OFF = new JingLoggerLevel(Integer.MAX_VALUE, "OFF", true);
+    public static final LocalLoggerLevel OFF = new LocalLoggerLevel(Integer.MAX_VALUE, "OFF", true);
 
-    public static final JingLoggerLevel FATAL = new JingLoggerLevel(50000, "FATAL", true);
+    public static final LocalLoggerLevel FATAL = new LocalLoggerLevel(50000, "FATAL", true);
 
-    public static final JingLoggerLevel IMP = new JingLoggerLevel(40000, "IMP", true);
+    public static final LocalLoggerLevel IMP = new LocalLoggerLevel(40000, "IMP", true);
 
-    public static final JingLoggerLevel ERROR = new JingLoggerLevel(40000, "ERROR", true);
+    public static final LocalLoggerLevel ERROR = new LocalLoggerLevel(40000, "ERROR", true);
 
-    public static final JingLoggerLevel SQL = new JingLoggerLevel(39999, "SQL", true);
+    public static final LocalLoggerLevel SQL = new LocalLoggerLevel(39999, "SQL", true);
 
-    public static final JingLoggerLevel WARN = new JingLoggerLevel(30000, "WARN", true);
+    public static final LocalLoggerLevel WARN = new LocalLoggerLevel(30000, "WARN", true);
 
-    public static final JingLoggerLevel INFO = new JingLoggerLevel(20000, "INFO", true);
+    public static final LocalLoggerLevel INFO = new LocalLoggerLevel(20000, "INFO", true);
 
-    public static final JingLoggerLevel DEBUG = new JingLoggerLevel(10000, "DEBUG", true);
+    public static final LocalLoggerLevel DEBUG = new LocalLoggerLevel(10000, "DEBUG", true);
 
-    public static final JingLoggerLevel TRACE = new JingLoggerLevel(5000, "TRACE", true);
+    public static final LocalLoggerLevel TRACE = new LocalLoggerLevel(5000, "TRACE", true);
 
-    public static final JingLoggerLevel ALL = new JingLoggerLevel(Integer.MIN_VALUE, "ALL", true);
+    public static final LocalLoggerLevel ALL = new LocalLoggerLevel(Integer.MIN_VALUE, "ALL", true);
 }

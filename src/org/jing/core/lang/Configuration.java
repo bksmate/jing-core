@@ -1,9 +1,9 @@
 package org.jing.core.lang;
 
 import org.jing.core.lang.itf.JInit;
-import org.jing.core.logger.JingLogger;
 import org.jing.core.logger.JingLoggerInit;
-import org.jing.core.logger.SingleLogger;
+import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.sys.SingleLogger;
 import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;

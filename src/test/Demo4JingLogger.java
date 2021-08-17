@@ -1,7 +1,8 @@
 package test;
 
 import org.jing.core.logger.JingLogger;
-import org.jing.core.logger.JingLoggerLevel;
+import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.local.LocalLoggerLevel;
 
 /**
  * Description: <br>
@@ -14,7 +15,6 @@ public class Demo4JingLogger {
 
     public Demo4JingLogger() {
         LOGGER.imp("imp1");
-        JingLoggerLevel.IMP.getLevelConfig().setFormat("%m%n");
         LOGGER.imp("imp2");
     }
     public static void main(String[] args) {

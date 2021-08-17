@@ -1,11 +1,11 @@
-package org.jing.core.logger.appender;
+package org.jing.core.logger.local.appender;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
-import org.jing.core.logger.JingLoggerEvent;
-import org.jing.core.logger.SingleLogger;
-import org.jing.core.logger.dispatcher.BaseDispatcher;
-import org.jing.core.logger.help.ResourcePool;
+import org.jing.core.logger.local.LocalLoggerEvent;
+import org.jing.core.logger.sys.SingleLogger;
+import org.jing.core.logger.local.dispatcher.BaseDispatcher;
+import org.jing.core.logger.local.help.ResourcePool;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
 
@@ -63,12 +63,12 @@ public class FileAppender extends BaseAppender {
 
     @Override protected void createDispatcher() {
         dispatcher = new Dispatcher(this);
-        dispatcher.setName("JingLogger-Dispatcher-" + dispatcher.getName());
+        dispatcher.setName("LocalLogger-Dispatcher-" + dispatcher.getName());
         dispatcher.setDaemon(true);
         dispatcher.start();
     }
 
-    @Override public void write(JingLoggerEvent event) {
+    @Override public void write(LocalLoggerEvent event) {
         try {
             synchronized (writeLocker) {
                 if (null == writer) {
@@ -80,7 +80,7 @@ public class FileAppender extends BaseAppender {
         catch (Exception ignored) {}
     }
 
-    @Override public void flush(JingLoggerEvent[] events) {
+    @Override public void flush(LocalLoggerEvent[] events) {
         try {
             writer.flush();
         }

@@ -8,7 +8,7 @@ import org.jing.core.util.StringUtil;
  * @author: bks <br>
  * @createDate: 2021-05-31 <br>
  */
-public class JsonFormat {
+@SuppressWarnings("unused") public class JsonFormat {
     private static final String DEFAULT_INDENT = "    ";
 
     private static final String DEFAULT_NEWLINE = "\r\n";

@@ -3,18 +3,18 @@ package org.jing.core.json;
 /**
  * Created by code4wt on 17/5/10.
  */
-public class Token {
+@SuppressWarnings("unused") public class Token {
 
     private TokenType tokenType;
 
     private String value;
 
-    public Token(TokenType tokenType, String value) {
+    Token(TokenType tokenType, String value) {
         this.tokenType = tokenType;
         this.value = value;
     }
 
-    public TokenType getTokenType() {
+    TokenType getTokenType() {
         return tokenType;
     }
 

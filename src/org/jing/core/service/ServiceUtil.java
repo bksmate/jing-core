@@ -5,7 +5,6 @@ import org.jing.core.lang.JingException;
 import org.jing.core.lang.annotation.ServiceCode;
 import org.jing.core.lang.itf.JService;
 import org.jing.core.logger.JingLogger;
-import org.jing.core.logger.JingLoggerConfiguration;
 import org.jing.core.util.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +27,8 @@ import java.lang.reflect.Method;
         if (StringUtil.isEmpty(serviceCode)) {
             throw new JingException("Service Code is empty");
         }
-        LOGGER.debug("[request:{}{}]", JingLoggerConfiguration.getGlobalNewLine(), param instanceof Carrier ? ((Carrier) param).asXML() : param);
+        LOGGER.debug("request:");
+        LOGGER.debug("{}", param instanceof Carrier ? ((Carrier) param).asXML() : param);
         // 1. 找映射类
         Class<? super JService> tempJService = ServiceInit.mappingService(serviceCode);
         if (null == tempJService) {
@@ -69,7 +69,8 @@ import java.lang.reflect.Method;
         catch (Exception e) {
             throw new JingException(e, e.getMessage());
         }
-        LOGGER.debug("[response:{}{}]", JingLoggerConfiguration.getGlobalNewLine(), param instanceof Carrier ? ((Carrier) param).asXML() : param);
+        LOGGER.debug("response:");
+        LOGGER.debug("{}", param instanceof Carrier ? ((Carrier) param).asXML() : param);
         return retObject;
     }
 }

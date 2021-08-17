@@ -3,7 +3,6 @@ package org.jing.core.util;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.Pair2;
 import org.jing.core.lang.itf.JService;
-import org.jing.core.logger.JingLogger;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -31,8 +30,6 @@ import static java.lang.Thread.currentThread;
  */
 @SuppressWarnings({ "WeakerAccess", "unused" })
 public class ClassUtil {
-    private static JingLogger LOGGER = JingLogger.getLogger(ClassUtil.class);
-
     private static ClassLoader defaultClassLoader;
 
     private static ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();

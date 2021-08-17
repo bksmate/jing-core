@@ -1,6 +1,6 @@
-package org.jing.core.logger.help;
+package org.jing.core.logger.local.help;
 
-import org.jing.core.logger.appender.BaseAppender;
+import org.jing.core.logger.local.appender.BaseAppender;
 import org.jing.core.util.StringUtil;
 
 import java.io.FileOutputStream;

@@ -3,13 +3,13 @@
 <jing>
     <!-- root level -->
     <root-level>ALL</root-level>
-    <stdout-level>IMP</stdout-level>
+    <stdout-level>ALL</stdout-level>
     <!-- extra level implements -->
     <!--<impl>org.jing.core.logger.JingLoggerLevelExtend</impl>-->
     <!-- check if need stdout ignoring case, default true -->
     <stdout>true</stdout>
     <!-- global date format -->
-    <date-format>yyyy-MM-dd HH:mm:ss SSS</date-format>
+    <date-format>yyyy-MM-dd HH:mm:ss.SSS</date-format>
     <!-- global encoding -->
     <encoding>UTF-8</encoding>
     <!-- global logger format -->
@@ -60,14 +60,14 @@
     </logger>
     <appender>
         <name>file-jing</name>
-        <impl>org.jing.core.logger.appender.FileAppender</impl>
+        <impl>org.jing.core.logger.local.appender.FileAppender</impl>
         <param>
             <file>logs/jing.log</file>
         </param>
     </appender>
     <appender>
         <name>file-sql</name>
-        <impl>org.jing.core.logger.appender.FileSizeAppender</impl>
+        <impl>org.jing.core.logger.local.appender.FileSizeAppender</impl>
         <param>
             <file>logs/sql.log</file>
             <!-- 分割大小, 单位为Mb -->
@@ -76,7 +76,7 @@
     </appender>
     <appender>
         <name>file-daily</name>
-        <impl>org.jing.core.logger.appender.FileDailyAppender</impl>
+        <impl>org.jing.core.logger.local.appender.FileDailyAppender</impl>
         <param>
             <file>logs/daily.log</file>
             <!-- 备份日志的时间格式 -->
@@ -87,7 +87,7 @@
     </appender>
     <appender>
         <name>file-err</name>
-        <impl>org.jing.core.logger.appender.FileAppender</impl>
+        <impl>org.jing.core.logger.local.appender.FileAppender</impl>
         <param>
             <file>logs/err.log</file>
         </param>

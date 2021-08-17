@@ -1,4 +1,4 @@
-package org.jing.core.logger;
+package org.jing.core.logger.local;
 
 import org.jing.core.util.DateUtil;
 
@@ -9,25 +9,25 @@ import org.jing.core.util.DateUtil;
  * @createDate: 2021-01-11 <br>
  */
 @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" })
-public class JingLoggerEvent {
+public class LocalLoggerEvent {
     private String loggerName;
 
-    private JingLoggerLevel level;
+    private LocalLoggerLevel level;
 
     private String content;
 
     private boolean stdOut = false;
 
-    public synchronized JingLoggerLevel getLevel() {
+    public synchronized LocalLoggerLevel getLevel() {
         return level;
     }
 
-    public synchronized JingLoggerEvent setLevel(JingLoggerLevel level) {
+    public synchronized LocalLoggerEvent setLevel(LocalLoggerLevel level) {
         this.level = level;
         return this;
     }
 
-    public synchronized JingLoggerEvent setLoggerName(String loggerName) {
+    public synchronized LocalLoggerEvent setLoggerName(String loggerName) {
         this.loggerName = loggerName;
         return this;
     }
@@ -36,7 +36,7 @@ public class JingLoggerEvent {
         return content;
     }
 
-    public synchronized JingLoggerEvent setContent(String content) {
+    public synchronized LocalLoggerEvent setContent(String content) {
         this.content = content;
         return this;
     }
@@ -107,7 +107,7 @@ public class JingLoggerEvent {
                         break;
                     // %n - newline
                     case 'n':
-                        stbr.append(JingLoggerConfiguration.newLine);
+                        stbr.append(LocalLoggerConfiguration.newLine);
                         break;
                     // %N - name
                     case 'N':
@@ -128,7 +128,7 @@ public class JingLoggerEvent {
 
     public synchronized void stdOut() {
         if (stdOut) return;
-        if (!this.getLevel().isGreaterOrEquals(JingLoggerConfiguration.stdOutLevel)) return;
+        if (!this.getLevel().isGreaterOrEquals(LocalLoggerConfiguration.stdOutLevel)) return;
         stdOut = true;
         System.out.print(content);
     }

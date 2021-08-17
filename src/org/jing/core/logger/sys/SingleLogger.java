@@ -1,4 +1,4 @@
-package org.jing.core.logger;
+package org.jing.core.logger.sys;
 
 import org.jing.core.util.DateUtil;
 import org.jing.core.util.StringUtil;
