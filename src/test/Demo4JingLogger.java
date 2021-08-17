@@ -1,8 +1,6 @@
 package test;
 
 import org.jing.core.logger.JingLogger;
-import org.jing.core.logger.JingLogger;
-import org.jing.core.logger.local.LocalLoggerLevel;
 
 /**
  * Description: <br>

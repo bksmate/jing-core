@@ -39,7 +39,7 @@ public final class Const {
      */
     public final static String CFG_TABLE_LIST_FILE_NAME = "tableList.xml";
 
-    public static final String SYSTEM_DEFAULT_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><init><index>1</index><implements>org.jing.core.logger.local.LoggerFactory</implements><parameters><path>config?logger.xml</path></parameters></init></jing>";
+    public static final String SYSTEM_DEFAULT_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><init><index>1</index><implements>org.jing.core.logger.JingLoggerInit</implements><parameters><path>config?logger.xml</path></parameters></init></jing>";
 
     public static final String SYSTEM_DEFAULT_LOGGER_PARAM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><path>config?logger.xml</path></jing>";
 
