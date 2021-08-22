@@ -14,7 +14,7 @@ package org.jing.core.json;
         this.value = value;
     }
 
-    TokenType getTokenType() {
+    public TokenType getTokenType() {
         return tokenType;
     }
 

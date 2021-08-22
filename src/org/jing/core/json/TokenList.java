@@ -23,15 +23,15 @@ import java.util.LinkedList;
         return pos < tokens.size() ? tokens.get(pos) : null;
     }
 
-    Token peekPrevious() {
+    public Token peekPrevious() {
         return pos - 1 < 0 ? null : tokens.get(pos - 2);
     }
 
-    Token next() {
+    public Token next() {
         return tokens.get(pos++);
     }
 
-    boolean hasMore() {
+    public boolean hasMore() {
         return pos < tokens.size();
     }
 

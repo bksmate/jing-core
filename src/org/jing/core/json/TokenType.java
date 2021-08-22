@@ -1,5 +1,7 @@
 package org.jing.core.json;
 
+import org.jing.core.lang.JingException;
+
 /**
  * Created by code4wt on 17/5/10.
  */
@@ -35,5 +37,11 @@ public enum TokenType {
 
     public int getTokenCode() {
         return code;
+    }
+
+    public void checkExpectToken(int expectToken) throws JingException {
+        if ((code & expectToken) == 0) {
+            throw new JingException("parse error, invalid token: {}", this);
+        }
     }
 }

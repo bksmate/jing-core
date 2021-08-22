@@ -16,13 +16,9 @@ import java.lang.Exception;
  */
 public class Demo4Carrier {
     private Demo4Carrier() throws Exception {
-        String json = FileUtil.readFile("temp/temp.json");
-        System.out.println(json);
-        Carrier carrier = Carrier.parseJson(json);
-        System.out.println(carrier.asXML());
-        System.out.println(carrier.asJson());
-        System.out.println(carrier.getString("CONTENT"));
-        System.out.println(carrier.asJson(new JsonFormat(true, true)));
+        String xml = FileUtil.readFile("temp/temp$1.xml");
+        Carrier xmlC = Carrier.parseXML(xml);
+        System.out.println(xmlC.asXML());
 
     }
 

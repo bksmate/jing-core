@@ -53,9 +53,6 @@ public class CarrierUtil {
 
     public static void addValueByKey(HashMap<String, Object> hashMap, String key, Object value) throws JingException {
         checkFeasibility(hashMap);
-        if (value instanceof Carrier) {
-            value = ((Carrier) value).getValueMap();
-        }
         if (hashMap.containsKey(key)) {
             Object node = hashMap.get(key);
             if (node instanceof List) {
@@ -75,9 +72,6 @@ public class CarrierUtil {
 
     public static void setValueByKey(HashMap<String, Object> hashMap, String key, Object value, int seq) throws JingException {
         checkFeasibility(hashMap);
-        if (value instanceof Carrier) {
-            value = ((Carrier) value).getValueMap();
-        }
         if (hashMap.containsKey(key)) {
             Object node = hashMap.get(key);
             if (node instanceof List) {
