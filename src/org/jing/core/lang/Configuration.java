@@ -1,10 +1,9 @@
 package org.jing.core.lang;
 
 import org.jing.core.lang.itf.JInit;
-import org.jing.core.logger.JingLoggerInit;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.JingLoggerInit;
 import org.jing.core.logger.sys.SingleLogger;
-import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
@@ -12,6 +11,7 @@ import org.jing.core.util.StringUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
  * @author: bks <br>
  * @createDate: 2019-01-09 <br>
  */
-public class Configuration {
+@SuppressWarnings({ "unused", "unchecked", "WeakerAccess" }) public class Configuration {
     private static volatile Configuration ourInstance = null;
 
     private Carrier configCarrier;
@@ -54,12 +54,11 @@ public class Configuration {
                 logDir = jingHome + "logs";
             }
             System.setProperty("JING_LOG_DIR", logDir);
-            String systemConfigFile = FileUtil.buildPathWithHome("config?system.xml");
-            String configContent = readFile(systemConfigFile);
+            String configContent = getConfigContent();
             if (StringUtil.isEmpty(configContent)) {
                 SingleLogger.log("Use default configuration");
                 try {
-                    configCarrier = CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_CONFIG);
+                    configCarrier = Carrier.parseXML(Const.SYSTEM_DEFAULT_CONFIG);
                 }
                 catch (Exception e) {
                     SingleLogger.err("Failed to use default configuration.");
@@ -68,11 +67,29 @@ public class Configuration {
             else {
                 try {
                     configContent = StringUtil.preOperation4XML(configContent);
-                    configCarrier = CarrierUtil.string2Carrier(configContent);
+                    configCarrier = Carrier.parseXML(configContent);
                 }
                 catch (Exception e) {
                     SingleLogger.err("Failed to transfer configuration xml.");
                 }
+            }
+        }
+    }
+
+    public String getConfigContent() {
+        File configFile = new File(FileUtil.buildPathWithHome("config?jing-system.xml"));
+        if (configFile.exists()) {
+            SingleLogger.log("read jing-system.xml by {}", configFile.getAbsolutePath());
+            return readFile(configFile);
+        }
+        else {
+            try (InputStream inputStream = Configuration.class.getClassLoader().getResourceAsStream("jing-system.xml")) {
+                SingleLogger.log("read jing-system.xml by classpath");
+                return StringUtil.readFromInputStream(inputStream, "utf-8");
+            }
+            catch (Throwable t) {
+                SingleLogger.log("use default jing-system.xml config");
+                return Const.SYSTEM_DEFAULT_CONFIG;
             }
         }
     }
@@ -87,25 +104,25 @@ public class Configuration {
         }
     }
 
-    public String getConfig(String path) throws JingException {
+    public String getConfig(String path) {
         synchronized (Configuration.class) {
             return configCarrier.getStringByPath(path);
         }
     }
 
-    public String getConfig(String path, String defaultString) throws JingException {
+    public String getConfig(String path, String defaultString) {
         synchronized (Configuration.class) {
             return StringUtil.ifEmpty(configCarrier.getStringByPath(path), defaultString);
         }
     }
 
-    public Carrier getConfigCarrier(String path) throws JingException {
+    public Carrier getConfigCarrier(String path) {
         synchronized (Configuration.class) {
             return configCarrier.getCarrier(path);
         }
     }
 
-    public Carrier getConfigCarrier(String path, int seq) throws JingException {
+    public Carrier getConfigCarrier(String path, int seq) {
         synchronized (Configuration.class) {
             return configCarrier.getCarrier(path, seq);
         }
@@ -130,11 +147,11 @@ public class Configuration {
         loadConfigFile();
     }
 
-    private String readFile(String filePath) {
+    private String readFile(File configFile) {
         StringBuilder stbr = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(
-                new InputStreamReader(new FileInputStream(new File(filePath)), StandardCharsets.UTF_8));
+                new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
             String row;
             boolean newLineFlag = false;
             while (null != (row = br.readLine())) {
@@ -149,7 +166,7 @@ public class Configuration {
             br.close();
         }
         catch (Exception e) {
-            SingleLogger.err("Failed to read file: {}", filePath);
+            SingleLogger.err("Failed to read file: {}", configFile);
         }
 
         return stbr.toString();
@@ -184,7 +201,7 @@ public class Configuration {
             k$ = i$;
             for (int j$ = i$ + 1; j$ < size; j$++) {
                 bCarrier = initCarrierList.get(j$);
-                if (Integer.parseInt(aCarrier.getString("index")) > Integer.parseInt(bCarrier.getString("index"))) {
+                if (Integer.parseInt(aCarrier.getStringByName("index")) > Integer.parseInt(bCarrier.getStringByName("index"))) {
                     initCarrierList.set(k$, bCarrier);
                     initCarrierList.set(j$, aCarrier);
                     k$ = j$;
@@ -192,7 +209,7 @@ public class Configuration {
             }
             if (!logInit) {
                 aCarrier = initCarrierList.get(i$);
-                Class<?> clazz = ClassUtil.loadClass(aCarrier.getString("implements"));
+                Class<?> clazz = ClassUtil.loadClass(aCarrier.getStringByName("implements"));
                 if (clazz == JingLoggerInit.class) {
                     logInit = true;
                 }
@@ -200,12 +217,12 @@ public class Configuration {
         }
         if (!logInit) {
             JingLoggerInit log4jInit = new JingLoggerInit();
-            log4jInit.init(CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_LOGGER_PARAM));
+            log4jInit.init(Carrier.parseXML(Const.SYSTEM_DEFAULT_LOGGER_PARAM));
         }
         // init
         String tempPath;
         for (Carrier tempCarrier : initCarrierList) {
-            tempPath = tempCarrier.getString("implements");
+            tempPath = tempCarrier.getStringByName("implements");
             Carrier parameters = null;
             if (tempCarrier.getCount("parameters") > 0) {
                 parameters = tempCarrier.getCarrier("parameters");

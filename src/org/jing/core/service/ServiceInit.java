@@ -2,11 +2,9 @@ package org.jing.core.service;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
-import org.jing.core.lang.annotation.ServiceCode;
 import org.jing.core.lang.itf.JInit;
 import org.jing.core.lang.itf.JService;
 import org.jing.core.logger.JingLogger;
-import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
 
@@ -20,12 +18,12 @@ import java.util.List;
  * @author: bks <br>
  * @createDate: 2019-03-21 <br>
  */
-public class ServiceInit implements JInit {
+@SuppressWarnings({ "WeakerAccess", "unused", "unchecked" }) public class ServiceInit implements JInit {
     private static JingLogger LOGGER = JingLogger.getLogger(ServiceInit.class);
 
     private static Carrier parameters = null;
 
-    private static HashMap<String, Class<? super JService>> serviceMap = new HashMap<String, Class<? super JService>>();
+    private static HashMap<String, Class<? super JService>> serviceMap = new HashMap<>();
 
     public static Carrier getParameters() {
         return parameters;
@@ -38,14 +36,14 @@ public class ServiceInit implements JInit {
             LOGGER.imp("Empty parameter for JService Initialize");
             return;
         }
-        String path = FileUtil.buildPathWithHome(parameters.getString("path", ""));
+        String path = FileUtil.buildPathWithHome(parameters.getStringByName("path", ""));
         addMapperByFilePath(path);
     }
 
     public void addMapperByFilePath(String filePath) throws JingException {
-        Carrier carrier = CarrierUtil.string2Carrier(FileUtil.readFile(filePath, "UTF-8"));
+        Carrier carrier = Carrier.parseXML(FileUtil.readFile(filePath, "UTF-8"));
         int count = carrier.getCount("service");
-        List<Carrier> mapperList = new ArrayList<Carrier>();
+        List<Carrier> mapperList = new ArrayList<>();
         for (int i$ = 0; i$ < count; i$++) {
             mapperList.add(carrier.getCarrier("service", i$));
         }
@@ -58,23 +56,24 @@ public class ServiceInit implements JInit {
             k$ = i$;
             for (int j$ = i$ + 1; j$ < size; j$++) {
                 bCarrier = mapperList.get(j$);
-                if (Integer.parseInt(aCarrier.getString("index", "0")) > Integer.parseInt(bCarrier.getString("index", "0"))) {
+                if (Integer.parseInt(aCarrier.getStringByName("index", "0")) > Integer.parseInt(bCarrier.getStringByName("index", "0"))) {
                     mapperList.set(k$, bCarrier);
                     mapperList.set(j$, aCarrier);
                     k$ = j$;
                 }
             }
         }
-        List<Class<? super Class<JService>>> classList = new ArrayList<Class<? super Class<JService>>>();
+        List<Class<? super Class<JService>>> classList = new ArrayList<>();
         for (Carrier mapper : mapperList) {
-            classList.addAll(ClassUtil.getClassByPackageAndInterface(mapper.getString("path", ""), JService.class));
+            classList.addAll(ClassUtil.getClassByPackageAndInterface(mapper.getStringByName("path", ""), JService.class));
         }
 
         operate(classList);
     }
 
     public void addMapperByPackagePath(String pkgPath) throws JingException {
-        List<Class<? super Class<JService>>> classList = new ArrayList<Class<? super Class<JService>>>(ClassUtil.getClassByPackageAndInterface(pkgPath, JService.class));
+        List<Class<? super Class<JService>>> classList = new ArrayList<>(
+            ClassUtil.getClassByPackageAndInterface(pkgPath, JService.class));
         operate(classList);
     }
 
@@ -87,7 +86,7 @@ public class ServiceInit implements JInit {
                 for (String serviceCode$ : serviceCodes) {
                     if (null != serviceCode$ && serviceCode$.length() != 0) {
                         if (serviceMap.containsKey(serviceCode$)) {
-                            throw new JingException("Duplicate Path Mapping Configuration: " + serviceCode$);
+                            throw new JingException("duplicate path mapping configuration: " + serviceCode$);
                         }
                         else {
                             try {
@@ -95,7 +94,7 @@ public class ServiceInit implements JInit {
                                 serviceMap.put(serviceCode$, (Class<? super JService>) clazz);
                             }
                             catch (Exception e) {
-                                throw new JingException(e, "Invalid Implements: " + clazz.getName());
+                                throw new JingException(e, "invalid implements: " + clazz.getName());
                             }
                         }
                     }
@@ -107,10 +106,10 @@ public class ServiceInit implements JInit {
     public static Class<? super JService> mappingService(String serviceCode) throws JingException {
         Class<? super JService> tempJService = serviceMap.get(serviceCode);
         if (null == tempJService) {
-            throw new JingException("Failed to get service mapping: " + serviceCode);
+            throw new JingException("failed to get service mapping: " + serviceCode);
         }
         else {
-            LOGGER.debug("Get service mapping: [serviceCode: {}][serviceImpl: {}]", serviceCode, tempJService.getName());
+            LOGGER.debug("get service mapping: [serviceCode: {}][serviceImpl: {}]", serviceCode, tempJService.getName());
         }
         return tempJService;
     }

@@ -13,7 +13,7 @@ import java.util.Date;
  * @author: bks <br>
  * @createDate: 2019-01-28 <br>
  */
-public class DateUtil {
+@SuppressWarnings({ "unused", "WeakerAccess" }) public class DateUtil {
     public static final String DB_DATE_TIME = "YYYY-MM-DD HH24:MI:SS";
 
     public static final String JAVA_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
@@ -28,7 +28,7 @@ public class DateUtil {
             return sdf.parse(dateStr);
         }
         catch (ParseException e) {
-            throw new JingException(e, "Failed to transfer String to Date: [{}] with [{}]", dateStr, dateFormat);
+            throw new JingException(e, "failed to transfer String to Date: [{}] with [{}]", dateStr, dateFormat);
         }
     }
 
@@ -85,7 +85,7 @@ public class DateUtil {
             case Calendar.SECOND:
                 return (float) (date1.getTime() - date2.getTime()) / (float) (1000);
             default:
-                throw new JingException("Invalid field type");
+                throw new JingException("invalid field type");
         }
     }
 

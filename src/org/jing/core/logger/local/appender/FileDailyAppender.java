@@ -18,7 +18,7 @@ import java.util.Date;
  * @author: bks <br>
  * @createDate: 2021-01-13 <br>
  */
-@SuppressWarnings("Duplicates") public class FileDailyAppender extends FileAppender {
+@SuppressWarnings({ "Duplicates", "WeakerAccess" }) public class FileDailyAppender extends FileAppender {
     protected String dateFormat;
 
     protected Date logFileDate;
@@ -30,9 +30,9 @@ import java.util.Date;
     }
 
     @Override protected void extendInit() throws JingException {
-        this.dateFormat = paramC.getString("date-format", "yyyy-MM-dd");
+        this.dateFormat = paramC.getStringByName("date-format", "yyyy-MM-dd");
         this.logFileDate = DateUtil.getDate(DateUtil.getDateString(new Date(logFile.lastModified()), "yyyyMMdd"), "yyyyMMdd");
-        this.timeSize = StringUtil.parseInteger(paramC.getString("times", ""), 1) * 24 * 60 * 60 * 1000;
+        this.timeSize = StringUtil.parseInteger(paramC.getStringByName("times", ""), 1) * 24 * 60 * 60 * 1000;
     }
 
     @Override public void append(LocalLoggerEvent event) {

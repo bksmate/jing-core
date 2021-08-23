@@ -1,13 +1,15 @@
 package org.jing.core.lang;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.jing.core.json.JsonFormat;
-import org.jing.core.util.CarrierUtil;
+import org.jing.core.format.Carrier2XML;
+import org.jing.core.json.CharReader;
+import org.jing.core.json.Token;
+import org.jing.core.json.TokenList;
+import org.jing.core.json.TokenType;
+import org.jing.core.json.Tokenizer;
+import org.jing.core.format.Carrier2Json;
 import org.jing.core.util.StringUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,459 +18,732 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.HashMap;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Description: A Special HashMap. <br>
+ * Description: <br>
  *
- * @author: lxd <br>
- * @createDate 2019-01-10 17:11:02 <br>
+ * @author: bks <br>
+ * @createDate: 2021-08-21 <br>
  */
+@SuppressWarnings({ "unused", "WeakerAccess", "UnusedReturnValue", "Duplicates" })
 public class Carrier {
-    /**
-     * Description: Value Map. <br>
-     */
-    private HashMap<String, Object> valueMap = new LinkedHashMap<String, Object>();
+    private volatile String name = "";
 
-    private HashMap<String, String> extendMap = null;
+    private volatile List<Carrier> childList = new ArrayList<>();
 
-    private String rootNodeName = Const.CARRIER_ROOT_NODE;
+    private volatile Object value = null;
 
-    /**
-     * Description: Constructor, it will initialize the value map with an empty HashMap. <br>
-     */
+    private LinkedHashMap<String, String> attrMap = null;
+
     public Carrier() {
+        name = Const.CARRIER_ROOT_NODE;
     }
 
-    public Carrier(String rootNodeName) {
-        if (StringUtil.isNotEmpty(rootNodeName)) {
-            this.rootNodeName = rootNodeName;
-        }
+    public Carrier(String name) {
+        this.setName(name);
+        this.setValue(null);
     }
 
-    /**
-     * Description: Throw exception if value map is empty. <br>
-     *
-     * @author: bks. <br>
-     * @throws JingException <br>
-     */
-    private void checkFeasibility() throws JingException {
-        if (null == valueMap) {
-            throw new JingException("null value map");
-        }
+    public Carrier(String name, Object value) {
+        this.setName(name);
+        this.setValue(value);
     }
 
-    /**
-     * Description: Count how many entry with the same key. <br>
-     *
-     * @param key <br>
-     * @return <br>
-     * @throws JingException <br>
-     */
-    public int getCount(String key) throws JingException {
-        checkFeasibility();
-        return CarrierUtil.getCount(valueMap, key);
+    public Carrier(String name, Carrier node) throws JingException {
+        this.setName(name);
+        this.addCarrier(node);
     }
 
-    public void setRootNodeName(String rootNodeName) {
-        this.rootNodeName = rootNodeName;
-    }
-
-    public String getRootNodeName() {
-        return rootNodeName;
-    }
-
-    /**
-     * Description: Setter. <br>
-     *
-     * @param valueMap <br>
-     */
-    public Carrier setValueMap(HashMap<String, Object> valueMap) {
-        this.valueMap = valueMap;
+    public Carrier setName(String name) {
+        this.name = name;
         return this;
     }
 
-    public Carrier addValueByKey(String key, Object value) throws JingException {
-        CarrierUtil.addValueByKey(valueMap, key, value);
+    public Carrier setValue(Object value) {
+        this.value = value;
         return this;
     }
 
-    public Carrier setValueByKey(int seq, String key, Object value) throws JingException {
-        CarrierUtil.setValueByKey(valueMap, key, value, seq);
+    public Object getValue() {
+        return this.value;
+    }
+
+    public String getString() {
+        return null == value ? "" : StringUtil.parseString(this.value);
+    }
+
+    public Carrier addCarrier(Carrier child) throws JingException {
+        if (null == child) {
+            throw new JingException("cannot add null carrier into child list");
+        }
+        this.childList.add(child);
         return this;
     }
 
-    public Carrier setValueByKey(String key, Object value) throws JingException {
-        CarrierUtil.setValueByKey(valueMap, key, value, 0);
+    public Carrier removeChildByName(String name) {
+        Carrier child;
+        int size = childList.size();
+        for (int i$ = 0; i$ < size; i$++) {
+            child = childList.get(i$);
+            if (child.name.equals(name)) {
+                childList.remove(i$);
+                i$ --;
+                size --;
+            }
+        }
         return this;
     }
 
-    public Object getValueByKey(int seq, String key, Object defaultValue) throws JingException {
-        return CarrierUtil.getValueByKey(valueMap, key, defaultValue, seq);
-    }
-
-    public Object getValueByKey(String key, Object defaultValue) throws JingException {
-        return CarrierUtil.getValueByKey(valueMap, key, defaultValue, 0);
-    }
-
-    public Object getValueByKey(int seq, String key) throws JingException {
-        return CarrierUtil.getValueByKey(valueMap, key, null, seq);
-    }
-
-    public Object getValueByKey(String key) throws JingException {
-        return CarrierUtil.getValueByKey(valueMap, key, null, 0);
-    }
-
-    public void removeByKey(String key) {
-        this.valueMap.remove(key);
-    }
-
-    public String getString(int seq, String key, String defaultString) throws JingException {
-        Object retObject = getValueByKey(seq, key, defaultString);
-        return StringUtil.ifEmpty(StringUtil.parseString(retObject), defaultString);
-    }
-
-    public String getString(int seq, String key) throws JingException {
-        Object retObject = getValueByKey(seq, key);
-        return StringUtil.parseString(retObject);
-    }
-
-    public String getString(String key, String defaultString) throws JingException {
-        Object retObject = getValueByKey(key, defaultString);
-        return StringUtil.ifEmpty(StringUtil.parseString(retObject), defaultString);
-    }
-
-    public String getString(String key) throws JingException {
-        Object retObject = getValueByKey(key);
-        return StringUtil.parseString(retObject);
-    }
-
-    public Carrier getCarrier(String key, int seq) throws JingException {
-        Object temp = getValueByKey(seq, key, null);
-        if (null == temp) {
-            throw new JingException("Invalid key: " + key);
+    public Carrier removeChildByName(String name, int seq) throws JingException {
+        if (seq < 0) {
+            throw new JingException("invalid seq: {}", seq);
         }
-        if (temp instanceof Carrier) {
-            return (Carrier) temp;
-        }
-        else if (temp instanceof HashMap) {
-            Carrier tempC = new Carrier();
-            try {
-                tempC.valueMap = (HashMap<String, Object>) temp;
+        int count = -1;
+        Carrier child;
+        int size = childList.size();
+        for (int i$ = 0; i$ < size; i$++) {
+            child = childList.get(i$);
+            if (child.name.equals(name)) {
+                count ++;
             }
-            catch (Exception e) {
-                tempC.valueMap = new HashMap<String, Object> ((Map<? extends String, ?>) temp);
+            if (count == seq) {
+                childList.remove(i$);
+                break;
             }
-            return tempC;
         }
-        else if (temp instanceof String && StringUtil.isEmpty((String) temp)) {
-            return new Carrier();
-        }
-        else {
-            throw new JingException("Invalid key: " + key);
-        }
-    }
-
-    public Carrier getCarrier(String key) throws JingException {
-        return getCarrier(key, 0);
-    }
-
-    public HashMap<String, Object> getValueMap() {
-        return valueMap;
-    }
-
-    public HashMap<String, String> getExtendMap() {
-        return extendMap;
-    }
-
-    public void extend(String key, String value) {
-        if (null == extendMap) {
-            extendMap = new LinkedHashMap<>();
-        }
-        extendMap.put(key, value);
-    }
-
-    public String extend(String key) {
-        return StringUtil.getMapString(extendMap, key);
-    }
-
-    public void setServiceCode(String serviceCode) {
-        this.extend("SERVICE_CODE", serviceCode);
-    }
-
-    public String getServiceCode() {
-        return this.extend("SERVICE_CODE");
-    }
-
-    public Carrier putAll(Map<String, Object> valueMap) {
-        this.valueMap.putAll(valueMap);
         return this;
     }
 
-    public String asXML() {
-        OutputFormat xmlFormat = CarrierUtil.generateXMLFormat(true, false, true, "    ");
-        return asXML(xmlFormat, true);
+    public Carrier addValueByName(String name, Object value) {
+        Carrier child = new Carrier();
+        child.name = name;
+        child.value = value;
+        childList.add(child);
+        return this;
     }
 
-    public String asLightXML(boolean needHead) {
-        OutputFormat xmlFormat = CarrierUtil.generateXMLFormat(true, false, false, null);
-        return asXML(xmlFormat, needHead);
+    public Carrier setValueByName(int seq, String name, Object value) throws JingException {
+        if (seq < 0) {
+            throw new JingException("invalid seq: {}", seq);
+        }
+        int count = -1;
+        for (Carrier child : childList) {
+            if (null == child) {
+                continue;
+            }
+            if (child.name.equals(name)) {
+                count++;
+            }
+            if (count == seq) {
+                child.setValue(value);
+                return this;
+            }
+        }
+        return addValueByName(name, value);
     }
 
-    public String asXML(OutputFormat xmlFormat, boolean needHead) {
-        Document document =DocumentHelper.createDocument();
-        Element rootElement = DocumentHelper.createElement(rootNodeName);
-        document.setRootElement(rootElement);
-        // 设置扩展属性
-        if (null != extendMap) {
-            for (Map.Entry<String, String> entry$ : extendMap.entrySet()) {
-                rootElement.addAttribute(entry$.getKey(), entry$.getValue());
-            }
-        }
-        // 设置数据
-        CarrierUtil.object2Element(valueMap, null, rootElement);
-        try {
-            StringWriter sw = new StringWriter();
-            XMLWriter xmlWriter = new XMLWriter(sw, xmlFormat);
-            if (needHead) {
-                xmlWriter.write(document);
-            }
-            else {
-                xmlWriter.write(rootElement);
-            }
-            return sw.toString();
-        }
-        catch (Exception e) {
-            return null;
-        }
+    public Carrier setValueByName(String name, Object value) throws JingException {
+        return setValueByName(0, name, value);
     }
 
-    public Object getValueByPath(String path) throws JingException {
-        String[] paths = path.split("\\.");
-        int length = paths.length;
-        Object retObject;
-        Carrier tempCarrier = this;
-        for (int i$ = 0; i$ < length; i$++) {
-            retObject = tempCarrier.getValueByKey(paths[i$]);
-            if (i$ == length - 1) {
-                return retObject;
-            }
-            if (null != retObject) {
-                if (retObject instanceof HashMap || retObject instanceof Carrier) {
-                    tempCarrier = tempCarrier.getCarrier(paths[i$]);
-                }
-                else {
-                    return null;
+    public Carrier setValueByPath(String path, Object value) throws JingException {
+        String[] names = path.split("\\.");
+        Carrier p = this;
+        int index = 0;
+        String name;
+        boolean flag;
+        while (index < names.length) {
+            name = names[index];
+            flag = false;
+            for (Carrier childNode : p.childList) {
+                if (name.equals(childNode.name)) {
+                    index ++;
+                    p = childNode;
+                    flag = true;
+                    break;
                 }
             }
-            else {
-                return null;
+            if (!flag) {
+                Carrier newNode = new Carrier(name);
+                p.addCarrier(newNode);
+                p = newNode;
+                index ++;
+            }
+            if (names.length == index) {
+                p.value = value;
+            }
+        }
+        return this;
+    }
+
+    public Carrier attr(String name, String value) {
+        if (null == attrMap) {
+            attrMap = new LinkedHashMap<>();
+        }
+        this.attrMap.put(name, value);
+        return this;
+    }
+
+    public String attr(String name) {
+        return this.attrMap.get(name);
+    }
+
+    public List<Carrier> getList(String name) {
+        ArrayList<Carrier> retList = null;
+        for (Carrier child : childList) {
+            if (child.name.equals(name)) {
+                if (null == retList) {
+                    retList = new ArrayList<>();
+                }
+                retList.add(child);
+            }
+        }
+        return retList;
+    }
+
+    public Carrier getCarrier(String name, int seq) {
+        int count = -1;
+        for (Carrier child : childList) {
+            if (child.name.equals(name)) {
+                count ++;
+            }
+            if (count == seq) {
+                return child;
             }
         }
         return null;
     }
 
-    public String getStringByPath(String path) throws JingException {
-        Object retObject = getValueByPath(path);
-        if (null == retObject) {
-            return null;
+    public Carrier getCarrier(String name) {
+        return getCarrier(name, 0);
+    }
+
+    public int getCount(String name) {
+        int count = 0;
+        for (Carrier child : childList) {
+            if (child.name.equals(name)) {
+                count ++;
+            }
+        }
+        return count;
+    }
+
+    public Object getValueByName(int seq, String name, Object defaultValue) throws JingException {
+        if (seq < 0) {
+            throw new JingException("invalid seq: {}", seq);
+        }
+        int count = -1;
+        Object retValue = null;
+        for (Carrier child : childList) {
+            if (null == child) {
+                continue;
+            }
+            if (child.name.equals(name)) {
+                count++;
+            }
+            if (count == seq) {
+                retValue =  child.getValue();
+                break;
+            }
+        }
+        if (null == retValue) {
+            return defaultValue;
         }
         else {
-            return String.valueOf(retObject);
+            return retValue;
         }
     }
 
-    public String getStringByPath(String path, String defaultString) throws JingException {
-        return StringUtil.ifEmpty(getStringByPath(path), defaultString);
+    public Object getValueByName(int seq, String name) throws JingException {
+        return getValueByName(seq, name, null);
     }
 
-    public void setValueByPath(String path, Object value) throws JingException {
-        String[] paths = path.split("\\.");
-        int length = paths.length;
+    public Object getValueByName(String name, Object defaultValue) throws JingException {
+        return getValueByName(0, name, defaultValue);
+    }
+
+    public Object getValueByName(String name) throws JingException {
+        return getValueByName(0, name, null);
+    }
+
+    public Object getValueByPath(String path, Object defaultValue) {
+        String[] names = path.split("\\.");
         Carrier p = this;
-        Object o;
-        String key = paths[0];
-        for (int i$ = 1; i$ < length; i$++) {
-            o = p.getValueByKey(key);
-            if (o instanceof Carrier) {
-                p = (Carrier) o;
-            }
-            else if (o instanceof Map) {
-                Carrier tempC = new Carrier();
-                tempC.putAll((Map<String, Object>) o);
-                p.setValueByKey(key, tempC);
-                p = tempC;
-            }
-            else if (o instanceof List) {
-                Carrier tempC = new Carrier();
-                if (((List) o).size() > 1) {
-                    ((List) o).set(0, tempC);
+        int index = 0;
+        String name;
+        boolean flag;
+        while (index < names.length) {
+            name = names[index];
+            flag = false;
+            for (Carrier childNode : p.childList) {
+                if (name.equals(childNode.name)) {
+                    index ++;
+                    p = childNode;
+                    flag = true;
+                    break;
                 }
-                else {
-                    p.setValueByKey(key, tempC);
+            }
+            if (!flag) {
+                return defaultValue;
+            }
+            if (names.length == index) {
+                break;
+            }
+        }
+        return p.value;
+    }
+
+    public Object getValueByPath(String path) {
+        return getValueByPath(path, null);
+    }
+
+    public String getStringByPath(String path, String defaultString) {
+        String[] names = path.split("\\.");
+        Carrier p = this;
+        int index = 0;
+        String name;
+        boolean flag;
+        while (index < names.length) {
+            name = names[index];
+            flag = false;
+            for (Carrier childNode : p.childList) {
+                if (name.equals(childNode.name)) {
+                    index ++;
+                    p = childNode;
+                    flag = true;
+                    break;
                 }
-                p = tempC;
+            }
+            if (!flag) {
+                return defaultString;
+            }
+            if (names.length == index) {
+                break;
+            }
+        }
+        return StringUtil.parseString(p.value);
+    }
+
+    public String getStringByPath(String path) {
+        return getStringByPath(path, null);
+    }
+
+    public String getStringByName(int seq, String name, String defaultString) throws JingException {
+        return StringUtil.parseString(getValueByName(seq, name, defaultString));
+    }
+
+    public String getStringByName(int seq, String name) throws JingException {
+        return getStringByName(seq, name, "");
+    }
+
+    public String getStringByName(String name, String defaultString) throws JingException {
+        return getStringByName(0, name, defaultString);
+    }
+
+    public String getStringByName(String name) throws JingException {
+        return getStringByName(0, name, "");
+    }
+
+    public String asXML() throws JingException {
+        return asXML(new Carrier2XML());
+    }
+
+    public String asXML(Carrier2XML format) throws JingException {
+        StringBuilder stbr = new StringBuilder();
+        if (0 == format.getLevel()) {
+            stbr.append(format.getHead());
+        }
+        else {
+            stbr.append(format.getCurrentIndent());
+        }
+        stbr.append("<").append(name);
+        if (null != attrMap && format.isNeedNodeAttr())  {
+            for (Map.Entry<String, String> attr : attrMap.entrySet()) {
+                validateAttr(attr);
+                stbr.append(String.format(" %s=\"%s\"", attr.getKey(), StringUtil.ifEmpty(attr.getValue())));
+            }
+        }
+        String content = getString();
+        if (childList.isEmpty() && StringUtil.isEmpty(content)) {
+            if (format.isExpandEmptyNode()) {
+                stbr.append("></").append(name).append(">");
             }
             else {
-                Carrier tempC = new Carrier();
-                p.setValueByKey(key, tempC);
-                p = tempC;
+                stbr.append("/>");
             }
-            key = paths[i$];
         }
-        p.setValueByKey(key, value);
+        else if (!childList.isEmpty()) {
+            stbr.append(">");
+            format.addLevel();
+            for (Carrier child : childList) {
+                if (null == child) {
+                    continue;
+                }
+                stbr.append(format.getNewLine()).append(child.asXML(format));
+            }
+            format.reduceLevel();
+            stbr.append(format.getNewLine()).append(format.getCurrentIndent()).append("</").append(name).append(">");
+        }
+        else {
+            stbr.append(">").append(content).append("</").append(name).append(">");
+        }
+        return stbr.toString();
     }
 
-    public String asJson() {
-        return CarrierUtil.carrier2JsonContent(this);
-    }
-
-    public String asJson(JsonFormat format) {
-        return CarrierUtil.carrier2JsonContent(this, format);
-    }
-
-    public String asJson(String newline, String indent) {
-        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(newline, indent));
-    }
-
-    public String asJson(String newline, boolean needIndent) {
-        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(newline, needIndent));
-    }
-
-    public String asJson(boolean needNewline, String indent) {
-        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(needNewline, indent));
-    }
-
-    public String asJson(boolean needNewline, boolean needIndent) {
-        return CarrierUtil.carrier2JsonContent(this, new JsonFormat(needNewline, needIndent));
-    }
-
-    public static Carrier parseJson(String json) throws JingException {
-        return CarrierUtil.jsonContent2Carrier(json);
-    }
-
-    public static Carrier parseXML(String xml) throws JingException {
-        return CarrierUtil.string2Carrier(xml);
-        /*try {
+    public static Carrier parseXML(String xmlContent) throws JingException {
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setIgnoringElementContentWhitespace(true);
             factory.setIgnoringComments(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputStream stream = new ByteArrayInputStream(xml.getBytes());
-            org.w3c.dom.Document document = builder.parse(stream);
-            org.w3c.dom.Element element = document.getDocumentElement();
+            InputStream stream = new ByteArrayInputStream(xmlContent.getBytes());
+            Document document = builder.parse(stream);
+            Element element = document.getDocumentElement();
             return parseXML(element);
         }
         catch (Throwable t) {
             throw new JingException(t, "failed to parse by xml content");
-        }*/
+        }
     }
 
-    /*public static Carrier parseXML(Node node) throws JingException {
+    public static Carrier parseXML(Node node) throws JingException {
         Carrier carrier = new Carrier(node.getNodeName());
-        carrier.parseXML(node, null);
+        carrier.parseXML(node, 0);
         return carrier;
     }
 
-    private void parseXML(Node node, String name) throws JingException {
-        if (isNodeTextOnly(node)) {
-            this.addValueByKey(name, getNodeText(node));
-        }
-        else {
-            Node childNode;
-            Carrier childCarrier;
-            NodeList nodeList = node.getChildNodes();
-            int length = null == nodeList ? 0 : nodeList.getLength();
-            childCarrier = new Carrier();
-            NamedNodeMap attrMap = node.getAttributes();
-            if (null != attrMap) {
-                int size = attrMap.getLength();
-                Node attrNode;
-                for (int i$ = 0; i$ < size; i$++) {
-                    attrNode = attrMap.item(i$);
-                    childCarrier.extend(attrNode.getNodeName(), StringUtil.ifEmpty(attrNode.getNodeValue()));
-                }
-            }
-            for (int i$ = 0; i$ < length; i$++) {
-                childNode = nodeList.item(i$);
-                if (childNode.getNodeType() == Node.TEXT_NODE) {
-                    continue;
-                }
-                childCarrier.parseXML(childNode, childNode.getNodeName());
-            }
-            if (null == name) {
-                this.valueMap = childCarrier.valueMap;
-            }
-            else {
-                this.addValueByKey(name, childCarrier);
+    private boolean parseXML(Node node, int level) throws JingException {
+        NamedNodeMap attrMap = node.getAttributes();
+        if (null != attrMap) {
+            int size = attrMap.getLength();
+            Node attrNode;
+            for (int i$ = 0; i$ < size; i$++) {
+                attrNode = attrMap.item(i$);
+                this.attr(attrNode.getNodeName(), StringUtil.ifEmpty(attrNode.getNodeValue()));
             }
         }
-        /*
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE: {
                 NodeList nodeList = node.getChildNodes();
-                int length = null == nodeList ? 0 : nodeList.getLength();
+                int length = nodeList.getLength();
                 if (length == 0) {
-                    this.setValueByKey(node.getNodeName(), null);
+                    this.setValue("");
                 }
                 else {
-                    Carrier childCarrier;
-                    Carrier p;
+                    Carrier childC;
                     Node childNode;
                     for (int i$ = 0; i$ < length; i$++) {
                         childNode = nodeList.item(i$);
-                        if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                            p = new Carrier();
+                        if (childNode.getNodeType() == Node.TEXT_NODE) {
+                            if (this.parseXML(childNode, level + 1)) {
+                                return true;
+                            }
                         }
                         else {
-                            p = this;
-                        }
-                        p.parseXML(childNode, node.getNodeName());
-                        if (p != this) {
-                            p.addValueByKey(childNode.getNodeName(), p);
-                        }
-                        else {
-                            this.setValueMap(p.getValueMap());
+                            childC = new Carrier(childNode.getNodeName());
+                            if (childC.parseXML(childNode, level + 1)) {
+                                this.addCarrier(childC);
+                            }
                         }
                     }
                 }
-                break;
+                return true;
             }
             case Node.TEXT_NODE: {
                 if (node.getPreviousSibling() == null && node.getNextSibling() == null) {
-                    this.addValueByKey(name, StringUtil.ifEmpty(node.getNodeValue()).trim());
+                    this.setValue(StringUtil.ifEmpty(node.getNodeValue()).trim());
+                    return true;
                 }
                 break;
             }
             default:
                 throw new JingException("invalid node type: {}", node.getNodeType());
         }
+        return false;
     }
 
-    private boolean isNodeTextOnly(Node node) throws JingException {
-        if (node.getNodeType() != Node.ELEMENT_NODE) {
-            throw new JingException("invalid node type");
-        }
-        NodeList childNodeList = node.getChildNodes();
-        int size = null == childNodeList ? 0 : childNodeList.getLength();
-        return size == 0 || size == 1 && childNodeList.item(0).getNodeType() == Node.TEXT_NODE;
+    public String asJson() {
+        return asJson(new Carrier2Json());
     }
 
-    private String getNodeText(Node node) {
-        NodeList childNodeList = node.getChildNodes();
-        int size = null == childNodeList ? 0 : childNodeList.getLength();
-        if (0 == size) {
-            return "";
+    public String asJson(Carrier2Json format) {
+        format.clearStringBuilder();
+        if (format.isNeedRootNode()) {
+            format.append("{");
+            key2Json(name, format);
+            value2Json(this, format);
+            format.append("}");
         }
-        return StringUtil.ifEmpty(childNodeList.item(0).getNodeValue()).trim();
-    }*/
+        else {
+            value2Json(this, format);
+        }
+        return format.getStringBuilder().toString();
+    }
 
-    @Override
-    public String toString() {
-        return null == valueMap ? null : valueMap.toString();
+    private void key2Json(String name, Carrier2Json format) {
+        format.append(format.getNewline()).append(format.getCurrentIndent())
+            .append("\"").append(Carrier2Json.escape(name)).append("\":").append(format.getSpace());
+    }
+
+    private void value2Json(Object value, Carrier2Json format) {
+        if (childList.isEmpty()) {
+            if (null == this.value) {
+                format.append("null");
+            }
+            else if (this.value instanceof Integer) {
+                format.append(String.valueOf(this.value));
+            }
+            else if (this.value instanceof Long) {
+                format.append(this.value + "L");
+            }
+            else if (this.value instanceof Float) {
+                format.append(this.value + "F");
+            }
+            else if (this.value instanceof Double) {
+                format.append(this.value + "D");
+            }
+            else if (this.value instanceof Boolean) {
+                format.append(String.valueOf(this.value));
+            }
+            else {
+                format.append("\"").append(StringUtil.parseString(this.value)).append("\"");
+            }
+        }
+        else {
+            format.append("{");
+            format.addLevel();
+            int size = childList.size();
+            int[] posArr = new int[size];
+            Carrier child$i, child$j;
+            boolean flag = false;
+            boolean flag$;
+            for (int i$ = 0; i$ < size; i$++) {
+                if (0 != posArr[i$]) {
+                    continue;
+                }
+                if (flag) {
+                    format.append(",").append(format.getSpace());
+                }
+                else {
+                    flag = true;
+                }
+                flag$ = false;
+                child$i = childList.get(i$);
+                key2Json(child$i.name, format);
+                posArr[i$] = 1;
+                for (int j$ = i$ + 1; j$ < size; j$++) {
+                    child$j = childList.get(j$);
+                    if (child$i.name.equals(child$j.name)) {
+                        posArr[j$] = 1;
+                        if (!flag$) {
+                            flag$ = true;
+                            format.append("[");
+                            format.addLevel();
+                            format.append(format.getNewline()).append(format.getCurrentIndent());
+                            child$i.value2Json(child$i.value, format);
+                        }
+                        format.append(",").append(format.getSpace());
+                        format.append(format.getNewline()).append(format.getCurrentIndent());
+                        child$j.value2Json(child$j.value, format);
+                    }
+                }
+                if (flag$) {
+                    // 已经输出了数组
+                    format.reduceLevel();
+                    format.append(format.getNewline()).append(format.getCurrentIndent());
+                    format.append("]");
+                }
+                else {
+                    child$i.value2Json(child$i.value, format);
+                }
+            }
+            format.reduceLevel();
+            format.append(format.getNewline()).append(format.getCurrentIndent());
+            format.append("}");
+        }
+    }
+
+    public static Carrier parseJson(String jsonContent) throws JingException {
+        CharReader charReader = new CharReader(new StringReader(jsonContent));
+        TokenList tokens = new Tokenizer().tokenize(charReader);
+        Token token = tokens.next();
+        if (null == token) {
+            return new Carrier();
+        } else if (token.getTokenType() == TokenType.BEGIN_OBJECT) {
+            return parseJson(tokens, null);
+        }
+        else {
+            throw new JingException("invalid begin token");
+        }
+    }
+
+    public static Carrier parseJson(TokenList tokens, String rootName) throws JingException {
+        int expectToken = TokenType.STRING.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+        String key = null;
+        Object value;
+        rootName = StringUtil.ifEmpty(rootName, Const.CARRIER_ROOT_NODE);
+        Carrier carrier = new Carrier(rootName);
+        while (tokens.hasMore()) {
+            Token token = tokens.next();
+            TokenType tokenType = token.getTokenType();
+            String tokenValue = token.getValue();
+            switch (tokenType) {
+                case BEGIN_OBJECT:
+                    tokenType.checkExpectToken(expectToken);
+                    carrier.addCarrier(parseJson(tokens, key));
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+                    break;
+                case END_OBJECT:
+                    tokenType.checkExpectToken(expectToken);
+                    return carrier;
+                case BEGIN_ARRAY:
+                    tokenType.checkExpectToken(expectToken);
+                    carrier.parseJsonArr(tokens, key);
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+                    break;
+                case NULL:
+                    tokenType.checkExpectToken(expectToken);
+                    carrier.setValueByName(key, null);
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+                    break;
+                case NUMBER:
+                    tokenType.checkExpectToken(expectToken);
+                    if (tokenValue.contains(".") || tokenValue.contains("e") || tokenValue.contains("E")) {
+                        carrier.setValueByName(key, Double.valueOf(tokenValue));
+                    }
+                    else {
+                        Long num = Long.valueOf(tokenValue);
+                        if (num > Integer.MAX_VALUE || num < Integer.MIN_VALUE) {
+                            carrier.setValueByName(key, num);
+                        } else {
+                            carrier.setValueByName(key, num.intValue());
+                        }
+                    }
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+                    break;
+                case BOOLEAN:
+                    tokenType.checkExpectToken(expectToken);
+                    carrier.setValueByName(key, Boolean.valueOf(token.getValue()));
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+                    break;
+                case STRING:
+                    tokenType.checkExpectToken(expectToken);
+                    Token preToken = tokens.peekPrevious();
+                    if (preToken.getTokenType() == TokenType.SEP_COLON) {
+                        value = token.getValue();
+                        carrier.addValueByName(key, value);
+                        expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_OBJECT.getTokenCode();
+                    } else {
+                        key = token.getValue();
+                        expectToken = TokenType.SEP_COLON.getTokenCode();
+                    }
+                    break;
+                case SEP_COLON:
+                    tokenType.checkExpectToken(expectToken);
+                    expectToken = TokenType.NULL.getTokenCode()
+                        | TokenType.NUMBER.getTokenCode()
+                        | TokenType.BOOLEAN.getTokenCode()
+                        | TokenType.STRING.getTokenCode()
+                        | TokenType.BEGIN_OBJECT.getTokenCode()
+                        | TokenType.BEGIN_ARRAY.getTokenCode();
+                    break;
+                case SEP_COMMA:
+                    tokenType.checkExpectToken(expectToken);
+                    expectToken = TokenType.STRING.getTokenCode();
+                    break;
+                case END_DOCUMENT:
+                    tokenType.checkExpectToken(expectToken);
+                    return carrier;
+                default:
+                    throw new JingException("unexpected token: {}", tokenType);
+            }
+        }
+        throw new JingException("parse error, invalid tokens");
+    }
+
+    private void parseJsonArr(TokenList tokens, String rootName) throws JingException {
+        int expectToken = TokenType.BEGIN_ARRAY.getTokenCode()
+            | TokenType.END_ARRAY.getTokenCode()
+            | TokenType.BEGIN_OBJECT.getTokenCode()
+            | TokenType.NULL.getTokenCode()
+            | TokenType.NUMBER.getTokenCode()
+            | TokenType.BOOLEAN.getTokenCode()
+            | TokenType.STRING.getTokenCode();
+        rootName = StringUtil.ifEmpty(rootName, Const.CARRIER_ROOT_NODE);
+        while (tokens.hasMore()) {
+            Token token = tokens.next();
+            TokenType tokenType = token.getTokenType();
+            String tokenValue = token.getValue();
+            switch (tokenType) {
+                case BEGIN_OBJECT:
+                    tokenType.checkExpectToken(expectToken);
+                    this.addCarrier(parseJson(tokens, rootName));
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_ARRAY.getTokenCode();
+                    break;
+                case BEGIN_ARRAY:
+                    tokenType.checkExpectToken(expectToken);
+                    this.parseJsonArr(tokens, rootName);
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_ARRAY.getTokenCode();
+                    break;
+                case END_ARRAY:
+                    tokenType.checkExpectToken(expectToken);
+                    return;
+                case NULL:
+                    tokenType.checkExpectToken(expectToken);
+                    this.addValueByName(rootName, null);
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_ARRAY.getTokenCode();
+                    break;
+                case NUMBER:
+                    tokenType.checkExpectToken(expectToken);
+                    if (tokenValue.contains(".") || tokenValue.contains("e") || tokenValue.contains("E")) {
+                        this.addValueByName(rootName, Double.valueOf(tokenValue));
+                    } else {
+                        Long num = Long.valueOf(tokenValue);
+                        if (num > Integer.MAX_VALUE || num < Integer.MIN_VALUE) {
+                            this.addValueByName(rootName, num);
+                        } else {
+                            this.addValueByName(rootName, num.intValue());
+                        }
+                    }
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_ARRAY.getTokenCode();
+                    break;
+                case BOOLEAN:
+                    tokenType.checkExpectToken(expectToken);
+                    this.addValueByName(rootName, Boolean.valueOf(tokenValue));
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_ARRAY.getTokenCode();
+                    break;
+                case STRING:
+                    tokenType.checkExpectToken(expectToken);
+                    this.addValueByName(rootName, tokenValue);
+                    expectToken = TokenType.SEP_COMMA.getTokenCode() | TokenType.END_ARRAY.getTokenCode();
+                    break;
+                case SEP_COMMA:
+                    tokenType.checkExpectToken(expectToken);
+                    expectToken = TokenType.STRING.getTokenCode()
+                        | TokenType.NULL.getTokenCode()
+                        | TokenType.NUMBER.getTokenCode()
+                        | TokenType.BOOLEAN.getTokenCode()
+                        | TokenType.BEGIN_ARRAY.getTokenCode()
+                        | TokenType.BEGIN_OBJECT.getTokenCode();
+                    break;
+                case END_DOCUMENT:
+                    tokenType.checkExpectToken(expectToken);
+                    return;
+                default:
+                    throw new JingException("unexpected token: {}", tokenType);
+            }
+        }
+        throw new JingException("parse error, invalid tokens");
+    }
+
+    private void validateAttr(Map.Entry<String, String> attr) throws JingException {
+        if (!attr.getKey().matches("\\w+")) {
+            throw new JingException("invalid attribute: {}=\"{}\"", attr.getKey(), attr.getValue());
+        }
     }
 }

@@ -11,7 +11,7 @@ import java.util.Arrays;
  * @author: bks <br>
  * @createDate: 2021-07-21 <br>
  */
-public class ByteUtil {
+@SuppressWarnings("unused") public class ByteUtil {
     public static byte[] string2ByteArray(String content, String charset, int arrLength, byte fillByte)
         throws JingException {
         try {
@@ -27,14 +27,7 @@ public class ByteUtil {
             return buffer;
         }
         catch (UnsupportedEncodingException e) {
-            throw new JingException("Invalid charset: {}", charset);
+            throw new JingException("invalid charset: {}", charset);
         }
-    }
-
-    public static void main(String[] args) throws JingException {
-        String content = "中文";
-        String charset = "utf-8";
-        byte[] buffer = string2ByteArray(content, charset, 10, (byte) 0);
-        System.out.println(buffer);
     }
 }

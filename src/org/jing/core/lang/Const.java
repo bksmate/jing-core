@@ -7,7 +7,7 @@ package org.jing.core.lang;
  * @author: bks <br>
  * @createDate: 2019-01-25 <br>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "WeakerAccess" })
 public final class Const {
     /**
      * 起效状态. <br>
@@ -39,7 +39,7 @@ public final class Const {
      */
     public final static String CFG_TABLE_LIST_FILE_NAME = "tableList.xml";
 
-    public static final String SYSTEM_DEFAULT_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><init><index>1</index><implements>org.jing.core.logger.JingLoggerInit</implements><parameters><path>config?logger.xml</path></parameters></init></jing>";
+    public static final String SYSTEM_DEFAULT_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><init><index>1</index><implements>org.jing.core.logger.JingLoggerInit</implements><parameters><frame>LOG4J</frame><path>config?logger.xml</path></parameters></init></jing>";
 
     public static final String SYSTEM_DEFAULT_LOGGER_PARAM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><jing><path>config?logger.xml</path></jing>";
 

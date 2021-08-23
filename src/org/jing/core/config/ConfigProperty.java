@@ -1,4 +1,4 @@
-package org.jing.core.lang.annotation;
+package org.jing.core.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,10 +9,12 @@ import java.lang.annotation.Target;
  * Description: <br>
  *
  * @author: bks <br>
- * @createDate: 2019-03-21 <br>
+ * @createDate: 2021-08-23 <br>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD})
-public @interface ServiceCode {
-    String[] value();
+@Target({ ElementType.METHOD })
+public @interface ConfigProperty {
+    String path();
+    boolean required() default false;
+    String defaultValue() default "";
 }

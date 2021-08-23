@@ -1,4 +1,4 @@
-package org.jing.core.lang.node;
+package org.jing.core.format;
 
 import org.jing.core.util.StringUtil;
 
@@ -11,7 +11,7 @@ import java.util.Map;
  * @author: bks <br>
  * @createDate: 2021-08-21 <br>
  */
-public class Format4XML {
+@SuppressWarnings("WeakerAccess") public class Carrier2XML {
     private String indent = "    ";
 
     private boolean expandEmptyNode = false;
@@ -30,36 +30,36 @@ public class Format4XML {
 
     private LinkedHashMap<String, String> headAttrMap = null;
 
-    public Format4XML(String indent, boolean expandEmptyNode, String newLine) {
+    public Carrier2XML(String indent, boolean expandEmptyNode, String newLine) {
         this.indent = indent;
         this.expandEmptyNode = expandEmptyNode;
         this.newLine = newLine;
     }
 
-    public Format4XML(String indent, boolean expandEmptyNode, boolean newLine) {
+    public Carrier2XML(String indent, boolean expandEmptyNode, boolean newLine) {
         this.indent = indent;
         this.expandEmptyNode = expandEmptyNode;
         this.newLine = newLine ? "\n" : "";
     }
 
-    public Format4XML() {}
+    public Carrier2XML() {}
 
-    public Format4XML setIndent(String indent) {
+    public Carrier2XML setIndent(String indent) {
         this.indent = indent;
         return this;
     }
 
-    public Format4XML setExpandEmptyNode(boolean expandEmptyNode) {
+    public Carrier2XML setExpandEmptyNode(boolean expandEmptyNode) {
         this.expandEmptyNode = expandEmptyNode;
         return this;
     }
 
-    public Format4XML setNewLine(String newLine) {
+    public Carrier2XML setNewLine(String newLine) {
         this.newLine = newLine;
         return this;
     }
 
-    public Format4XML setNewLine(boolean newLine) {
+    public Carrier2XML setNewLine(boolean newLine) {
         this.newLine = newLine ? "\n" : "";
         return this;
     }
@@ -80,12 +80,12 @@ public class Format4XML {
         return level;
     }
 
-    public Format4XML addLevel() {
+    public Carrier2XML addLevel() {
         level ++;
         return this;
     }
 
-    public Format4XML reduceLevel() {
+    public Carrier2XML reduceLevel() {
         level --;
         return this;
     }
@@ -98,7 +98,7 @@ public class Format4XML {
         return headVersion;
     }
 
-    public Format4XML setHeadVersion(String headVersion) {
+    public Carrier2XML setHeadVersion(String headVersion) {
         this.headVersion = headVersion;
         return this;
     }
@@ -107,12 +107,12 @@ public class Format4XML {
         return headEncoding;
     }
 
-    public Format4XML setHeadEncoding(String headEncoding) {
+    public Carrier2XML setHeadEncoding(String headEncoding) {
         this.headEncoding = headEncoding;
         return this;
     }
 
-    public Format4XML headAttr(String name, String value) {
+    public Carrier2XML headAttr(String name, String value) {
         if (null == headAttrMap) {
             headAttrMap = new LinkedHashMap<>();
         }
@@ -127,7 +127,7 @@ public class Format4XML {
         return StringUtil.getMapString(headAttrMap, name);
     }
 
-    public Format4XML setNeedHead(boolean needHead) {
+    public Carrier2XML setNeedHead(boolean needHead) {
         this.needHead = needHead;
         return this;
     }
@@ -151,13 +151,13 @@ public class Format4XML {
         return needNodeAttr;
     }
 
-    public Format4XML setNeedNodeAttr(boolean needNodeAttr) {
+    public Carrier2XML setNeedNodeAttr(boolean needNodeAttr) {
         this.needNodeAttr = needNodeAttr;
         return this;
     }
 
-    public static Format4XML getZpFormat(boolean needHead) {
-        Format4XML format = new Format4XML("", true, false);
+    public static Carrier2XML getZpFormat(boolean needHead) {
+        Carrier2XML format = new Carrier2XML("", true, false);
         format.setNeedHead(needHead);
         format.setNeedNodeAttr(false);
         return format;

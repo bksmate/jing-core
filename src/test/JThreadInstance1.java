@@ -14,10 +14,10 @@ import org.jing.core.util.StringUtil;
  */
 public class JThreadInstance1 implements JThread {
     private static final JingLogger LOGGER = JingLogger.getLogger(JThreadInstance1.class);
-    private int size = 0;
+    private int size;
 
     public JThreadInstance1(Carrier param) throws JingException {
-        size = StringUtil.parseInteger(param.getString("size", "0"));
+        size = StringUtil.parseInteger(param.getStringByName("size", "0"));
     }
 
     @Override public void run() {

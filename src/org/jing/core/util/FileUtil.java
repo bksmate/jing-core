@@ -21,13 +21,13 @@ import java.util.zip.ZipOutputStream;
  * @author: bks <br>
  * @createDate: 2019-01-09 <br>
  */
-public class FileUtil {
+@SuppressWarnings({ "WeakerAccess", "unused", "ResultOfMethodCallIgnored", "Duplicates" }) public class FileUtil {
     /**
      * LOGGER. <br>
      */
     private static volatile InnerLogger LOGGER = new InnerLogger();
 
-    static class InnerLogger {
+    @SuppressWarnings("SameParameterValue") static class InnerLogger {
         JingLogger logger = null;
 
         void createLogger() {
@@ -78,7 +78,7 @@ public class FileUtil {
             return new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed to get bufferedReader [filePath: {}]", file.getAbsolutePath());
+            throw new JingException(e, "failed to get bufferedReader [filePath: {}]", file.getAbsolutePath());
         }
     }
 
@@ -89,15 +89,12 @@ public class FileUtil {
     public static String readFile(File file, String encoding) throws JingException {
         String filePath = file.getAbsolutePath();
         LOGGER.info("Try To Read File [filePath: {}]", filePath);
-        String retString = null;
+        String retString;
         try {
             encoding = StringUtil.ifEmpty(encoding, "utf-8");
             BufferedReader br = getBufferedReader(file, encoding);
             StringBuilder stbr = new StringBuilder();
             String row = br.readLine();
-            if (!StringUtil.isEmpty(row)) {
-                retString = "";
-            }
             boolean initFlag = false;
             while (null != row) {
                 if (initFlag) {
@@ -111,7 +108,7 @@ public class FileUtil {
             retString = stbr.toString();
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed To Read File [filePath: ]", filePath);
+            throw new JingException(e, "failed To Read File [filePath: ]", filePath);
         }
         return retString;
     }
@@ -148,15 +145,14 @@ public class FileUtil {
             boolean initFlag = false;
             while (null != (row = br.readLine())) {
                 if (null == retList) {
-                    retList = new ArrayList<String>();
+                    retList = new ArrayList<>();
                 }
                 retList.add(row);
-                initFlag = true;
             }
             br.close();
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed To Read File [filePath: {}]", filePath);
+            throw new JingException(e, "failed To Read File [filePath: {}]", filePath);
         }
         return retList;
     }
@@ -173,13 +169,14 @@ public class FileUtil {
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
             File sourceFile = new File(srcFilePath);
             if (skipParentDirectory && !sourceFile.isDirectory()) {
-                throw new JingException("Src file must be directory");
+                throw new JingException("src file must be directory");
             }
             String base = sourceFile.getName();
             if (skipParentDirectory) {
                 File[] fileList = sourceFile.listFiles();
                 int count = GenericUtil.countArray(fileList);
                 for (int i$ = 0; i$ < count; i$++) {
+                    assert fileList != null;
                     zipSubFunc(out, fileList[i$], fileList[i$].getName());
                 }
             }
@@ -204,6 +201,7 @@ public class FileUtil {
             }
             else {
                 for (int i$ = 0; i$ < count; i$++) {
+                    assert fileList != null;
                     zipSubFunc(out, fileList[i$], base + File.separator + fileList[i$].getName());
                 }
             }
@@ -218,13 +216,11 @@ public class FileUtil {
                 while ((tag = bis.read()) != -1) {
                     out.write(tag);
                 }
-                bis.close();
-                fos.close();
             }
         }
     }
 
-    public static ArrayList<ZipEntry> unzipFile(ZipFile zipFile) throws JingException {
+    public static ArrayList<ZipEntry> unzipFile(ZipFile zipFile) {
         ArrayList<ZipEntry> retList = new ArrayList<>();
         Enumeration<? extends ZipEntry> zipFiles = zipFile.entries();
         ZipEntry zipEntry;
@@ -313,15 +309,14 @@ public class FileUtil {
     public static String readResource(String filePath, boolean log) throws JingException {
         try {
             ClassLoader[] classLoader = ClassUtil.getClassLoader(FileUtil.class);
-            int size = classLoader.length;
+            int size = GenericUtil.countArray(classLoader);
             for (int i$ = 0; i$ < size; i$++) {
                 ClassLoader classLoader$ = classLoader[i$];
-                InputStream is = null;
+                InputStream is;
                 if (null != classLoader$) {
                     is = classLoader$.getResourceAsStream(filePath);
                     if (null == is) {
-                        is = classLoader$.getResourceAsStream(
-                            new StringBuilder(Const.SYSTEM_FILE_SEPARATOR).append(filePath).toString());
+                        is = classLoader$.getResourceAsStream(Const.SYSTEM_FILE_SEPARATOR + filePath);
                     }
                     if (null != is) {
                         StringBuilder stbr$ = new StringBuilder();
@@ -333,16 +328,17 @@ public class FileUtil {
                                 ? maxLength$
                                 : Const.SYSTEM_MAX_BYTES_SIZE;
                             byte[] bytes$ = new byte[len$];
-                            is.read(bytes$, off$, len$);
-                            stbr$.append(new String(bytes$));
+                            int index = is.read(bytes$, off$, len$);
+                            stbr$.append(new String(bytes$, 0, index));
                         }
+                        is.close();
                         return stbr$.toString();
                     }
                 }
             }
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed To Read Properties [filePath: {}]", filePath);
+            throw new JingException(e, "failed To Read Properties [filePath: {}]", filePath);
         }
         return "";
     }
@@ -361,33 +357,18 @@ public class FileUtil {
 
     public static void writeFile(File file, String content, boolean append, String encoding) {
         encoding = StringUtil.ifEmpty(encoding, "utf-8");
-        BufferedWriter writer = null;
-        try {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding))) {
             File parent = file.getParentFile();
             if (null == parent || (parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
-                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
                 writer.write(content);
                 writer.flush();
             }
             else {
-                throw new JingException("Failed to mkdirs");
+                throw new JingException("failed to mkdirs");
             }
         }
         catch (Exception e) {
             LOGGER.error("Failed to append file {}", e, file.getAbsolutePath());
-        }
-        finally {
-            if (null != writer) {
-                try {
-                    writer.close();
-                }
-                catch (Exception e) {
-                    LOGGER.error("Failed to close OutputStreamWriter", e);
-                }
-                finally {
-                    writer = null;
-                }
-            }
         }
     }
 
@@ -421,11 +402,9 @@ public class FileUtil {
 
     public static void writeFile(File file, List<String> rowList, boolean append, String encoding) {
         encoding = StringUtil.ifEmpty(encoding, "utf-8");
-        BufferedWriter writer = null;
-        try {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding))) {
             File parent = file.getParentFile();
             if (null == parent || (parent.exists() && parent.isDirectory()) || parent.mkdirs()) {
-                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), encoding));
                 int count = GenericUtil.countList(rowList);
                 for (int i$ = 0; i$ < count; i$++) {
                     if (0 != i$) {
@@ -436,24 +415,11 @@ public class FileUtil {
                 writer.flush();
             }
             else {
-                throw new JingException("Failed to mkdirs");
+                throw new JingException("failed to mkdirs");
             }
         }
         catch (Exception e) {
-            LOGGER.error("Failed to append file {}", e, file.getAbsolutePath());
-        }
-        finally {
-            if (null != writer) {
-                try {
-                    writer.close();
-                }
-                catch (Exception e) {
-                    LOGGER.error("Failed to close OutputStreamWriter", e);
-                }
-                finally {
-                    writer = null;
-                }
-            }
+            LOGGER.error("failed to append file {}", e, file.getAbsolutePath());
         }
     }
 

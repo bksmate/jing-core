@@ -10,7 +10,6 @@ import org.jing.core.logger.local.appender.BaseAppender;
 import org.jing.core.logger.local.appender.EmptyAppender;
 import org.jing.core.logger.local.help.ResourcePool;
 import org.jing.core.logger.sys.SingleLogger;
-import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.ClassUtil;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
@@ -29,17 +28,17 @@ import java.util.HashSet;
  * @author: bks <br>
  * @createDate: 2020-12-31 <br>
  */
-public final class LoggerFactory implements JingLoggerFactoryItf {
+@SuppressWarnings("unchecked") public final class LoggerFactory implements JingLoggerFactoryItf {
 
     @Override public void init(Carrier params) throws JingException {
         SingleLogger.log("init Logger.LOCAL...");
         String path = FileUtil.buildPathWithHome(params.getStringByPath("path", ""));
         File configFile = new File(path);
         if (StringUtil.isNotEmpty(path) && configFile.exists() && configFile.isFile()) {
-            LocalLoggerConfiguration.configC = CarrierUtil.string2Carrier(FileUtil.readFile(path));
+            LocalLoggerConfiguration.configC = Carrier.parseXML(FileUtil.readFile(path));
         }
         else {
-            LocalLoggerConfiguration.configC = CarrierUtil.string2Carrier(Const.SYSTEM_DEFAULT_LOGGER_CONFIG);
+            LocalLoggerConfiguration.configC = Carrier.parseXML(Const.SYSTEM_DEFAULT_LOGGER_CONFIG);
         }
         operate();
     }
@@ -68,13 +67,13 @@ public final class LoggerFactory implements JingLoggerFactoryItf {
 
     private void bindGlobalSettings() throws JingException {
         LocalLoggerConfiguration.stdOut = !"FALSE".equalsIgnoreCase(
-            LocalLoggerConfiguration.configC.getString("stdOut", "TRUE"));
+            LocalLoggerConfiguration.configC.getStringByName("stdOut", "TRUE"));
 
-        LocalLoggerConfiguration.dateFormat = LocalLoggerConfiguration.configC.getString("date-format", "yyyy-MM-dd HH:mm:ss.SSS");
+        LocalLoggerConfiguration.dateFormat = LocalLoggerConfiguration.configC.getStringByName("date-format", "yyyy-MM-dd HH:mm:ss.SSS");
 
-        LocalLoggerConfiguration.format = LocalLoggerConfiguration.configC.getString("format", "[%d][%t][%N->>-%M][%p] - %m%n");
+        LocalLoggerConfiguration.format = LocalLoggerConfiguration.configC.getStringByName("format", "[%d][%t][%N->>-%M][%p] - %m%n");
 
-        LocalLoggerConfiguration.encoding = LocalLoggerConfiguration.configC.getString("encoding", "UTF-8");
+        LocalLoggerConfiguration.encoding = LocalLoggerConfiguration.configC.getStringByName("encoding", "UTF-8");
     }
 
     private void initAppender() throws JingException {
@@ -85,12 +84,12 @@ public final class LoggerFactory implements JingLoggerFactoryItf {
         for (int i$ = 0; i$ < size; i$++) {
             appenderC = LocalLoggerConfiguration.configC.getCarrier("appender", i$);
             paramC = appenderC.getCount("param") > 0 ? appenderC.getCarrier("param") : null;
-            name = appenderC.getString("name", "");
+            name = appenderC.getStringByName("name", "");
             if (null != ResourcePool.getInstance().getAppenderByName(name)) {
                 SingleLogger.err("Duplicate appender: {}", name);
                 continue;
             }
-            impl = appenderC.getString("impl", "");
+            impl = appenderC.getStringByName("impl", "");
             if (StringUtil.isEmpty(impl)) {
                 SingleLogger.err("Empty appender impl: {}", name);
                 continue;
@@ -118,15 +117,15 @@ public final class LoggerFactory implements JingLoggerFactoryItf {
     }
 
     private void initLoggerLevels() throws JingException {
-        String rootLevel = LocalLoggerConfiguration.configC.getString("root-level", "ALL").toUpperCase();
-        String stdOutLevel = LocalLoggerConfiguration.configC.getString("stdout-level", "ALL").toUpperCase();
+        String rootLevel = LocalLoggerConfiguration.configC.getStringByName("root-level", "ALL").toUpperCase();
+        String stdOutLevel = LocalLoggerConfiguration.configC.getStringByName("stdout-level", "ALL").toUpperCase();
         int size = LocalLoggerConfiguration.configC.getCount("impl");
         String impl;
         Class levelClass;
         ArrayList<Field> allFields = ClassUtil.getDeclaredFieldsByType(LocalLoggerLevel.class, LocalLoggerLevel.class);
         HashSet<Field> fieldSet = new HashSet<>(allFields);
         for (int i$ = 0; i$ < size; i$++) {
-            impl = LocalLoggerConfiguration.configC.getString(i$, "impl");
+            impl = LocalLoggerConfiguration.configC.getStringByName(i$, "impl");
             levelClass = ClassUtil.loadClass(impl);
             if (ClassUtil.checkRelations(LocalLoggerLevel.class, levelClass)) {
                 fieldSet.addAll(ClassUtil.getDeclaredFieldsByType(levelClass, LocalLoggerLevel.class));
@@ -178,16 +177,16 @@ public final class LoggerFactory implements JingLoggerFactoryItf {
         BaseAppender appender;
         for (int i$ = 0; i$ < size; i$++) {
             loggerC = LocalLoggerConfiguration.configC.getCarrier("logger", i$);
-            name = loggerC.getString("name", "").toUpperCase();
+            name = loggerC.getStringByName("name", "").toUpperCase();
             config = new LocalLoggerLevel.LevelConfig();
-            config.format = loggerC.getString("format", LocalLoggerConfiguration.format);
-            config.encoding = loggerC.getString("encoding", LocalLoggerConfiguration.encoding);
-            config.dateFormat = loggerC.getString("date-format", LocalLoggerConfiguration.dateFormat);
+            config.format = loggerC.getStringByName("format", LocalLoggerConfiguration.format);
+            config.encoding = loggerC.getStringByName("encoding", LocalLoggerConfiguration.encoding);
+            config.dateFormat = loggerC.getStringByName("date-format", LocalLoggerConfiguration.dateFormat);
             // appender
             size$ = loggerC.getCount("appender");
             hasAppender = false;
             for (int j$ = 0; j$ < size$; j$++) {
-                appenderName = loggerC.getString(j$, "appender", "");
+                appenderName = loggerC.getStringByName(j$, "appender", "");
                 appender = ResourcePool.getInstance().getAppenderByName(appenderName);
                 if (null != appender) {
                     hasAppender = true;

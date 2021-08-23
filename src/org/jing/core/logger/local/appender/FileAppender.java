@@ -18,7 +18,7 @@ import java.io.FileOutputStream;
  * @author: bks <br>
  * @createDate: 2021-01-12 <br>
  */
-public class FileAppender extends BaseAppender {
+@SuppressWarnings("WeakerAccess") public class FileAppender extends BaseAppender {
     protected FileOutputStream writer;
 
     protected String absoluteFilePath;
@@ -31,22 +31,24 @@ public class FileAppender extends BaseAppender {
 
     @Override protected void init() throws JingException {
         if (null == paramC) {
-            throw new JingException("Empty parameter carrier");
+            throw new JingException("empty parameter carrier");
         }
-        String filePath = paramC.getString("file", "");
+        String filePath = paramC.getStringByName("file", "");
         if (StringUtil.isEmpty(filePath)) {
-            throw new JingException("Empty file path");
+            throw new JingException("empty file path");
         }
         logFile = new File(FileUtil.buildPathWithHome(filePath));
         filePath = logFile.getAbsolutePath();
         FileOutputStream writer = ResourcePool.getInstance().getFileOutputStream(filePath);
         if (null != writer) {
-            throw new JingException("FileOutputStream has already exists: " + filePath);
+            throw new JingException("fileOutputStream has already exists: " + filePath);
         }
         try {
             File parentDir = logFile.getParentFile();
             if (null != parentDir && !parentDir.exists()) {
-                parentDir.mkdirs();
+                if (!parentDir.mkdirs()) {
+                    throw new JingException("failed to create log directory");
+                }
             }
             writer = new FileOutputStream(filePath, true);
             ResourcePool.getInstance().addFileOutputStream(filePath, writer);
@@ -98,7 +100,6 @@ public class FileAppender extends BaseAppender {
     }
 
     protected static class Dispatcher extends BaseDispatcher {
-
         protected Dispatcher(BaseAppender appender) {
             super(appender);
         }

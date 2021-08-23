@@ -28,7 +28,7 @@ import static java.lang.Thread.currentThread;
  * @author: bks <br>
  * @createDate: 2019-03-21 <br>
  */
-@SuppressWarnings({ "WeakerAccess", "unused" })
+@SuppressWarnings({ "WeakerAccess", "unused", "unchecked" })
 public class ClassUtil {
     private static ClassLoader defaultClassLoader;
 
@@ -50,7 +50,7 @@ public class ClassUtil {
             }
         }
         catch (ClassNotFoundException e) {
-            throw new JingException(e, "Failed to load class [fullClassName: {}][loader: {}]", fullClassName, loader);
+            throw new JingException(e, "failed to load class [fullClassName: {}][loader: {}]", fullClassName, loader);
         }
     }
 
@@ -83,13 +83,6 @@ public class ClassUtil {
         if (!dir.exists() || !dir.isDirectory()) {
             return;
         }
-        // 如果存在 就获取包下的所有文件 包括目录
-        //        File[] dirfiles = dir.listFiles(new FileFilter() {
-        //            // 自定义过滤规则 如果可以循环(包含子目录) 或则是以.class结尾的文件(编译好的java类文件)
-        //            public boolean accept(File file) {
-        //                return file.isDirectory()|| file.getName().endsWith(".class");
-        //            }
-        //        });
         File[] files = dir.listFiles(new FileFilter() {
             @Override public boolean accept(File pathName) {
                 return  pathName.isDirectory() || pathName.getName().endsWith("class");
@@ -159,7 +152,7 @@ public class ClassUtil {
 
     public static Set<Class<?>> getClassByPackage(String packagePath) throws JingException {
         //第一个class类的集合
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new HashSet<>();
         // 获取包的名字 并进行替换
         String pkgDirName = packagePath.replace('.', '/');
         ClassLoader[] loaders = getClassLoader(ClassUtil.class);
@@ -192,7 +185,7 @@ public class ClassUtil {
                 }
             }
         } catch (IOException e) {
-            throw new JingException(e, "Failed to get class [packagePath: {}]", packagePath);
+            throw new JingException(e, "failed to get class [packagePath: {}]", packagePath);
         }
 
         return classes;
@@ -201,7 +194,7 @@ public class ClassUtil {
     public static <T> Set<Class<? super T>> getClassByPackageAndInterface(String packagePath, T interfaceType) throws JingException {
         //第一个class类的集合
         Set<Class<?>> classes = getClassByPackage(packagePath);
-        Set<Class<? super T>> retSet = new HashSet<Class<? super T>>();
+        Set<Class<? super T>> retSet = new HashSet<>();
         for (Class<?> clazz : classes) {
             if (Arrays.asList(clazz.getGenericInterfaces()).contains(JService.class)) {
                 retSet.add((Class<? super T>) clazz);
@@ -233,7 +226,7 @@ public class ClassUtil {
             return clazz.newInstance();
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed to create instance for class [{}]", clazz.getName());
+            throw new JingException(e, "failed to create instance for class [{}]", clazz.getName());
         }
     }
 
@@ -255,7 +248,7 @@ public class ClassUtil {
             }
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed to create instance for class [{}]", clazz.getName());
+            throw new JingException(e, "failed to create instance for class [{}]", clazz.getName());
         }
     }
 
@@ -274,7 +267,7 @@ public class ClassUtil {
             field.set(object, value);
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed to set the value [{}] of [{}]", name, object.getClass().getName());
+            throw new JingException(e, "failed to set the value [{}] of [{}]", name, object.getClass().getName());
         }
     }
 
@@ -285,7 +278,7 @@ public class ClassUtil {
             return field.get(object);
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed to get the value [{}] of [{}]", name, object.getClass().getName());
+            throw new JingException(e, "failed to get the value [{}] of [{}]", name, object.getClass().getName());
         }
     }
 
@@ -299,7 +292,7 @@ public class ClassUtil {
             }
         }
         catch (Exception e) {
-            throw new JingException(e, "Failed to set the value [{}] of [{}]", names, object.getClass().getName());
+            throw new JingException(e, "failed to set the value [{}] of [{}]", names, object.getClass().getName());
         }
     }
 }

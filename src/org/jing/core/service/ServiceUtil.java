@@ -2,7 +2,6 @@ package org.jing.core.service;
 
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
-import org.jing.core.lang.annotation.ServiceCode;
 import org.jing.core.lang.itf.JService;
 import org.jing.core.logger.JingLogger;
 import org.jing.core.util.StringUtil;
@@ -25,14 +24,14 @@ import java.lang.reflect.Method;
 
     public static Object callService(String serviceCode, Object param) throws JingException {
         if (StringUtil.isEmpty(serviceCode)) {
-            throw new JingException("Service Code is empty");
+            throw new JingException("serviceCode is empty");
         }
         LOGGER.debug("request:");
         LOGGER.debug("{}", param instanceof Carrier ? ((Carrier) param).asXML() : param);
         // 1. 找映射类
         Class<? super JService> tempJService = ServiceInit.mappingService(serviceCode);
         if (null == tempJService) {
-            throw new JingException("Cannot find Service: " + serviceCode);
+            throw new JingException("cannot find service: " + serviceCode);
         }
         Object retObject = null;
         try {

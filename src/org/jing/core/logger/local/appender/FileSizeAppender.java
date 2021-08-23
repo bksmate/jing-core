@@ -18,7 +18,7 @@ import java.io.FileOutputStream;
  * @author: bks <br>
  * @createDate: 2021-01-13 <br>
  */
-public class FileSizeAppender extends FileAppender {
+@SuppressWarnings({ "WeakerAccess", "Duplicates" }) public class FileSizeAppender extends FileAppender {
     protected static long defaultSize = 10 * 1024 * 1024;
 
     protected long maxSize;
@@ -30,7 +30,7 @@ public class FileSizeAppender extends FileAppender {
     }
 
     @Override protected void extendInit() throws JingException {
-        String sizeString = paramC.getString("size", "10");
+        String sizeString = paramC.getStringByName("size", "10");
         try {
             float f = Float.parseFloat(sizeString);
             maxSize = (long) Math.floor(1024 * 1024 * f);
@@ -66,6 +66,7 @@ public class FileSizeAppender extends FileAppender {
         Pair3<String, String, String> p = LoggerUtil.analysisFileName(logName);
         String regex = p.getA() + "\\.\\d+\\." + p.getB();
         for (int i$ = 0; i$ < length; i$++) {
+            assert files != null;
             file = files[i$];
             logName$ = file.getName();
             if (!logName.equals(logName$) && logName$.matches(regex)) {

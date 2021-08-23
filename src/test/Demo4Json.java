@@ -1,12 +1,7 @@
 package test;
 
 import org.jing.core.lang.Carrier;
-import org.jing.core.util.CarrierUtil;
 import org.jing.core.util.FileUtil;
-import org.jing.core.util.StringUtil;
-
-import java.lang.Exception;
-import java.util.LinkedHashMap;
 
 /**
  * Description: <br>
@@ -19,7 +14,7 @@ public class Demo4Json {
         String jsonContent = FileUtil.readFile("temp/temp.json");
         Carrier jsonC = Carrier.parseJson(jsonContent);
         System.out.println(jsonC.asXML());
-        String result = jsonC.asJson(StringUtil.isNotEmpty("Y"), StringUtil.repeat(" ", 4));
+        String result = jsonC.asJson();
         System.out.println(result);
     }
 

@@ -1,4 +1,4 @@
-package org.jing.core.lang.node;
+package org.jing.core.format;
 
 import org.jing.core.util.StringUtil;
 
@@ -8,7 +8,7 @@ import org.jing.core.util.StringUtil;
  * @author: bks <br>
  * @createDate: 2021-08-22 <br>
  */
-@SuppressWarnings("unused") public class Format4Json {
+@SuppressWarnings("unused") public class Carrier2Json {
     private String newline = "\n";
 
     private String indent = "    ";
@@ -21,15 +21,15 @@ import org.jing.core.util.StringUtil;
 
     private StringBuilder stbr = new StringBuilder();
 
-    public Format4Json() {
+    public Carrier2Json() {
     }
 
-    public Format4Json setNewline(String newline) {
+    public Carrier2Json setNewline(String newline) {
         this.newline = StringUtil.ifEmpty(newline);
         return this;
     }
 
-    public Format4Json setNewline(boolean needNewLine) {
+    public Carrier2Json setNewline(boolean needNewLine) {
         this.newline = needNewLine ? "\n" : "";
         return this;
     }
@@ -38,12 +38,12 @@ import org.jing.core.util.StringUtil;
         return newline;
     }
 
-    public Format4Json setIndent(String indent) {
+    public Carrier2Json setIndent(String indent) {
         this.indent = StringUtil.ifEmpty(indent);
         return this;
     }
 
-    public Format4Json setIndent(boolean needIndent) {
+    public Carrier2Json setIndent(boolean needIndent) {
         this.indent = needIndent ? "    " : "";
         return this;
     }
@@ -56,12 +56,12 @@ import org.jing.core.util.StringUtil;
         return StringUtil.repeat(indent, level);
     }
 
-    public Format4Json setSpace(String space) {
+    public Carrier2Json setSpace(String space) {
         this.space = StringUtil.ifEmpty(space);
         return this;
     }
 
-    public Format4Json setSpace(boolean needSpace) {
+    public Carrier2Json setSpace(boolean needSpace) {
         this.space = needSpace ? " " : "";
         return this;
     }
@@ -70,17 +70,17 @@ import org.jing.core.util.StringUtil;
         return space;
     }
 
-    public Format4Json addLevel() {
+    public Carrier2Json addLevel() {
         level ++;
         return this;
     }
 
-    public Format4Json reduceLevel() {
+    public Carrier2Json reduceLevel() {
         level --;
         return this;
     }
 
-    public Format4Json setNeedRootNode(boolean needRootNode) {
+    public Carrier2Json setNeedRootNode(boolean needRootNode) {
         this.needRootNode = needRootNode;
         return this;
     }
@@ -107,12 +107,12 @@ import org.jing.core.util.StringUtil;
             .replaceAll("\\\\t", "\\t");
     }
 
-    public Format4Json append(String content) {
+    public Carrier2Json append(String content) {
         stbr.append(content);
         return this;
     }
 
-    public Format4Json clearStringBuilder() {
+    public Carrier2Json clearStringBuilder() {
         stbr.setLength(0);
         return this;
     }

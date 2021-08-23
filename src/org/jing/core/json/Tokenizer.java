@@ -67,7 +67,7 @@ import org.jing.core.lang.JingException;
             return readNumber();
         }
 
-        throw new JingException("Illegal character");
+        throw new JingException("illegal character");
     }
 
     private boolean isWhiteSpace(char ch) {
@@ -92,7 +92,7 @@ import org.jing.core.lang.JingException;
                             if (isHex(ch)) {
                                 sb.append(ch);
                             } else {
-                                throw new JingException("Invalid character");
+                                throw new JingException("invalid character");
                             }
                         }
                         break;
@@ -112,12 +112,12 @@ import org.jing.core.lang.JingException;
                         sb.append('\f');
                         break;
                     default:
-                        throw new JingException("Invalid escape character");
+                        throw new JingException("invalid escape character");
                 }
             } else if (ch == '"') {
                 return new Token(TokenType.STRING, sb.toString());
             } else if (ch == '\r' || ch == '\n') {
-                throw new JingException("Invalid character");
+                throw new JingException("invalid character");
             } else {
                 sb.append(ch);
             }
@@ -156,7 +156,7 @@ import org.jing.core.lang.JingException;
                     sb.append(readFracAndExp());
                 }
             } else {
-                throw new JingException("Invalid minus number");
+                throw new JingException("invalid minus number");
             }
         } else if (ch == '0') {    // 处理小数
             sb.append(ch);
@@ -194,7 +194,7 @@ import org.jing.core.lang.JingException;
             sb.append(ch);
             ch = charReader.next();
             if (!isDigit(ch)) {
-                throw new JingException("Invalid frac");
+                throw new JingException("invalid frac");
             }
             do {
                 sb.append(ch);
@@ -247,14 +247,14 @@ import org.jing.core.lang.JingException;
     private Token readBoolean() throws JingException {
         if (charReader.peek() == 't') {
             if (!(charReader.next() == 'r' && charReader.next() == 'u' && charReader.next() == 'e')) {
-                throw new JingException("Invalid json string");
+                throw new JingException("invalid json string");
             }
 
             return new Token(TokenType.BOOLEAN, "true");
         } else {
             if (!(charReader.next() == 'a' && charReader.next() == 'l'
                 && charReader.next() == 's' && charReader.next() == 'e')) {
-                throw new JingException("Invalid json string");
+                throw new JingException("invalid json string");
             }
 
             return new Token(TokenType.BOOLEAN, "false");
@@ -263,7 +263,7 @@ import org.jing.core.lang.JingException;
 
     private Token readNull() throws JingException {
         if (!(charReader.next() == 'u' && charReader.next() == 'l' && charReader.next() == 'l')) {
-            throw new JingException("Invalid json string");
+            throw new JingException("invalid json string");
         }
 
         return new Token(TokenType.NULL, "null");

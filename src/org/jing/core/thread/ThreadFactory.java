@@ -15,14 +15,14 @@ import java.util.LinkedList;
  * @author: bks <br>
  * @createDate: 2020-07-17 <br>
  */
-public class ThreadFactory implements Runnable {
+@SuppressWarnings("UnusedReturnValue") public class ThreadFactory implements Runnable {
     private static final JingLogger LOGGER = JingLogger.getLogger(ThreadFactory.class);
 
     private static int maxThreadNumber = 16;
 
-    private static final HashSet<ThreadFactory> runningSet = new HashSet<ThreadFactory>();
+    private static final HashSet<ThreadFactory> runningSet = new HashSet<>();
 
-    private static final LinkedList<ThreadFactory> waitingList = new LinkedList<ThreadFactory>();
+    private static final LinkedList<ThreadFactory> waitingList = new LinkedList<>();
 
     private Class<?> type;
 
@@ -34,7 +34,7 @@ public class ThreadFactory implements Runnable {
 
     private Method method;
 
-    public static class Constructor {
+    @SuppressWarnings({ "WeakerAccess", "unchecked" }) public static class Constructor {
         private Class<?>[] constructorTypes;
 
         private Object[] constructorValues;
@@ -64,7 +64,7 @@ public class ThreadFactory implements Runnable {
         }
     }
 
-    public static class Method {
+    @SuppressWarnings({ "unchecked", "WeakerAccess" }) public static class Method {
         private String methodName;
 
         private Class<?>[] methodTypes;
@@ -184,10 +184,10 @@ public class ThreadFactory implements Runnable {
     public static void createThreadByIncident(Object incident, Method method, boolean forceAccess, boolean wait) throws JingException {
         ThreadFactory thread = new ThreadFactory();
         if (null == incident) {
-            throw new JingException("Incident cannot be empty.");
+            throw new JingException("incident cannot be empty.");
         }
         if (null == method || StringUtil.isEmpty(method.getMethodName())) {
-            throw new JingException("Method cannot be empty.");
+            throw new JingException("method cannot be empty.");
         }
         thread.type = incident.getClass();
         thread.incident = incident;
@@ -210,7 +210,7 @@ public class ThreadFactory implements Runnable {
     public static void createThreadByType(Class<?> type, Constructor constructor, Method method, boolean forceAccess, boolean wait) throws JingException {
         ThreadFactory thread = new ThreadFactory();
         if (null == type) {
-            throw new JingException("Type cannot be empty.");
+            throw new JingException("type cannot be empty.");
         }
         thread.type = type;
         thread.incident = null;
