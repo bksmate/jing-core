@@ -1,6 +1,6 @@
 # jing-core
 
-Lowest JDK `1.7`
+Lowest JDK `1.8`
 ---
 
 Email
@@ -10,14 +10,18 @@ Email
 Dependencies
 ---
 
-* `dom4j-2.0.2.jar`
+Optional
+---
+* `log4j-1.2.17.jar`
+* `log4j-api-2.3.jar`
+* `log4j-core-2.3.jar`
 
 Functions
 ---
 
 * 文件的基本操作, 读/写/删/压缩;
 * 日期/字符串/类/转换等一些基本的工具;
-* 配置文件读取/刷新配置文件缓存;
+* 配置文件读取/刷新配置文件缓存/动态独立配置文件读取;
 * 日志框架;
 * 利用注解实现的服务映射;
 * 初始化时根据配置自动加载指定的类;
@@ -28,4 +32,5 @@ Functions
 Attention
 ---
 
-* 在一些情况下配置文件可能不能如愿的在执行脚本所在目录, 在`1.06`的版本里已经更新了环境变量`JING_HOME`的使用, 如果配置了环境变量就可以在指定的目录下读取`config`子目录里的`system.xml`进行初始化.
+* 升级到1.30版本后, 不再使用dom4j的依赖
+* 配置文件读取顺序为JING_HOME/config/jing-system.xml, classpath:jing-system.xml, 最后是内部常量类Const里的默认配置
