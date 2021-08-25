@@ -64,6 +64,10 @@ public class Carrier {
         return this;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Carrier setValue(Object value) {
         this.value = value;
         return this;
@@ -191,6 +195,10 @@ public class Carrier {
 
     public String attr(String name) {
         return this.attrMap.get(name);
+    }
+
+    public List<Carrier> getChildList() {
+        return childList;
     }
 
     public List<Carrier> getList(String name) {
