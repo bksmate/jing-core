@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
  * @author: bks <br>
  * @createDate: 2021-08-22 <br>
  */
-public class DynamicConfigFactory {
+@SuppressWarnings("Duplicates") public class DynamicConfigFactory {
     private static final JingLogger LOGGER = JingLogger.getLogger(DynamicConfigFactory.class);
 
     public static <T> T createDynamicConfig(Class<T> clazz) throws JingException {
@@ -44,10 +44,10 @@ public class DynamicConfigFactory {
                     }
                     if (null == value) {
                         value = (defaultValue = setter.defaultValue());
-                        LOGGER.debug("read config by [path: {}], use [default: {}]", path, defaultValue);
+                        LOGGER.debug("read config by [path: {}], set [default: {}]", path, defaultValue);
                     }
                     else {
-                        LOGGER.debug("read config by [path: {}], value [value: {}]", path, value);
+                        LOGGER.debug("read config by [path: {}], set [value: {}]", path, value);
                     }
                     method.invoke(instance, value);
                 }

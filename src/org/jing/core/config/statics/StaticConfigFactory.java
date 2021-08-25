@@ -50,10 +50,10 @@ public class StaticConfigFactory {
                     }
                     if (null == value) {
                         value = (defaultValue = setter.defaultValue());
-                        LOGGER.debug("read config by [path: {}], use [default: {}]", path, defaultValue);
+                        LOGGER.debug("read config by [path: {}], set [default: {}]", path, defaultValue);
                     }
                     else {
-                        LOGGER.debug("read config by [path: {}], value [value: {}]", path, value);
+                        LOGGER.debug("read config by [path: {}], set [value: {}]", path, value);
                     }
                     method.invoke(instance, value);
                 }
