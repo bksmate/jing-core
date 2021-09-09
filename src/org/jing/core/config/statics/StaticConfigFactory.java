@@ -20,14 +20,23 @@ import java.util.HashMap;
 public class StaticConfigFactory {
     private static final JingLogger LOGGER = JingLogger.getLogger(StaticConfigFactory.class);
 
-    private static final HashMap<Class<? extends JStaticConfig>, Carrier> CONFIG_MAP = new HashMap<>();
+    private static HashMap<Class<? extends JStaticConfig>, Carrier> configMap ;
+
+    private static HashMap<Class<? extends JStaticConfig>, Carrier> getConfigMap() {
+        if (null == configMap) {
+            synchronized (StaticConfigFactory.class) {
+                configMap = new HashMap<>();
+            }
+        }
+        return configMap;
+    }
 
     public static <T> T createStaticConfig(Class<T> clazz) throws JingException {
         if (!JStaticConfig.class.isAssignableFrom(clazz)) {
             throw new JingException("class must implement from JStaticConfig");
         }
         LOGGER.debug("create static config: {}", clazz.getName());
-        Carrier configC = CONFIG_MAP.get(clazz);
+        Carrier configC = getConfigMap().get(clazz);
         if (null == configC) {
             throw new JingException("static config has not registered");
         }
@@ -66,6 +75,6 @@ public class StaticConfigFactory {
     }
 
     public static synchronized void registerStaticConfig(Class<? extends JStaticConfig> clazz, Carrier carrier) {
-        CONFIG_MAP.put(clazz, carrier);
+        getConfigMap().put(clazz, carrier);
     }
 }

@@ -17,9 +17,13 @@ import java.net.Socket;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        StaticConfigFactory.registerStaticConfig(TempStaticConfig.class, Carrier.parseXML(FileUtil.readFile("config/system.xml")));
-        TempStaticConfig config = StaticConfigFactory.createStaticConfig(TempStaticConfig.class);
-        System.out.println(config);
+        long millis = System.currentTimeMillis ();
+        long sum = 0L; // uses Long, not long
+        for (long i = 0; i <= Integer.MAX_VALUE; i++) {
+            sum += i;
+        }
+        System.out.println (sum);
+        System.out.println ((System.currentTimeMillis () - millis) / 1000);
     }
 
     public static void main(String[] args) throws Exception {

@@ -88,6 +88,11 @@ public class Carrier {
         this.childList.add(child);
         return this;
     }
+    
+    public Carrier addAll(Carrier carrier) {
+        this.childList.addAll(carrier.childList);
+        return this;
+    }
 
     public Carrier removeChildByName(String name) {
         Carrier child;
@@ -752,6 +757,16 @@ public class Carrier {
     private void validateAttr(Map.Entry<String, String> attr) throws JingException {
         if (!attr.getKey().matches("\\w+")) {
             throw new JingException("invalid attribute: {}=\"{}\"", attr.getKey(), attr.getValue());
+        }
+    }
+
+    @Override public String toString() {
+        try {
+            return asXML();
+        }
+        catch (JingException e) {
+            e.printStackTrace();
+            return super.toString();
         }
     }
 }

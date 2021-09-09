@@ -49,6 +49,11 @@ import java.util.Map;
         return this;
     }
 
+    public Carrier2XML setIndent(boolean indent) {
+        this.indent = indent ? "    " : "";
+        return this;
+    }
+
     public Carrier2XML setExpandEmptyNode(boolean expandEmptyNode) {
         this.expandEmptyNode = expandEmptyNode;
         return this;
