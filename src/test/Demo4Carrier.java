@@ -13,10 +13,11 @@ import java.lang.Exception;
  */
 public class Demo4Carrier {
     private Demo4Carrier() throws Exception {
-        String xml = FileUtil.readFile("temp/temp$1.xml");
+        String xml = FileUtil.readFile("temp/temp.xml");
         Carrier xmlC = Carrier.parseXML(xml);
+        xmlC.setValueByPath("USER_NAME.temp$", "<123>");
         System.out.println(xmlC.asXML());
-
+        System.out.println(xmlC.toString());
     }
 
     public static void main(String[] args) throws Exception {

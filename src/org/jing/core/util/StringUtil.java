@@ -416,6 +416,26 @@ public class StringUtil {
         return string;
     }
 
+    public static String escape4XML(String string) {
+        string = string
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll("'", "&apos;")
+            .replaceAll("\"", "&quot;");
+        return string;
+    }
+
+    public static String unescape4XML(String string) {
+        string = string
+            .replaceAll("&amp;", "&")
+            .replaceAll("&lt;", "<")
+            .replaceAll("&gt;", ">")
+            .replaceAll("&apos;", "'")
+            .replaceAll("&quot;", "\"");
+        return string;
+    }
+
     public static String readFromInputStream(InputStream inputStream, String charSet) throws JingException {
         return readFromInputStream(inputStream, 3072, charSet);
     }

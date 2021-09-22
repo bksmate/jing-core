@@ -88,7 +88,7 @@ public class Carrier {
         this.childList.add(child);
         return this;
     }
-    
+
     public Carrier addAll(Carrier carrier) {
         this.childList.addAll(carrier.childList);
         return this;
@@ -403,7 +403,7 @@ public class Carrier {
             stbr.append(format.getNewLine()).append(format.getCurrentIndent()).append("</").append(name).append(">");
         }
         else {
-            stbr.append(">").append(content).append("</").append(name).append(">");
+            stbr.append(">").append(StringUtil.escape4XML(content)).append("</").append(name).append(">");
         }
         return stbr.toString();
     }
