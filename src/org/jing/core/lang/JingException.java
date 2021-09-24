@@ -1,14 +1,12 @@
 package org.jing.core.lang;
 
-import org.jing.core.util.StringUtil;
-
 /**
  * Description: <br>
  *
  * @author: bks <br>
  * @createDate: 2019-11-28 <br>
  */
-public class JingException extends Exception {
+public class JingException extends BaseJingException {
     public JingException() {
         super();
     }
@@ -18,18 +16,18 @@ public class JingException extends Exception {
     }
 
     public JingException(String message, Object... parameters) {
-        super(StringUtil.mixParameters(message, parameters));
+        super(message, parameters);
     }
 
     public JingException(Throwable cause, String message) {
-        super(message, cause);
+        super(cause, message);
     }
 
     public JingException(Throwable cause, String message, Object... parameters) {
-        super(StringUtil.mixParameters(message, parameters), cause);
+        super(cause, message, parameters);
     }
 
     public JingException(Throwable cause) {
-        super("", cause);
+        super(cause);
     }
 }

@@ -206,6 +206,23 @@ public class Carrier {
         return childList;
     }
 
+    public List<Pair2<String, Object>> getValueChildList() {
+        return getValueChildList("");
+    }
+
+    private List<Pair2<String, Object>> getValueChildList(String prefix) {
+        List<Pair2<String, Object>> retList = new ArrayList<>();
+        for (Carrier child : childList) {
+            if (child.childList.isEmpty()) {
+                retList.add(new Pair2<>(prefix + child.getName(), child.getValue()));
+            }
+            else {
+                retList.addAll(child.getValueChildList(prefix + child.getName() + "."));
+            }
+        }
+        return retList;
+    }
+
     public List<Carrier> getList(String name) {
         ArrayList<Carrier> retList = null;
         for (Carrier child : childList) {

@@ -2,6 +2,8 @@ package test;
 
 import org.jing.core.config.statics.StaticConfigFactory;
 import org.jing.core.lang.Carrier;
+import org.jing.core.lang.ExceptionHandler;
+import org.jing.core.lang.JingException;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
 

@@ -1,6 +1,8 @@
 package org.jing.core.util;
 
 import org.jing.core.lang.JingException;
+import org.jing.core.lang.JingRuntimeException;
+import org.jing.core.lang.MethodInformation;
 import org.jing.core.lang.Pair2;
 import org.jing.core.lang.itf.JService;
 
@@ -9,6 +11,8 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -28,7 +32,7 @@ import static java.lang.Thread.currentThread;
  * @author: bks <br>
  * @createDate: 2019-03-21 <br>
  */
-@SuppressWarnings({ "WeakerAccess", "unused", "unchecked" })
+@SuppressWarnings({ "WeakerAccess", "unused", "unchecked", "Duplicates" })
 public class ClassUtil {
     private static ClassLoader defaultClassLoader;
 
@@ -260,39 +264,126 @@ public class ClassUtil {
         }
     }
 
-    public static void setByForce(Object object, String name, Object value) throws JingException {
+    public static boolean isFieldStatic(Field field) {
+        return Modifier.isStatic(field.getModifiers());
+    }
+
+    public static boolean isMethodStatic(Method method) {
+        return Modifier.isStatic(method.getModifiers());
+    }
+
+    public static void setDeclaredFieldByForce(Object object, String name, Object value) {
         try {
             Field field = object.getClass().getDeclaredField(name);
+            if (isFieldStatic(field)) {
+                throw new JingException("wrong static field");
+            }
             field.setAccessible(true);
             field.set(object, value);
         }
         catch (Exception e) {
-            throw new JingException(e, "failed to set the value [{}] of [{}]", name, object.getClass().getName());
+            throw new JingRuntimeException(e, "failed to set the value [{}] of [{}]", name, object.getClass().getSimpleName());
         }
     }
 
-    public static Object getByForce(Object object, String name) throws JingException {
+    public static void setFieldByForce(Object object, String name, Object value) {
+        try {
+            Field field = object.getClass().getField(name);
+            if (isFieldStatic(field)) {
+                throw new JingException("wrong static field");
+            }
+            field.setAccessible(true);
+            field.set(object, value);
+        }
+        catch (Exception e) {
+            throw new JingRuntimeException(e, "failed to set the value [{}] of [{}]", name, object.getClass().getSimpleName());
+        }
+    }
+
+    public static Object getDeclaredFieldByForce(Object object, String name) {
         try {
             Field field = object.getClass().getDeclaredField(name);
+            if (isFieldStatic(field)) {
+                throw new JingException("wrong static field");
+            }
             field.setAccessible(true);
             return field.get(object);
         }
         catch (Exception e) {
-            throw new JingException(e, "failed to get the value [{}] of [{}]", name, object.getClass().getName());
+            throw new JingRuntimeException(e, "failed to get the value [{}] of [{}]", name, object.getClass().getSimpleName());
         }
     }
 
-    public static void batchSetByForce(Object object, String[] names, Object[] values) throws JingException {
+    public static Object getFieldByForce(Object object, String name) {
         try {
-            int count = names.length;
-            for (int i$ = 0; i$ < count; i$++) {
-                Field field$ = object.getClass().getDeclaredField(names[i$]);
-                field$.setAccessible(true);
-                field$.set(object, values[i$]);
+            Field field = object.getClass().getField(name);
+            if (isFieldStatic(field)) {
+                throw new JingException("wrong static field");
             }
+            field.setAccessible(true);
+            return field.get(object);
         }
         catch (Exception e) {
-            throw new JingException(e, "failed to set the value [{}] of [{}]", names, object.getClass().getName());
+            throw new JingRuntimeException(e, "failed to get the value [{}] of [{}]", name, object.getClass().getSimpleName());
+        }
+    }
+
+    public static void setStaticFieldByForce(Class clazz, String name, Object value) {
+        try {
+            Field field = clazz.getDeclaredField(name);
+            if (!isFieldStatic(field)) {
+                throw new JingException("not static field");
+            }
+            field.setAccessible(true);
+            field.set(null, value);
+        }
+        catch (Exception e) {
+            throw new JingRuntimeException(e, "failed to set the value [{}] of [{}]", name, clazz.getSimpleName());
+        }
+    }
+
+    public static Object executeMethod(Object object, MethodInformation methodInformation) {
+        try {
+            Method method = object.getClass().getMethod(methodInformation.getMethodName(), methodInformation.getMethodTypes());
+            if (isMethodStatic(method)) {
+                throw new JingException("wrong static method");
+            }
+            method.setAccessible(true);
+            methodInformation.setResult(method.invoke(object, methodInformation.getMethodValues()));
+            return methodInformation.isVoid() ? null : methodInformation.getResult();
+        }
+        catch (Throwable t) {
+            throw new JingRuntimeException(t, "failed to execute method {} of {}", methodInformation, object.getClass().getSimpleName());
+        }
+    }
+
+    public static Object executeDeclaredMethod(Object object, MethodInformation methodInformation) {
+        try {
+            Method method = object.getClass().getDeclaredMethod(methodInformation.getMethodName(), methodInformation.getMethodTypes());
+            if (isMethodStatic(method)) {
+                throw new JingException("wrong static method");
+            }
+            method.setAccessible(true);
+            methodInformation.setResult(method.invoke(object, methodInformation.getMethodValues()));
+            return methodInformation.isVoid() ? null : methodInformation.getResult();
+        }
+        catch (Throwable t) {
+            throw new JingRuntimeException(t, "failed to execute method {} of {}", methodInformation, object.getClass().getSimpleName());
+        }
+    }
+
+    public static Object executeStaticMethod(Class clazz, MethodInformation methodInformation) {
+        try {
+            Method method = clazz.getDeclaredMethod(methodInformation.getMethodName(), methodInformation.getMethodTypes());
+            if (isMethodStatic(method)) {
+                throw new JingException("wrong static method");
+            }
+            method.setAccessible(true);
+            methodInformation.setResult(method.invoke(clazz, methodInformation.getMethodValues()));
+            return methodInformation.isVoid() ? null : methodInformation.getResult();
+        }
+        catch (Throwable t) {
+            throw new JingRuntimeException(t, "failed to execute method {} of {}", methodInformation, clazz.getSimpleName());
         }
     }
 }
