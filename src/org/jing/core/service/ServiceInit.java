@@ -18,7 +18,8 @@ import java.util.List;
  * @author: bks <br>
  * @createDate: 2019-03-21 <br>
  */
-@SuppressWarnings({ "WeakerAccess", "unused", "unchecked" }) public class ServiceInit implements JInit {
+@SuppressWarnings({ "WeakerAccess", "unused", "unchecked" })
+public class ServiceInit implements JInit {
     private static JingLogger LOGGER = JingLogger.getLogger(ServiceInit.class);
 
     private static Carrier parameters = null;
@@ -32,8 +33,9 @@ import java.util.List;
     @Override
     public void init(Carrier params) throws JingException {
         parameters = params;
+        serviceMap.clear();
         if (null == parameters) {
-            LOGGER.imp("Empty parameter for JService Initialize");
+            LOGGER.imp("empty parameter for JService Initialize");
             return;
         }
         String path = FileUtil.buildPathWithHome(parameters.getStringByName("path", ""));
@@ -90,7 +92,7 @@ import java.util.List;
                         }
                         else {
                             try {
-                                LOGGER.imp("Load mapper: {}", clazz.getName());
+                                LOGGER.imp("load mapper: {}", clazz.getName());
                                 serviceMap.put(serviceCode$, (Class<? super JService>) clazz);
                             }
                             catch (Exception e) {

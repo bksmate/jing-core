@@ -15,8 +15,9 @@ import java.lang.reflect.Method;
  * @author: bks <br>
  * @createDate: 2020-05-25 <br>
  */
-@SuppressWarnings("unused") public class ServiceUtil {
-    private static final JingLogger LOGGER = JingLogger.getLogger(ServiceUtil.class);
+@SuppressWarnings("unused")
+public class Services {
+    private static final JingLogger LOGGER = JingLogger.getLogger(Services.class);
 
     public static void reloadServiceMapping() throws JingException {
         new ServiceInit().init(ServiceInit.getParameters());
@@ -26,8 +27,6 @@ import java.lang.reflect.Method;
         if (StringUtil.isEmpty(serviceCode)) {
             throw new JingException("serviceCode is empty");
         }
-        LOGGER.debug("request:");
-        LOGGER.debug("{}", param instanceof Carrier ? ((Carrier) param).asXML() : param);
         // 1. 找映射类
         Class<? super JService> tempJService = ServiceInit.mappingService(serviceCode);
         if (null == tempJService) {
@@ -62,14 +61,9 @@ import java.lang.reflect.Method;
                 retObject = service.execute(param);
             }
         }
-        catch (InvocationTargetException e) {
-            throw new JingException(e.getTargetException(), e.getTargetException().getMessage());
+        catch (Throwable t) {
+            throw new JingException(t);
         }
-        catch (Exception e) {
-            throw new JingException(e, e.getMessage());
-        }
-        LOGGER.debug("response:");
-        LOGGER.debug("{}", param instanceof Carrier ? ((Carrier) param).asXML() : param);
         return retObject;
     }
 }
