@@ -1,9 +1,10 @@
 package test;
 
-import org.jing.core.lang.GlobalContext;
-import org.jing.core.lang.JingException;
+import org.jing.core.lang.annotation.Getter;
+import org.jing.core.lang.annotation.Setter;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Description: <br>
@@ -11,8 +12,16 @@ import java.io.InputStream;
  * @author: bks <br>
  * @createDate: 2021-09-24 <br>
  */
-public class TempGlobalContext extends GlobalContext {
-    public static void setInputStream(InputStream inputStream) throws JingException {
-        GlobalContext.addCloseable("INPUT", inputStream);
-    }
+public interface TempGlobalContext {
+    @Setter("INPUT")
+    void setInputStream(InputStream inputStream);
+
+    @Getter("INPUT")
+    InputStream getInputStream();
+
+    @Setter("OUTPUT")
+    void setOutputStream(OutputStream outputStream);
+
+    @Getter("OUTPUT")
+    OutputStream getOutputStream();
 }
