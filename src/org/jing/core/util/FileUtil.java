@@ -5,6 +5,7 @@ import org.jing.core.lang.Const;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.Pair2;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.logger.sys.SingleLogger;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -46,7 +47,7 @@ import java.util.zip.ZipOutputStream;
                 logger.info(msg, parameters);
             }
             else {
-                System.out.println(StringUtil.mixParameters(msg, parameters));
+                SingleLogger.log(msg, parameters);
             }
         }
 
@@ -56,8 +57,8 @@ import java.util.zip.ZipOutputStream;
                 logger.error(msg, t, parameters);
             }
             else {
-                System.out.println(StringUtil.mixParameters(msg, parameters));
-                t.printStackTrace();
+                SingleLogger.err(msg, parameters);
+                SingleLogger.err(StringUtil.getErrorStack(t));
             }
         }
 
@@ -67,8 +68,8 @@ import java.util.zip.ZipOutputStream;
                 logger.error(msg, t);
             }
             else {
-                System.out.println(msg);
-                t.printStackTrace();
+                SingleLogger.err(msg);
+                SingleLogger.err(StringUtil.getErrorStack(t));
             }
         }
     }
@@ -108,7 +109,7 @@ import java.util.zip.ZipOutputStream;
             retString = stbr.toString();
         }
         catch (Exception e) {
-            throw new JingException(e, "failed To Read File [filePath: ]", filePath);
+            throw new JingException(e, "failed To Read File [filePath: {}]", filePath);
         }
         return retString;
     }

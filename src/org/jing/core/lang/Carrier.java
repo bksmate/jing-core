@@ -94,6 +94,11 @@ public class Carrier {
         return this;
     }
 
+    public Carrier clear() {
+        this.childList.clear();
+        return this;
+    }
+
     public Carrier removeChildByName(String name) {
         Carrier child;
         int size = childList.size();
