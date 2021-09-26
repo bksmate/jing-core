@@ -1,8 +1,10 @@
 package org.jing.core.lang;
 
+import javafx.util.Pair;
 import org.jing.core.lang.annotation.Getter;
 import org.jing.core.lang.annotation.Setter;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.util.GenericUtil;
 import org.jing.core.util.StringUtil;
 
 import java.io.Closeable;
@@ -11,6 +13,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Description: <br>
@@ -129,7 +132,11 @@ public final class GlobalContext implements Closeable {
 
     @Override public void close() throws IOException {
         synchronized (GlobalContext.class) {
-            for (Pair2<String, Object> pair : paramC.getValueChildList()) {
+            List<Pair2<String, Object>> childList = paramC.getValueChildList();
+            Pair2<String, Object> pair;
+            int size = GenericUtil.countList(childList);
+            for (int i$ = size - 1; i$ >= 0; i$++) {
+                pair = childList.get(i$);
                 LOGGER.info("trigger close for {}", pair.getA());
                 ((Closeable) pair.getB()).close();
                 paramC.getChildList().clear();
