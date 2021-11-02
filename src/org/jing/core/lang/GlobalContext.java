@@ -69,7 +69,6 @@ public final class GlobalContext implements Closeable {
 
     @SuppressWarnings("unchecked")
     public static <T> T map(Class<T> clazz) {
-        LOGGER.debug("map {}...", clazz.getSimpleName());
         synchronized (GlobalContext.class) {
             T instance = (T) MAP.get(clazz);
             if (null == instance) {
@@ -99,7 +98,6 @@ public final class GlobalContext implements Closeable {
                     if (StringUtil.isEmpty(path)) {
                         throw new JingException("empty getter property annotation");
                     }
-                    LOGGER.debug("get global context: {}", path);
                     return GlobalContext.getCloseable(path);
                 }
                 else if (null != setter) {
@@ -135,7 +133,7 @@ public final class GlobalContext implements Closeable {
             List<Pair2<String, Object>> childList = paramC.getValueChildList();
             Pair2<String, Object> pair;
             int size = GenericUtil.countList(childList);
-            for (int i$ = size - 1; i$ >= 0; i$++) {
+            for (int i$ = size - 1; i$ >= 0; i$--) {
                 pair = childList.get(i$);
                 LOGGER.info("trigger close for {}", pair.getA());
                 ((Closeable) pair.getB()).close();

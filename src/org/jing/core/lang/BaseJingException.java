@@ -36,7 +36,9 @@ public abstract class BaseJingException extends Exception implements JException 
             else if (throwable instanceof InvocationTargetException) {
                 Throwable cause = ((InvocationTargetException) throwable).getTargetException();
                 if (cause instanceof JException) {
-                    cause = cause.getCause();
+                    if (null != cause.getCause()) {
+                        cause = cause.getCause();
+                    }
                 }
                 detailMessage = StringUtil.ifEmpty(cause.getMessage(), cause.getLocalizedMessage());
             }

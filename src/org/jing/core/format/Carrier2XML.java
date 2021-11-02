@@ -20,7 +20,7 @@ import java.util.Map;
 
     private int level = 0;
 
-    private boolean needHead = true;
+    private boolean needHead = false;
 
     private String headVersion = "1.0";
 
