@@ -4,11 +4,13 @@ import org.jing.core.config.statics.StaticConfigFactory;
 import org.jing.core.lang.Carrier;
 import org.jing.core.lang.ExceptionHandler;
 import org.jing.core.lang.JingException;
+import org.jing.core.lang.JingExtraException;
 import org.jing.core.util.FileUtil;
 import org.jing.core.util.StringUtil;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 /**
@@ -19,13 +21,9 @@ import java.net.Socket;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        long millis = System.currentTimeMillis ();
-        long sum = 0L; // uses Long, not long
-        for (long i = 0; i <= Integer.MAX_VALUE; i++) {
-            sum += i;
-        }
-        System.out.println (sum);
-        System.out.println ((System.currentTimeMillis () - millis) / 1000);
+        InvocationTargetException invocationTargetException = new InvocationTargetException(new JingExtraException("1", "2"));
+        JingException jingException = new JingException(invocationTargetException);
+        System.out.println(jingException);
     }
 
     public static void main(String[] args) throws Exception {

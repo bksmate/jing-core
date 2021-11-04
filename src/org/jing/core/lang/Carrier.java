@@ -534,13 +534,16 @@ public class Carrier {
                 format.append(String.valueOf(this.value));
             }
             else if (this.value instanceof Long) {
-                format.append(this.value + "L");
+                format.append(String.valueOf(this.value));
+                // format.append(this.value + "L");
             }
             else if (this.value instanceof Float) {
-                format.append(this.value + "F");
+                format.append(String.valueOf(this.value));
+                // format.append(this.value + "F");
             }
             else if (this.value instanceof Double) {
-                format.append(this.value + "D");
+                format.append(String.valueOf(this.value));
+                // format.append(this.value + "D");
             }
             else if (this.value instanceof Boolean) {
                 format.append(String.valueOf(this.value));

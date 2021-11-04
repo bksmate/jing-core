@@ -1,6 +1,5 @@
 package org.jing.core.service;
 
-import org.jing.core.lang.Carrier;
 import org.jing.core.lang.JingException;
 import org.jing.core.lang.itf.JService;
 import org.jing.core.logger.JingLogger;
@@ -60,6 +59,17 @@ public class Services {
                 // no: 使用默认的execute方法.
                 retObject = service.execute(param);
             }
+        }
+        catch (InvocationTargetException e) {
+            if (null != e.getTargetException() && e.getTargetException() instanceof JingException) {
+                throw (JingException) e.getTargetException();
+            }
+            else {
+                throw new JingException(e);
+            }
+        }
+        catch (JingException e) {
+            throw e;
         }
         catch (Throwable t) {
             throw new JingException(t);
