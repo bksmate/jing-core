@@ -21,9 +21,9 @@ import java.net.Socket;
  */
 public class CommonDemo {
     private CommonDemo() throws Exception {
-        InvocationTargetException invocationTargetException = new InvocationTargetException(new JingExtraException("1", "2"));
-        JingException jingException = new JingException(invocationTargetException);
-        System.out.println(jingException);
+        String content = "\\123\\456\"";
+        System.out.println(content);
+        System.out.println(content.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\""));
     }
 
     public static void main(String[] args) throws Exception {

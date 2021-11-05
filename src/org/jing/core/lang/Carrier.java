@@ -522,34 +522,34 @@ public class Carrier {
 
     private void key2Json(String name, Carrier2Json format) {
         format.append(format.getNewline()).append(format.getCurrentIndent())
-            .append("\"").append(Carrier2Json.escape(name)).append("\":").append(format.getSpace());
+            .append("\"").appendWithEscape(name).append("\":").append(format.getSpace());
     }
 
     private void value2Json(Object value, Carrier2Json format) {
         if (childList.isEmpty()) {
             if (null == this.value) {
-                format.append("null");
+                format.appendWithEscape("null");
             }
             else if (this.value instanceof Integer) {
-                format.append(String.valueOf(this.value));
+                format.appendWithEscape(String.valueOf(this.value));
             }
             else if (this.value instanceof Long) {
-                format.append(String.valueOf(this.value));
+                format.appendWithEscape(String.valueOf(this.value));
                 // format.append(this.value + "L");
             }
             else if (this.value instanceof Float) {
-                format.append(String.valueOf(this.value));
+                format.appendWithEscape(String.valueOf(this.value));
                 // format.append(this.value + "F");
             }
             else if (this.value instanceof Double) {
-                format.append(String.valueOf(this.value));
+                format.appendWithEscape(String.valueOf(this.value));
                 // format.append(this.value + "D");
             }
             else if (this.value instanceof Boolean) {
-                format.append(String.valueOf(this.value));
+                format.appendWithEscape(String.valueOf(this.value));
             }
             else {
-                format.append("\"").append(StringUtil.parseString(this.value)).append("\"");
+                format.append("\"").appendWithEscape(StringUtil.parseString(this.value)).append("\"");
             }
         }
         else {

@@ -91,11 +91,11 @@ import org.jing.core.util.StringUtil;
 
     public static String escape(String content) {
         return content
-            .replace("\\", "\\\\")
-            .replaceAll("\\r", "\\\\r")
-            .replaceAll("\\n", "\\\\n")
+            .replaceAll("\\\\", "\\\\\\\\")
             .replaceAll("\"", "\\\\\"")
-            .replaceAll("\\t", "\\\\t");
+            .replaceAll("\r", "\\\\r")
+            .replaceAll("\t", "\\\\t")
+            .replaceAll("\n", "\\\\n");
     }
 
     public static String unescape(String content) {
@@ -109,6 +109,11 @@ import org.jing.core.util.StringUtil;
 
     public Carrier2Json append(String content) {
         stbr.append(content);
+        return this;
+    }
+
+    public Carrier2Json appendWithEscape(String content) {
+        stbr.append(escape(content));
         return this;
     }
 
