@@ -53,26 +53,31 @@ public abstract class BaseJingException extends Exception implements JException 
     }
 
     public void setCause(Throwable throwable) {
-        Throwable cause;
-        if (null == throwable) {
-            cause = this;
-        }
-        else if (throwable instanceof JException) {
-            cause = throwable.getCause();
-        }
-        else if (throwable instanceof InvocationTargetException) {
-            cause = ((InvocationTargetException) throwable).getTargetException();
-            if (cause instanceof JException) {
-                cause = cause.getCause();
-            }
-        }
-        else {
-            cause = throwable;
-        }
         try {
             Field field = Throwable.class.getDeclaredField("cause");
             field.setAccessible(true);
-            field.set(this, cause);
+            Throwable cause;
+            if (null == throwable) {
+                cause = this;
+            }
+            else if (throwable instanceof JException) {
+                cause = throwable.getCause();
+                if (null == cause) {
+                    cause = (Throwable) field.get(throwable);
+                }
+            }
+            else if (throwable instanceof InvocationTargetException) {
+                cause = ((InvocationTargetException) throwable).getTargetException();
+                if (cause instanceof JException) {
+                    cause = cause.getCause();
+                }
+            }
+            else {
+                cause = throwable;
+            }
+            if (null != cause) {
+                field.set(this, cause);
+            }
         }
         catch (Throwable ignored) {}
     }
