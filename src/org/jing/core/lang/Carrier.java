@@ -528,7 +528,7 @@ public class Carrier {
     private void value2Json(Object value, Carrier2Json format) {
         if (childList.isEmpty()) {
             if (null == this.value) {
-                format.appendWithEscape("null");
+                format.appendWithEscape("{}");
             }
             else if (this.value instanceof Integer) {
                 format.appendWithEscape(String.valueOf(this.value));

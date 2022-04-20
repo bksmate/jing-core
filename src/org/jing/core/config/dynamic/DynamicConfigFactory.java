@@ -1,14 +1,16 @@
 package org.jing.core.config.dynamic;
 
-import org.jing.core.lang.Carrier;
-import org.jing.core.lang.JingException;
 import org.jing.core.config.ConfigProperty;
 import org.jing.core.config.JDynamicConfig;
+import org.jing.core.config.statics.StaticConfigFactory;
+import org.jing.core.lang.Carrier;
+import org.jing.core.lang.JingException;
 import org.jing.core.logger.JingLogger;
+import org.jing.core.util.FileUtil;
 import org.jing.core.util.GenericUtil;
-import test.TempDynamicConfig;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Description: <br>
@@ -19,14 +21,34 @@ import java.lang.reflect.Method;
 @SuppressWarnings("Duplicates") public class DynamicConfigFactory {
     private static final JingLogger LOGGER = JingLogger.getLogger(DynamicConfigFactory.class);
 
+    private static ConcurrentHashMap<Class<? extends JDynamicConfig>, String> configMap ;
+
+    private static ConcurrentHashMap<Class<? extends JDynamicConfig>, String> getConfigMap() {
+        if (null == configMap) {
+            synchronized (StaticConfigFactory.class) {
+                configMap = new ConcurrentHashMap<>();
+            }
+        }
+        return configMap;
+    }
+
     public static <T> T createDynamicConfig(Class<T> clazz) throws JingException {
         if (!JDynamicConfig.class.isAssignableFrom(clazz)) {
             throw new JingException("class must implement from JDynamicConfig");
         }
         LOGGER.debug("create dynamic config: {}", clazz.getName());
+        String filePath = getConfigMap().get(clazz);
+        Carrier configC;
+        try {
+            configC = Carrier.parseXML(FileUtil.readFile(filePath));
+        }
+        catch (JingException e) {
+            LOGGER.error(e);
+            throw new JingException("failed to parse dynamic config: {}", filePath);
+        }
         try {
             T instance = clazz.newInstance();
-            Carrier configC = ((JDynamicConfig) instance).readConfigCarrier();
+            ((JDynamicConfig) instance).operate(configC);
             Method[] methods = clazz.getDeclaredMethods();
             Method method;
             ConfigProperty setter;
@@ -59,7 +81,7 @@ import java.lang.reflect.Method;
         }
     }
 
-    public static void main(String[] args) throws JingException {
-        createDynamicConfig(TempDynamicConfig.class);
+    public static synchronized void registerDynamicConfig(Class<? extends JDynamicConfig> clazz, String filePath) {
+        getConfigMap().put(clazz, filePath);
     }
 }

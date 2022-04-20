@@ -8,7 +8,7 @@ import org.jing.core.logger.JingLogger;
 import org.jing.core.util.GenericUtil;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Description: <br>
@@ -20,12 +20,12 @@ import java.util.HashMap;
 public class StaticConfigFactory {
     private static final JingLogger LOGGER = JingLogger.getLogger(StaticConfigFactory.class);
 
-    private static HashMap<Class<? extends JStaticConfig>, Carrier> configMap ;
+    private static ConcurrentHashMap<Class<? extends JStaticConfig>, Carrier> configMap ;
 
-    private static HashMap<Class<? extends JStaticConfig>, Carrier> getConfigMap() {
+    private static ConcurrentHashMap<Class<? extends JStaticConfig>, Carrier> getConfigMap() {
         if (null == configMap) {
             synchronized (StaticConfigFactory.class) {
-                configMap = new HashMap<>();
+                configMap = new ConcurrentHashMap<>();
             }
         }
         return configMap;

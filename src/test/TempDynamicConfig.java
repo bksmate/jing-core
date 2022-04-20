@@ -23,13 +23,11 @@ public class TempDynamicConfig extends BaseDto implements JDynamicConfig {
         return this;
     }
 
-    @Override public Carrier readConfigCarrier() throws JingException {
-        String xmlContent = FileUtil.readFile("temp/temp$1.xml");
-        return Carrier.parseXML(xmlContent);
-    }
-
     public static void main(String[] args) throws JingException {
         TempDynamicConfig config = DynamicConfigFactory.createDynamicConfig(TempDynamicConfig.class);
         System.out.println(config);
+    }
+
+    @Override public void operate(Carrier c) throws JingException {
     }
 }
